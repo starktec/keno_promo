@@ -1,0 +1,11 @@
+.cancelado {
+  background-color: rgb(237, 183, 183);
+}
+
+.partida-futura {
+  background-color: #cacbe6;
+}
+
+.partida-nao-sorteada {
+  background-color: rgb(250, 247, 169);
+}

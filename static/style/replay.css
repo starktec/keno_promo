@@ -1,0 +1,64 @@
+.container-replay-historico {
+  display: none;
+}
+
+.container-tabs {
+  border-radius: 4px 4px 0 0;
+}
+
+.container-table-tabs {
+  border-radius: 0 0 4px 4px !important;
+}
+
+.radius-zero {
+  border-radius: 0 !important;
+}
+
+.active-tabs-table {
+  color: #2b3748 !important;
+  font-weight: bold;
+  border-bottom: 2px solid #2b3748 !important;
+}
+
+.deactivate-tabs-table {
+  color: #6d6d6d !important;
+}
+
+.color-iniciado {
+  color: #92c7ff !important;
+  font-weight: bold;
+}
+
+.color-etapa-2 {
+  color: #007cff !important;
+  font-weight: bold;
+}
+
+.color-executado {
+  color: #1ee0ac !important;
+  font-weight: bold;
+}
+
+.container-legenda {
+  padding: 0 6px;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.content-legenda {
+  padding: 0 30px;
+}
+
+.container-legenda {
+  margin-bottom: 5px;
+}
+
+.modal-aviso {
+  display: none;
+  background-color: rgba(46, 46, 46, 0.521);
+}
+
+.span-plus:hover {
+  background-color: #bbbcc0;
+  color: #0c0c0c;
+}

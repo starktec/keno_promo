@@ -1,0 +1,83 @@
+#!/bin/bash
+
+adduser david
+usermod -aG sudo david
+usermod -aG root david
+adduser marcos
+usermod -aG sudo marcos
+usermod -aG root marcos
+adduser juan
+usermod -aG sudo juan
+usermod -aG root juan
+
+apt update -y
+apt-get update -y
+
+timedatectl set-timezone America/Recife
+
+apt install python3-pip -y
+apt install python3-venv -y
+
+apt install redis
+
+cd /home/project/bingo/
+mkdir logs
+mkdir /home/project/bingo/static/builds/
+mkdir /home/project/bingo/static/builds/kenno/
+
+python3 -m venv env
+source env/bin/activate
+pip install -r requirements.txt
+
+apt install postgresql postgresql-contrib -y
+cp /home/project/bingo/bin/postgresql.conf /etc/postgresql/12/main/
+systemctl restart postgresql
+apt install nginx -y
+apt install certbot python3-certbot-nginx -y
+
+cp /home/project/bingo/bin/django_logrotate /etc/logrotate.d/
+cp /home/project/bingo/bin/gunicorn_logrotate /etc/logrotate.d/
+cp /home/project/bingo/bin/sorteios_logrotate /etc/logrotate.d/
+cp /home/project/bingo/bin/default /etc/nginx/sites-available/default
+
+cp /home/project/bingo/bin/gunicorn.socket /etc/systemd/system/
+cp /home/project/bingo/bin/gunicorn.service /etc/systemd/system/
+systemctl enable --now gunicorn.socket
+
+ufw allow ssh
+ufw allow OpenSSH
+ufw allow 5432/tcp
+ufw allow "Nginx Full"
+ufw enable
+
+crontab /home/project/bingo/bin/cron_auditoria
+
+nano /etc/nginx/sites-available/default
+
+nano /etc/hostname
+
+sudo -u postgres psql
+
+#nano /home/project/bingo/jogodasorte/agendamento.py
+nano /home/project/bingo/jogodasorte/local_settings.py
+
+cd /home/project/bingo/
+
+rm /home/project/bingo/jogodasorte/migrations/0*.*
+rm /home/project/bingo/jogodasorte/migrations/__pycache__/0*.*
+
+python manage.py makemigrations
+python manage.py makemigrations jogodasorte
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py createsuperuser
+python manage.py createsuperuser
+python manage.py runscript criar_instalador
+
+#nano /home/project/bingo/jogodasorte/agendamento.py
+
+reboot
+
+
+
+

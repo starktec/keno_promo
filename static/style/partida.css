@@ -1,0 +1,46 @@
+.icon-identificacao {
+  font-size: 1.8rem;
+}
+
+.font-table-2 {
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.icon-aguarde {
+  color: rgb(73, 125, 236);
+}
+
+.icon-cancelado {
+  color: #e85347;
+}
+
+.icon-confirmado {
+  color: #1ee0ac;
+}
+
+.container-btn-create-automatica{
+  margin-right: 10px;
+}
+
+.icon-robo{
+  width: 1.6rem;
+}
+
+.icon-robo-2{
+  width: 1.8rem;
+}
+
+.celula-icon{
+  width: 50px;
+  min-width: 50px;
+}
+.color-yellow{
+    color: #bfb900;
+    font-weight: bold;
+}
+
+.color-green{
+    color: #21b500;
+    font-weight: bold;
+}

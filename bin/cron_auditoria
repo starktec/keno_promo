@@ -1,0 +1,1 @@
+0 4 * * *   bash   /home/project/bingo/bin/limpar_auditoria.sh > /home/project/cron

@@ -1,0 +1,230 @@
+.container-create-partida {
+}
+
+.container-btn-createPartida .button-partida {
+  margin: 0;
+}
+
+.table-create {
+  margin-top: 25px;
+}
+
+.footer-modal {
+  background-color: #ffffff;
+}
+
+.btn-modal-form {
+  background-color: #e5e9f2;
+  color: #1ee0ac;
+  border: none;
+}
+
+.btn-modal-form-voltar {
+  background-color: #e85347;
+  color: #e85347;
+  border: none;
+}
+
+.card-valor {
+  padding: 1rem 1.5rem;
+
+  border-radius: 4px;
+}
+
+.container-padrao {
+  margin-bottom: 20px;
+}
+
+.modal-title {
+  padding: 5px;
+
+  font-size: 1.1rem;
+  font-weight: bold;
+
+  color: #000000;
+  font-size: 1.3rem;
+}
+
+.data-partida {
+  padding: 5px;
+
+  font-size: 1.1rem;
+  font-weight: bold;
+  text-align: right;
+
+  color: #000000;
+}
+
+.title-card-valor {
+  padding: 8px;
+  border-radius: 4px 4px 0 0;
+}
+
+.title-card-valor h6 {
+  color: #000000;
+
+  font-size: 1.5rem;
+}
+
+.content-valor {
+  padding: 12px 8px;
+  border-radius: 0 0 4px 4px;
+}
+
+.text-black {
+  color: #000000;
+  font-weight: bold;
+}
+
+.text-red {
+  color: #ff0000 !important;
+  font-weight: bold;
+}
+
+.text-valor {
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.text-green {
+  color: #287c19 !important;
+  font-weight: bold;
+}
+
+.modal-display {
+  display: block;
+}
+
+.modal-display-none {
+  display: none;
+}
+
+.is-invalid{
+  padding: 11px 16px !important;
+}
+
+.container-information-franquias{
+  padding-bottom: 0.9rem !important;
+}
+
+.card-infomation-franquias{
+  padding: 0.8rem 1rem;
+  border-radius: 2px;
+  background-color: #eeeeee;
+}
+
+.itens-infomation-franquias > h2{
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.itens-infomation-franquias > h6{
+  margin: 0;
+  margin-bottom: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.itens-infomation-franquias > p{
+  margin: 0;
+  margin-bottom: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.checkbox-none-margin{
+  margin-right: 8px;
+}
+
+.btn-informacoes{
+  padding: 1px 5px !important;
+  color: #ffffff !important;
+  font-weight: bold;
+  background-color: #3480b3;
+  border: #3480b3;
+  transition: 0.5s;
+}
+
+.btn-informacoes:hover{
+  background-color: #2e668c;
+  border: #2e668c; 
+}
+
+.invisible-box{
+  display: none;
+}
+
+.flex-box{
+  display: flex;
+}
+
+#dias-ads{
+  display: flex;
+  flex-wrap: wrap;
+}
+
+#dias-ads li{
+  list-style: none;
+  width: 100%;
+}
+
+@media(min-width: 550px) {
+  #dias-ads li{
+    width: calc(100% * 1/2);
+  }
+}
+
+@media(min-width: 760px) {
+  #dias-ads li{
+    width: calc(100% * 1/3);
+  }
+}
+
+@media(min-width: 1024px) {
+  #dias-ads li{
+    width: calc(100% * 1/4);
+  }
+}
+
+@media(min-width: 1240px) {
+  #dias-ads li{
+    width: calc(100% * 1/5);
+  }
+}
+
+.bg-cinza{
+  background-color: #e5e9f2;
+}
+
+.title-franquia-dados{
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+
+.subtitle-franquia-dados{
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #5b6570;
+}
+
+.margin-franquia-dados{
+  margin-bottom: 1rem;
+}
+
+.close-modal{
+  position: absolute;
+  top: 0.5rem;
+  right: 1rem;
+}

@@ -1,0 +1,128 @@
+@import url("https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@700&display=swap");
+:root {
+  font-size: 60%;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "M PLUS Rounded 1c", sans-serif;
+}
+
+.container {
+  width: 100%;
+  height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  background-image: url(./img/Pagina_-_Erro_404.jpg);
+  background-size: cover;
+  color: #203247;
+}
+
+.container-error {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.container-icon {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.icon-error {
+  width: 18rem;
+}
+
+.title {
+  font-size: 7rem;
+  line-height: 8rem;
+}
+
+.sub-title {
+  font-size: 2.8rem;
+  line-height: 3rem;
+}
+
+.paragrafo {
+  width: 70%;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  font-size: 1.9rem;
+  line-height: 1.7rem;
+  text-align: center;
+}
+
+.sub-paragrafo {
+  font-size: 1.3rem;
+  text-align: center;
+  max-width: 25rem;
+  line-height: 1.3rem;
+}
+
+.btn-reload{
+  background-color: #203247;
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 1.2rem;
+
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.2rem;
+
+  transition: 0.5s;
+}
+
+.btn-reload:hover{
+  opacity: 0.9;
+  color: #ffffff;
+}
+
+.btn-back{
+  margin-top: 1rem;
+  text-decoration: none;
+  background-color: #203247;
+  color: #ffffff;
+  font-weight: bold;
+  border-radius: 0.2rem;
+  padding: 0.2rem 1.2rem;
+  transition: 0.5s;
+}
+
+.btn-back:hover{
+  background-color: #2d4157;
+}
+
+@media (min-width: 900px) {
+  :root {
+    font-size: 100%;
+  }
+
+  .container {
+    flex-direction: row;
+    background-size: cover;
+  }
+
+  .container-error {
+    width: 100%;
+  }
+
+  .container-icon {
+    width: 100%;
+  }
+
+  .sub-title {
+    font-size: 2.5rem;
+  }
+}

@@ -1,0 +1,5 @@
+env/
+.idea/
+logs/
+migratgions/
+__pycache__/

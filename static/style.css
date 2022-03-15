@@ -1,0 +1,813 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap');
+
+:root{
+    font-size: 100%;
+
+    --background-table-body: #93B0DD;
+    --background-table-body-secundary: #B9CBE8;
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+}
+
+.contina-screen{
+    width: 100vw;
+    height: 100vh;
+    padding: 5px;
+
+    background-color: #bab9c0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container{
+    display: grid;
+    width: 100%;
+    height: 100%;
+
+    grid-template-columns: 50% calc(50% - 25px);
+    grid-template-rows: calc(86% - 20px) 14%;
+    grid-template-areas: "header content"
+                        "footer footer";
+    
+    align-self: center;
+    justify-self: center;
+
+    gap: 1.2rem;
+}
+
+.header{
+    height: 100%;
+
+    grid-area: header;
+
+    gap: 1.2rem;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    
+}
+
+.start-draw{
+    width: 100%;
+    height: 18%;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    gap: 0.5rem;
+}
+
+.draw-information{
+    width: calc(100% * (2/3));
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.time-draw{
+    width: 100%;
+    height: 50%;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    color: white;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.time-draw h2{
+    height: 100%;
+    width: 50%;
+    padding-right: 10%;
+
+    background-color: #031F4B;
+    border-radius: 7px 0 0 7px;
+
+    color: #ffffff;
+    font-size: 1.5rem;
+    font-weight: 900;
+
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.time-draw p{
+    height: 100%;
+    width: 50%;
+
+    background-color: #fdffab;
+    border-radius: 0 0 33.49px 0;
+
+    color: #000000;
+
+    font-size: 1.2rem;
+    font-weight: 900;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.number-draw{
+    width: 100%;
+    height: 50%;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    color: white;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.number-draw h2{
+    height: 100%;
+    width: 50%;
+    padding-right: 10%;
+
+    background-color: #031F4B;
+
+    color: #ffffff;
+    font-weight: 900;
+
+    border-radius: 7px 0 0 7px;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.number-draw p{
+    height: 100%;
+    width: 50%;
+
+    background-color: #fdffab;
+    border-radius: 0 0 33.49px 0;
+    color: #000000;
+
+    font-size: 1.4rem;
+    font-weight: 900;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.donation{
+    width: 33%;
+    height: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.donation h2{
+    width: 100%;
+    height: 40%;
+
+    background-color: #031F4B;
+
+    font-weight: 900;
+    color: #ffffff;
+    text-transform: uppercase;
+    font-size: 1.5rem;
+    border-radius:  7px 7px 0 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.donation p{
+    width: 100%;
+    height: 60%;
+    
+    background-color: #fdffab;
+    border-radius: 0 0 7px 7px;
+
+    font-size: 1.6rem;
+    font-weight: 900;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.bingo-prizes{
+    width: 100%;
+    height: 20%;
+
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.bingo-prizes .quadra{
+    width: calc(100% * (1/3));
+    height: 100%;
+}
+
+.bingo-prizes .quadra h2{
+    height: 45%;
+    background-color: #449F7E;
+
+    color: #ffffff;
+    text-transform: uppercase;
+    font-weight: 900;
+    font-size: 1.5rem;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 7px 7px 0 0;
+}
+
+.bingo-prizes .quadra p{
+    height: 55%;
+    background-color: #FDFFAB;
+    border-radius: 0 0 7px 7px;
+
+    font-weight: 900;
+    font-size: 2rem;
+    text-transform: uppercase;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.bingo-prizes .quina{
+    width: calc(100% * (1/3));
+    height: 100%;
+}
+
+.bingo-prizes .quina h2{
+    height: 45%;
+    background-color: #2C5CA6;
+    border-radius: 7px 7px 0 0;
+
+    color: #ffffff;
+    font-weight: 900;
+    font-size: 1.5rem;
+    text-transform: uppercase;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.bingo-prizes .quina p{
+    height: 55%;
+    background-color: #FDFFAB;
+    border-radius: 0 0 7px 7px;
+
+    font-weight: 900;
+    font-size: 2rem;
+    text-transform: uppercase;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.bingo-prizes .bingo{
+    width: calc(100% * (1/3));
+    height: 100%;
+}
+
+.bingo-prizes .bingo h2{
+    height: 45%;
+    background-color: #FFC122;
+    border-radius: 7px 7px 0 0;
+
+    text-transform: uppercase;
+    font-weight: 900;
+    font-size: 1.5rem;
+    color: #ffffff;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.bingo-prizes .bingo p{
+    height: 55%;
+    background-color: #FDFFAB;
+    border-radius: 0 0 7px 7px;
+
+    font-weight: 900;
+    font-size: 2rem;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+/*****************************************************/
+
+.slider{
+    width: 100%;
+    height: 31%;
+    overflow: hidden;
+}
+
+.slides{
+    width: 500%;
+    height: 100%;
+    display: flex;
+}
+
+.slides input{
+    display: none;
+}
+
+.slide{
+    width: 20%;
+    transition: 3s;
+    padding: 0 5px;
+}
+
+.slide div{
+    width: 100%;
+    height: 100%;
+}
+
+#radio1:checked ~ .first{
+    margin-left: 0;
+}
+
+#radio2:checked ~ .first{
+    margin-left: -20%;
+}
+
+#radio3:checked ~ .first{
+    margin-left: -40%;
+}
+
+#radio4:checked ~ .first{
+    margin-left: -60%;
+}
+
+.navigation-auto{
+    display: none;
+
+    /*
+    position: absolute;
+
+    width: 100%;
+    height: 95%;
+
+    justify-content: center;
+    align-items: flex-end;
+    */
+}
+
+
+.navigation-auto div:not(:last-child){
+    margin-right: 40px;
+}
+
+.next-draw{
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.next-draw .draw-data{
+    width: 100%;
+    height: 30%;
+    min-height: 40px;
+    max-height: 60px;
+
+    padding: 0 8px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    background-color: #031F4B;
+    color: #ffffff;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-transform: uppercase;
+
+    border-radius: 8px;
+}
+
+.next-draw .draw-data h2{
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.awards{
+    width: 100%;
+    height: 70%;
+
+    display: flex;
+    gap: 5px;
+}
+
+.quadra-quina{
+    width: 50%;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.quadra-quina .quadra{
+    width: 100%;
+    height: 50%;
+    display: flex;
+}
+
+.quadra-quina .quadra h2{
+    width: 45%;
+    height: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 7px 0 0 7px;
+
+    background-color: #449F7E;
+    color: #ffffff;
+
+    font-size: 1.5rem;
+    font-weight: 900;
+}
+
+.quadra-quina .quadra p{
+    width: 55%;
+    height: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 0 7px 7px 0;
+
+    background-color: #FDFFAB;
+
+    font-size: 2rem;
+    font-weight: 900;
+}
+
+.quadra-quina .quina{
+    width: 100%;
+    height: 50%;
+    display: flex;
+}
+
+.quadra-quina .quina h2{
+    width: 45%;
+    height: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 7px 0 0 7px;
+    font-weight: 900;
+    font-size: 1.5rem;
+
+    background-color: #2C5CA6;
+    color: #ffffff;
+}
+
+.quadra-quina .quina p{
+    width: 55%;
+    height: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 0 7px 7px 0;
+
+    background-color: #FDFFAB;
+
+    font-size: 2rem;
+    font-weight: 900;
+}
+
+.awards .bingo{
+    height: 100%;
+
+    display: flex;
+}
+
+.awards .bingo h2{
+    width: 45%;
+    height: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 7px 0 0 7px;
+
+    color: #ffffff;
+    font-size: 1.5rem;
+    font-weight: 900;
+
+    background-color: #FFC122;
+}
+
+.awards .bingo p{
+    width: 55%;
+    height: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 0 7px 7px 0;
+
+    background-color: #FDFFAB;
+
+    font-size: 2rem;
+    font-weight: 900;
+}
+
+.special-draw{
+    width: 100%;
+    height: 31%;
+    gap: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.special-draw .draw-data{
+    width: 100%;
+    height: 30%;
+    min-height: 40px;
+    max-height: 60px;
+
+    padding: 0 8px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    background-color: #031F4B;
+    color: #ffffff;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-transform: uppercase;
+
+    border-radius: 8px;
+}
+
+.special-draw .draw-data h2{
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.special-draw .awards{
+    width: 100%;
+    height: 70%;
+
+    display: flex;
+    gap: 5px;
+}
+
+.special-draw .awards .bingo{
+    height: 100%;
+    width: 50%;
+}
+/**************************************************************************************************/
+
+.content{
+    grid-area: content; 
+    display: flex;
+    flex-direction: column;
+
+    gap: 1.2rem;
+}
+
+.accumulated{
+    width: 100%;
+    height: 18%;
+
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+}
+
+.accumulated-head{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    width: 70%;
+    height: 100%;
+}
+
+.accumulated-head h2{
+    width: 40%;
+    height: 100%;
+
+    background-color: #2C5CA6;
+
+    color: #ffffff;
+    font-size: 1.5rem;
+    font-weight: 900;
+
+    border-radius: 30px 0 0 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.accumulated-head p{
+    width: 60%;
+    height: 100%;
+
+    background-color: #FDFFAB;
+
+    font-size: 2rem;
+    font-weight: 900;
+
+    border-radius: 0 0 30px 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.accumulated .logo-img{
+    width: 30%;
+    height: 100%;
+    background-color: #FFC122;
+}
+
+.winners{
+    width: 100%;
+    height: 62%;
+}
+
+.title-table{
+    width: 100%;
+    height: 10%;
+    padding: 0 5px;
+
+    background-color: #031F4B;
+
+    color: #ffffff;
+    font-size: 1.3rem;
+    font-weight: 700;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.title-table h2{
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.title-table p{
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.winners-table{
+    width: 100%;
+    height: 90%;
+    border-collapse: collapse;
+}
+
+.table-header{
+    height: 10%;
+    color: #ffffff;
+}
+
+.table-header .card{
+    width: 15%;
+    background-color: #2C5CA6;
+
+    text-align: center;
+    font-weight: 900;
+    font-size: 1.3rem;
+}
+
+.table-header .awarded{
+    width: 60%;
+    background-color: #4872B4;
+
+    text-align: center;
+    font-weight: 900;
+    font-size: 1.5rem;
+}
+
+.table-header .value{
+    width: 25%;
+    background-color: #6587BD;
+
+    text-align: center;
+    font-weight: 900;
+    font-size: 1.5rem;
+}
+
+.winners tr:nth-child(even) {
+    background-color: var(--background-table-body);
+}
+
+.winners tr:nth-child(odd) {
+    background-color: var(--background-table-body-secundary);
+}
+
+.table-body .card{
+    text-align: center;
+    font-weight: 900;
+    font-size: 1.1rem;
+}
+
+.table-body .awarded{
+    text-align: center;
+    font-weight: 900;
+    font-size: 1.1rem;
+}
+
+.table-body .value{
+    width: 25%;
+    height: 10%;
+
+    text-align: center;
+    font-weight: 900;
+    font-size: 1.1rem;
+}
+
+.publicity{
+    width: 100%;
+    height: 20%;
+
+    background-color: aqua;
+}
+
+footer{
+    width: 100%;
+
+    grid-area: footer;
+
+    display: flex;
+    align-items: center;
+    justify-content:  center;
+}
+
+.footer{
+    width: 100%;
+    height: 100%;
+
+    background-color: #031F4B;
+}
+
+
+@media(min-width:1366px){
+    .container{
+    
+    }
+
+    .header{
+    
+    }
+    
+    .content{
+    }
+}

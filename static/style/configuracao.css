@@ -1,0 +1,286 @@
+.container-salve-conf {
+  padding: 0;
+}
+
+.conf-subtitle {
+  padding: 5px 0 15px;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.tabs {
+  margin: 0 20px;
+  padding: 0;
+}
+
+.tab {
+  padding: 0;
+}
+
+.tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.tabs-margin {
+  margin: 0 0px;
+  padding: 5px 8px !important;
+}
+
+.tabs-content {
+  padding: 0 !important;
+  margin: 0;
+  border-color: #ffffff;
+}
+
+.nav-tabs {
+  background-color: #ffffff;
+  border-bottom: 1px solid #ffffff;
+}
+
+.nav-link {
+  background-color: #ffffff;
+  padding: 10px 0 5px 0 !important;
+  margin: 0 8px !important;
+}
+
+.active-tabs {
+  color: #2c41ca !important;
+  font-weight: bold;
+  border-bottom: 1px solid #4d64ff !important;
+}
+
+.deactivate-tabs {
+  color: #888888 !important;
+}
+
+.card-tabs {
+  border-radius: 5px;
+}
+
+.container-jogo-conf {
+  margin-top: 30px !important;
+}
+
+.container-server-conf {
+  display: none;
+  margin-top: 30px !important;
+}
+
+.container-extra-conf {
+  display: none;
+  margin-top: 30px !important;
+}
+
+.container-versao{
+  display: none;
+  margin-top: 30px !important;
+}
+
+.container-img-conf {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  object-fit: cover;
+
+  border-radius: 3px;
+
+  background-color: #ffffff;
+}
+
+.container-img-conf img {
+  height: 100px;
+  width: 100px;
+
+  object-fit: contain;
+  border-radius: 3px;
+}
+
+.container-logos {
+  margin-top: 10px;
+  padding: 0;
+}
+
+.btn-baixar {
+  margin-left: 15px;
+}
+
+.card-text {
+  min-height: 70px;
+}
+
+.card-input {
+  border-radius: 4px;
+  padding: 25px 8px;
+}
+
+.box-card-input {
+  padding: 10px;
+}
+
+.padding-zero {
+  padding: 0;
+}
+
+.margin-zero {
+  margin: 0;
+}
+
+.padding-top-botton {
+  padding: 5px;
+}
+
+.container-input-create {
+  padding-top: 8px;
+}
+
+.btn-download {
+  padding: 4px 10px;
+}
+
+.btn-download-right {
+  margin-right: 8px;
+}
+
+.conf-img-title {
+  padding: 0px;
+
+  font-size: 1.2rem;
+  padding-top: 20px;
+
+  color: #364a63;
+}
+
+.conf-img-subtitle {
+  font-size: 0.7rem;
+  font-weight: bold;
+
+  margin-left: 5px;
+  margin-bottom: 8px !important;
+
+  color: #364a63;
+}
+
+.conatiner-img-input {
+  height: 100px;
+
+  display: flex;
+
+  padding: 5px;
+}
+
+.conatiner-img-conf {
+  height: 100px !important;
+  padding: 5px !important;
+}
+
+.id_logo {
+  display: none;
+}
+
+.btn_logo {
+  text-align: center;
+  font-weight: bold;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.d-flex {
+  padding: 0;
+
+  align-self: flex-end;
+  justify-content: center;
+
+  outline: none;
+
+  border: 1px solid #ced1da;
+  border-radius: 4px;
+
+  height: 35px;
+}
+
+.d-flex .btn_logo {
+  background-color: #dbdfea;
+  color: #3c4d62;
+  border-radius: 0 4px 4px 0;
+}
+
+.name_logo {
+  padding: 5px 48px !important;
+  width: 75% !important;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  white-space: nowrap;
+  overflow: auto;
+
+  text-overflow: ellipsis;
+}
+
+.name_logo p {
+  width: 80px;
+  padding: 0 !important;
+}
+
+.container-integracoes {
+  display: none;
+}
+
+.container-partida-conf {
+  display: none;
+}
+
+.container-impressao{
+  display: none;
+}
+
+.icon-label > .icon{
+  padding-left: 0;
+  padding-right: 0.6rem;
+  font-size: 1.1rem;
+}
+
+.icon-label > .icon-success{
+  color: #1ee0ac;
+}
+
+.icon-label > .icon-danger{
+  color: #e85347;
+}
+
+.label-check-icon{
+  margin-right: 5px;
+}
+
+.card-infomation-franquias{
+  color: #364a63;
+}
+
+@media (max-width: 576px) {
+  .container-img-conf {
+    padding: 0 !important;
+  }
+
+  .conf-img-subtitle {
+    margin-left: 5px;
+    margin-bottom: 4px !important;
+
+    color: #364a63;
+  }
+}
+
+@media (min-width: 760px) {
+  .tabs-content {
+    padding: 0 25px !important;
+  }
+}
+
+@media (min-width: 991px) {
+  .nav-tabs {
+    max-width:900px;
+  }
+}

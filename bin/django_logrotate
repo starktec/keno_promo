@@ -1,0 +1,7 @@
+/home/project/bingo/logs/django_debug.log {
+    daily
+    missingok
+    delaycompress
+    dateext
+    rotate 1000
+}

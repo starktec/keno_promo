@@ -1,0 +1,641 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap');
+
+:root{
+    font-size: 100%;
+
+    --background-sorteio:  #bab9c0;
+    --color-title: #FFFCFC;
+
+    --background-table-head: #2C5CA6;
+    --background-table-body: #93B0DD;
+    --background-table-body-secundary: #B9CBE8;
+
+    --background-draw-information: #031F4B;
+
+    --background-cards: #7982a5;
+    --background-cards-title: #031F4B;
+    --background-card-iten: #FFFFFF;
+
+    --background-card-iten-secundary: #449F7E;
+
+    --background-accumulated:#2C5CA6;
+    --background-accumulated-secundary:#FDFFAB;
+
+    --background-kuadra: #449F7E;
+    --background-kina: #2C5CA6;
+    --background-keno: #FFC122;
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-weight: 900;
+    font-family: 'Roboto', sans-serif;
+}
+
+body{
+    width: 100vw;
+    height: 100vh;
+
+    background-color: var(--background-sorteio);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container{
+    width: 95%;
+    height: 95%;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 10px;
+}
+
+.draw-information{
+    height: 15%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    gap: 1rem;
+    background-color: var(--background-draw-information);
+}
+
+.draw-information-title{
+    color: var(--background-sorteio);
+    font-size: 1.2rem;
+}
+
+.draw-information-caption{
+    color:var(--background-sorteio);
+    font-size: 0.9rem;
+}
+
+.draw-information-caption span{
+    background-color: var(--background-kuadra);
+    padding: 0.5rem 0.8rem;
+
+    border-radius: 1.1rem;
+    color: var(--background-sorteio);
+}
+
+/********************** players **********************/
+
+.players{
+    width: 100%;
+}
+
+.table-players tr:nth-child(even) {
+    background-color: var(--background-table-body);
+}
+
+.table-players tr:nth-child(odd) {
+    background-color: var(--background-table-body-secundary);
+}
+
+.table-players{
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-players-head{
+    background-color: var(--background-table-head);
+
+    color: var(--background-sorteio);
+    text-align: center;
+    padding: 5px 0;
+}
+
+.table-players-body{
+    text-align: center;
+    padding: 5px 0;
+}
+
+/********************** cards **********************/
+
+.cards{
+
+
+}
+
+/********************** earnings **********************/
+
+.earnings{
+    
+}
+
+/********************** draw-balls **********************/
+
+.draw-balls{
+
+}
+
+/********************** footer **********************/
+
+.footer{
+
+}
+
+
+@media (min-width:1280px){
+
+    .container{
+        width: 100vw;
+        height: 100vh;
+        padding: 5px;
+        
+        display: grid;
+        grid-template-columns: calc(30% - 15px) calc(20% - 5px) calc(50% - 20px);
+        grid-template-rows: calc(20% - 20px) calc(66% - 20px) calc(14%);
+        grid-template-areas: "draw-information cards earnings"
+                            "players cards draw-balls"
+                            "footer footer footer";
+        
+        align-self: center;
+        justify-self: center;
+    
+        gap: 20px;
+    }
+    
+    /********************** Draw-information **********************/
+    
+    .draw-information{
+        height: 100%;
+        grid-area: draw-information;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    
+        gap: 1rem;
+        background-color: #031F4B;
+    }
+    
+    .draw-information-title{
+        color: var(--color-title);
+        font-size: 1.2rem;
+    }
+    
+    .draw-information-caption{
+        color: var(--color-title);
+        font-size: 0.9rem;
+    }
+    
+    .draw-information-caption span{
+        background-color: var(--background-kuadra);
+        padding: 0.5rem 0.8rem;
+    
+        border-radius: 1.1rem;
+        color: var(--color-title);
+    }
+    
+    /********************** players **********************/
+    
+    .players{
+        grid-area: players;
+    }
+    
+    .table-players tr:nth-child(even) {
+        background-color: #93B0DD;
+    }
+    
+    .table-players tr:nth-child(odd) {
+        background-color: #B9CBE8;
+    }
+    
+    .table-players{
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .table-players-head{
+        background-color: #2C5CA6;
+    
+        color:var(--color-title);
+        text-align: center;
+        padding: 5px 0;
+    }
+    
+    .table-players-body{
+        text-align: center;
+        padding: 5px 0;
+    }
+    
+    /********************** cards **********************/
+    
+    .cards{
+        width: 100%;
+        height: 100%;
+
+        grid-area: cards;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+
+        gap: 1rem;
+    }
+
+    .card-content{
+        width: 100%;
+        height: 25%;
+
+        background-color: var(--background-cards);
+        border-radius: 5px;
+    }
+
+    .card-content .card-title{
+        width: 100%;
+        height: 20%;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        background-color: var(--background-cards-title);
+        border-radius: 5px 5px 0 0;
+
+        color: var(--color-title);
+        font-size: 1.2rem;
+    }
+
+    .card-balls{
+        width: 100%;
+        height: 80%;
+        padding: 5px;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+    
+    .itens-card{
+        width: 17%;
+        height: 30%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        background-color: var(--background-card-iten);
+        border-radius: 5px;
+
+        font-size: 1rem;
+    }
+
+    .active{
+        background-color: var(--background-card-iten-secundary); 
+    }
+
+    /********************** earnings **********************/
+
+    .earnings{
+        grid-area: earnings;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: row;
+        gap: 1rem;
+    }
+
+    .itens-earnings{
+        width: 75%;
+        height: 100%;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+
+    .earnings-head{
+        width: 100%;
+        height: 50%;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .earnings-head .accumulated{
+        width: calc(100% * (2/3));
+        height: 100%;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: row;
+
+        font-size: 1.4rem;  
+        background-color: var(--background-accumulated-secundary);
+    }
+
+    .earnings-head .accumulated h2{
+        width: calc(50%);
+        height: 100%;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+
+        font-size: 0.8rem;
+        color: var(--color-title);
+        background-color: var(--background-accumulated);
+    }
+
+    .earnings-head .accumulated p{
+        width: calc(50%);
+        height: 100%;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+
+        font-size: 1.3rem;
+    }
+
+    .earnings-head .accumulated h2 span{
+        font-size: 1rem;
+    }
+
+    .earnings-head .donation{
+        width: calc(100% * (1/3));
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+
+        background-color: var(--background-kina);
+    }
+
+    .earnings-head .donation h2{
+        width: 100%;
+        height: 50%;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        font-size: 1rem;
+        color: var(--color-title);
+        background-color: var(--background-draw-information);
+    }
+
+    .earnings-head .donation p{
+        width: 100%;
+        height: 50%;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        
+        background-color: var(--background-accumulated-secundary);
+    }
+
+    .earnings-body{
+        width: 100%;
+        height: 50%;
+        
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: row;
+        gap: 5px;
+    }
+
+    .kuadra{
+        width: calc(100% * (1/3));
+        height: 100%;
+
+        background-color: var(--background-accumulated-secundary);
+    }
+
+    .kuadra h2{
+        width: 100%;
+        height: 45%;
+        
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        background-color: var(--background-kuadra);
+
+        color: var(--color-title);
+        font-size: 1.2rem;
+    }
+
+    .kuadra p{
+        width: 100%;
+        height: 55%;
+        
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        font-size: 1.3rem;
+    }
+
+    .kina{
+        width: calc(100% * (1/3));
+        height: 100%;
+
+        background-color: var(--background-accumulated-secundary);
+    }
+
+    .kina h2{
+        width: 100%;
+        height: 45%;
+        
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        background-color: var(--background-kina);
+
+        color: var(--color-title);
+        font-size: 1.2rem;
+    }
+
+    .kina p{
+        width: 100%;
+        height: 55%;
+        
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        font-size: 1.3rem;
+    }
+
+    .keno{
+        width: calc(100% * (1/3));
+        height: 100%;
+
+        background-color: var(--background-accumulated-secundary);
+    }
+
+    .keno h2{
+        width: 100%;
+        height: 45%;
+        
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        background-color: var(--background-keno);
+
+        color: var(--color-title);
+        font-size: 1.2rem;
+    }
+
+    .keno p{
+        width: 100%;
+        height: 55%;
+        
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        font-size: 1.3rem;
+    }
+
+    .logo{
+        width: 25%;
+        height: 100%;
+        background-color: blue;
+    }
+
+    /********************** draw-balls **********************/
+    
+    .draw-balls{
+        grid-area: draw-balls;
+        width: 100%;
+        height: 100%;
+
+        display: flex;
+        align-self: center;
+        justify-self: center;
+        flex-direction: column;
+
+        gap: 10px;
+    }
+
+    .numbers-drawn{
+        width: 100%;
+        height: 70%;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .ball-globe{
+        width: 30%;
+        height: 100%;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    .globe-content{
+        width: 100%;
+        height: 50%;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .globe-content img{
+        width: auto;
+        height: 100%;
+    }
+
+    .ball-content{
+        width: 100%;
+        height: 50%;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .ball-content img{
+        width: auto;
+        height: 100%;
+    }
+    
+    .numbers-drawn-content{
+        width: 70%;
+        height: 100%;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+
+        background-color: #0C0C0C;
+        border-radius: 16px;
+    }
+
+    .numbers-drawn-content div{
+        width: calc(100% * (1/10));
+        height: calc(100% * (1/9));
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        color: #514E4E;
+    }
+
+    .numbers-drawn-content .numbers-active{
+        color: #02FEA3;
+    }
+
+    .numbers-drawn-footer{
+        width: 100%;
+        height: 30%;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .ball-footer{
+        height: 100%;
+        width: calc(100% * (1/3));
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .ball-footer img{
+        height: 100%;
+        width: auto;
+    }
+
+    /********************** footer **********************/
+    
+    .footer{
+        grid-area: footer;
+        background-color: black;
+    }
+    
+
+}

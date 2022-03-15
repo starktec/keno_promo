@@ -1,0 +1,13 @@
+.destaque-transacao {
+  background-color: #d4e0f5;
+  color: #000000;
+  border-top: 1px solid #5b688d !important;
+}
+
+.linhas-normais {
+  border-top: 1px solid #5b688d !important;
+}
+
+.borda-table-linha {
+  border-bottom: 1px solid #000000;
+}

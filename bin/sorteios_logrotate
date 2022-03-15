@@ -1,0 +1,7 @@
+/home/project/bingo/logs/log_agendamento.txt {
+    daily
+    missingok
+    delaycompress
+    dateext
+    rotate 1000
+}

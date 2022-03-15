@@ -1,0 +1,147 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+
+:root{
+    --background : #6060b4;
+    --background-secondary: #02026e;
+    --background-third: #e5e5e7;
+    --background-balls: linear-gradient(rgb(167, 166, 166), rgb(243, 243, 243), rgb(243, 243, 243), rgb(167, 166, 166));
+    --background-active: radial-gradient(circle, rgba(56,231,4,1) 0%, rgba(38,155,3,1) 100%);
+    --color-primary:#ffffff;
+    --color-secondary: #0c0c0c;
+    --background-number-card: #ddd8d8;
+    --font-cards : 'Bebas Neue', cursive;
+
+    font-size: 60%;
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    background-color: var(--background);
+    /* background-color: black; */
+}
+
+.container-cards{
+    width: 100%;
+    padding: 15px 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.cards{
+    width: 95%;
+    max-width: 500px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    background-color: var(--background-third);
+    border-radius: 1.1rem;
+
+    font-family: var(--font-cards);
+}
+
+.card-header{
+    width: 100%;
+    padding: 10px 20px 5px 10px;
+    border-radius: 1rem 1rem 0 0;
+    background: rgb(23,100,161);
+    background: linear-gradient(180deg, rgba(23,100,161,1) 0%, rgba(40,58,107,1) 100%);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 200;
+    /* font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif; */
+    border-bottom: 1px #01013f solid;
+}
+
+.number-card{
+    width: 25%;
+    padding: 5px 5px;
+
+    background-color: var(--background-third);
+    font-size: 2rem;
+    border-radius: 50px;
+    text-align: center;
+    color: #373435;
+    border-width: 1px 0 0 1px;
+    border-color: #0c0c0c;
+    border-style: solid;
+}
+
+.name-card{
+    padding-right: 5px;
+    font-size: 3rem;
+    font-weight: 200;
+    color: var(--color-primary);
+}
+
+.card-body{
+    width: 100%;
+    padding: 8px 8px 1px 8px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1%;
+}
+
+.number-balls{
+    width: calc(90%*(1/5));
+    height: 200%;
+    padding: 3px 4px;
+    margin-bottom: 3px;
+
+    background-image: #CED8DC;
+    border-width: 1px 0 0 1px;
+    /* border-color: #0c0c0c; */
+    /* border-style: solid; */
+
+    -moz-box-shadow:    inset 0 0 15px #777;
+    -webkit-box-shadow: inset 0 0 15px #777;
+    box-shadow:         inset 0 0 15px #777;
+    
+    font-family: var(--font-cards);
+    -webkit-text-stroke: 2px black;
+
+
+    border-radius: 0.4rem;
+
+    display: flex;
+    justify-content: center;
+
+    font-size: 2.5rem;
+}
+
+.number-balls-active{
+    background-image: var(--background-active);
+    /* border-width: 0 1px 1px 0; */
+    /* border-color: #0c0c0c; */
+    /* border-style: solid; */
+    color: white;
+    -webkit-text-stroke: 2px white;
+
+    -moz-box-shadow:    inset 0 0 0px transparent !important;
+    -webkit-box-shadow: inset 0 0 0px transparent !important;
+    box-shadow:         inset 0 0 0px transparent !important;
+}
+
+.card-footer{
+    width: 94%;
+    height: 4px;
+    margin-bottom: 5px;
+
+    background: rgb(23,100,161);
+    background: linear-gradient(90deg, rgba(23,100,161,1) 0%, #283a6b 100%);    border-radius: 50px;
+}

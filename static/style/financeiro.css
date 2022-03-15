@@ -1,0 +1,20 @@
+.logo-img {
+  max-height: none;
+  height: 87px;
+  max-width: 255px;
+  object-fit: contain;
+}
+
+.input-margin-top {
+  margin-top: 10px;
+}
+
+.cards-btn-csv {
+  margin-bottom: 10px;
+  padding: 5px 15px;
+}
+
+input[type="time"] {
+  -webkit-min-logical-width: 100% !important;
+  -webkit-appearance: none !important;
+}

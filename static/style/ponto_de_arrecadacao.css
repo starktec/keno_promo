@@ -1,0 +1,61 @@
+.btn-checkbox {
+  padding: 1px;
+}
+
+.btn-checkbox .icon {
+  color: #ffffff !important;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.checkbox-all {
+  margin-right: 8px;
+}
+
+.checkbox-text {
+  display: none;
+}
+
+.checkbox-text-none {
+  display: none;
+}
+
+.span-plus {
+  padding: 0;
+  background: #00000029;
+  color: #2b3748;
+  border: none;
+  transition: 0.5s;
+}
+
+.modal-header-estabelecimento {
+  padding: 5px 20px;
+}
+
+.modal-body-estabelecimento {
+  padding: 10px 5px 5px;
+}
+
+.container-list-estabelecimento {
+  margin: 0 5px 10px !important;
+  padding: 3px 6px;
+
+  background-color: #f0f2f7;
+  border-radius: 4px;
+
+  font-size: 1rem;
+  color: #0c0c0c;
+}
+
+.container-list-estabelecimento .icon {
+  color: #dfe4ec;
+  margin-right: 5px;
+}
+
+.select-pdv {
+  min-width: 140px;
+}
+
+.paragrafo-pdv {
+  min-width: 150px;
+}
