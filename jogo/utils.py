@@ -2,23 +2,12 @@ import random
 
 from asgiref.sync import sync_to_async
 
-from jogo.models import ADSData, Automato, Usuario, Partida, Configuracao, TemplatePartida, Cartela
+from jogo.models import Automato, Usuario, Partida, Configuracao, TemplatePartida, Cartela
 from datetime import date, datetime, timedelta
 
 import datetime
 from django.db import connection, transaction
 import subprocess
-
-def ads_dias_disponiveis():
-    agora = datetime.datetime.today()
-    choices = []
-    for i in range(0,15):
-        data = agora + datetime.timedelta(days=i)
-        data = data.date()
-        if not ADSData.objects.filter(date=data,status=1).exists():
-            choices.append((i,data))
-    return choices
-
 
 
 def dictfetchall(cursor):

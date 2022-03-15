@@ -21,7 +21,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from django.db import transaction
 
 from jogo.models import Automato, Cartela, Partida, Configuracao, CartelaVencedora, Agendamento, \
-    TemplatePartida, ADSData, DispositivosConectados
+    TemplatePartida, DispositivosConectados
 from jogo.utils import partida_automatizada, testa_horario, comprar_cartelas
 
 FILE = settings.BASE_DIR + "/logs/log_agendamento.txt"
@@ -345,15 +345,6 @@ class Agenda():
                         self.log("Sorteio Automatizado Iniciando Script")
                         self.log("id do automato" + str(partida.id_automato))
                         partida_automatizada(partida, self)
-
-                    self.log("Desativando as ADS da Partida")
-                    ads = ADSData.objects.filter(partida=partida)
-                    ads_list = []
-                    if ads:
-                        for ad in ads:
-                            ad.status = 3
-                            ads_list.append(ad)
-                        ADSData.objects.bulk_update(ads_list, fields=['status'])
 
                     self.log("Sorteio Finalizado (finally)")
 

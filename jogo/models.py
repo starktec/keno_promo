@@ -18,6 +18,7 @@ from django.utils.crypto import get_random_string
 
 # Create your models here.
 from jogo import local_settings
+from jogo.choices import AcaoTipoChoices
 from jogo.consts import StatusSolicitacaoRecolhe, TipoSolicitacaoRecolhe
 from jogo.websocket_triggers import event_doacoes, event_pos, event_tela, event_tela_partidas
 
@@ -105,8 +106,6 @@ class Configuracao(models.Model):
     tempo_sorteio_online = models.PositiveSmallIntegerField(default=10)
     imprimir_qrcode = models.BooleanField(default=False)
 
-    # Usar ou não ADS
-    usar_ads = models.BooleanField(default=False)
     # Usar realtime data
     usar_realtime = models.BooleanField(default=False)
 
@@ -172,7 +171,27 @@ PARTIDA_TIPOS_CHOICES = (
     (1,"NORMAL"),(2,"ESPECIAL"),(3,"SUPER ESPECIAL")
 )
 
+# NOVA CLASSE
+class Regra(models.Model):
+    nome = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.nome
+
+# NOVA CLASSE
+class Acao(models.Model):
+    regra = models.ForeignKey(Regra, on_delete=models.PROTECT)
+    tipo = models.CharField(max_length=20, choices=AcaoTipoChoices.choices)
+    url = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.get_tipo_display() + " " + self.url
+
+
 class Partida(models.Model):
+    # NOVO CAMPO
+    regra = models.ForeignKey(Regra, on_delete=models.PROTECT)
+
     valor_kuadra = models.DecimalField(default=20.00, decimal_places=2, max_digits=6)
     valor_kina = models.DecimalField(default=20.00, decimal_places=2, max_digits=6)
     valor_keno = models.DecimalField(default=100.00, decimal_places=2, max_digits=8)
@@ -325,29 +344,9 @@ class Partida(models.Model):
         else:
             return Cartela.objects.filter(partida=self, cancelado=False).count()
 
-    def ads_status(self):
-        ads = ADSData.objects.filter(partida=self).first()
-        if not ads:
-            return 0
-        else:
-            if ads.date > date.today():
-                return 4  # status aguardando
-            return ads.status
-
 
 
 TEMPLATE_STATUS_CHOICES = ((0, "APLICADO"), (1, "CANCELADO"))
-
-STATUS_ADS_CHOICES = (
-    (1, "Ativo"), (2, "Pausa"), (3, "Encerrado")
-)
-
-
-class ADSData(models.Model):
-    partida = models.ForeignKey(Partida, on_delete=models.CASCADE)
-    date = models.DateField()
-    status = models.PositiveSmallIntegerField(choices=STATUS_ADS_CHOICES, default=1)
-
 
 class TemplatePartida(models.Model):
     valor_kuadra = models.DecimalField(default=20.00, decimal_places=2, max_digits=6)

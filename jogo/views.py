@@ -7,16 +7,18 @@ import csv
 import math
 import logging
 
+from jogo.utils import testa_horario
 from keno_promo.settings import BASE_DIR
 from jogo.constantes import VALORES_VOZES
 from jogo.frontend_objects import FrontEndFranquia, FrontEndPartida, FrontEndADSCriar
-from jogo.utils import ads_dias_disponiveis
+
 from jogo.websocket_triggers import event_doacoes, event_tela_partidas
 from jogo.websocket_triggers_bilhete import event_bilhete_partida
 
 from jogo.agendamento import Agenda
-from jogo.forms import NovaPartidaAutomatizada, ADSForm, PartidaEditForm
-from jogo.models import Partida, Automato, Cartela, Usuario, ADSData, Configuracao
+from jogo.forms import NovaPartidaAutomatizada, PartidaEditForm, GanhadoresForm, NovaPartidaForm, UsuarioAddForm, \
+    ConfiguracaoForm, TemplateEditForm
+from jogo.models import Partida, Automato, Cartela, Usuario, Configuracao, CartelaVencedora, TemplatePartida
 
 logger = logging.getLogger(__name__)
 
@@ -48,6 +50,8 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
 def login_page(request):
     error = []
     configuracao = Configuracao.objects.last()
+    if not configuracao:
+        configuracao = Configuracao.objects.create()
     if request.method == "POST":
         username = request.POST['user']
         senha = request.POST['password']
@@ -64,15 +68,13 @@ def login_page(request):
                     request.session['nome_server'] = configuracao.nome_server
                 if configuracao.logo_login:
                     request.session['logo_login'] = configuracao.logo_login.url
-                if configuracao.notificacao_server:
-                    request.session['aviso'] = configuracao.notificacao_server
                 if configuracao.usar_realtime:
                     request.session['real_time'] = configuracao.usar_realtime
 
                 next_url = request.GET.get('next')
                 if next_url:
                     return redirect(next_url)
-                return redirect('/')
+                return redirect('/partidas/')
 
         else:
             logger.error(error)
@@ -113,16 +115,7 @@ def cancelar_partida(request, partida_id):
 
 @login_required(login_url="/login/")
 def index(request):
-    if "perfil_max" in request.session:
-        if request.session['perfil_max'] == 9:
-            return redirect('/recolhe/')
-        if request.session['perfil_max'] < 7:
-            return redirect('/partidas/')
-        else:
-            return redirect('/transacoes/')
-    else:
-        logger.error(str(request.user) + " - 401")
-        return HttpResponse(status=401)
+    return redirect('/partidas/')
 
 
 @login_required(login_url="/login/")
@@ -190,7 +183,7 @@ def partidas(request):
     pagina = 0
     ultima_pagina = 0
     itens_pagina = 10
-    usuario = Usuario.objects.filter(usuario=request.user).first()
+    usuario = request.user.usuario
     partidas = []
     data_final = None
     data_inicial = datetime.date.today()
@@ -206,13 +199,13 @@ def partidas(request):
         else:
             data_inicial = datetime.date.today()
         if not data_final:
-            partidas = Partida.objects.filter(data_partida__gte=data_inicial,).distinct()
+            partidas = Partida.objects.filter(data_partida__gte=data_inicial,)
         else:
             partidas = Partida.objects.filter(data_partida__gte=data_inicial,
-                                              data_partida__lte=data_final,).distinct()
+                                              data_partida__lte=data_final,)
     else:
         if not partidas:
-            partidas = Partida.objects.filter(data_partida__gte=data_inicial,).distinct()
+            partidas = Partida.objects.filter(data_partida__gte=data_inicial,)
 
 
     total_dados = partidas.count()
@@ -234,137 +227,27 @@ def partidas(request):
     if ultima_pagina == 0:
         ultima_pagina = 1
 
+    total_participantes = 0
+    total_online = 0
+    total_offline = 0
+    agora = datetime.datetime.now()
+    if partidas:
+        proxima_partida = partidas[len(partidas)-1]
+        for p in partidas:
+            if p < agora:
+                break
+            else:
+                proxima_partida = p
+
+        total_participantes = Cartela.objects.filter(partida=proxima_partida, jogador__isnull=False).count()
+
     return render(request, 'partidas.html', {'data_inicial': data_inicial.strftime("%d/%m/%Y"),
                                              'data_final': data_final.strftime("%d/%m/%Y") if data_final else None,
-                                             'partidas': partidas, 'agora': datetime.datetime.now(), 'pagina_atual': pagina,
+                                             'partidas': partidas, 'agora': agora, 'pagina_atual': pagina,
                                              'ultima_pagina': ultima_pagina, 'proxima_pagina': proxima_pagina,
-                                             'pagina_anterior': pagina_anterior
+                                             'pagina_anterior': pagina_anterior, "participantes":total_participantes,
+                                             'online':total_online,'offline':total_offline
                                              })
-
-
-@login_required(login_url="/login/")
-def ads(request, error=None):
-    if request.session['ads'] and request.session['perfil_max'] < 3:
-        # ads = ADSData.objects.filter(date__lt  = datetime.datetime.today()).delete()# deletar todos os ads anteriores
-        hoje = datetime.datetime.today()
-        ads = ADSData.objects.all().order_by('-id')
-        ads_vencidos = ads.filter(date__lt=hoje, status__lt=3)
-        if ads_vencidos:
-            ads_vencidos.update(status=3)
-            ads = ADSData.objects.all().order_by('-id')
-        return render(request, 'ads.html', {'ads': ads, 'valores_disponiveis': VALORES_VOZES,
-                                            'dias_disponiveis': ads_dias_disponiveis, 'error': error})
-    else:
-        logger.error(str(request.user) + " - 401")
-        return HttpResponse(status=401)
-
-
-@login_required(login_url="/login/")
-def criar_ads(request):
-    if request.session['ads'] and request.session['perfil_max'] < 3:
-        usuario = Usuario.objects.filter(usuario=request.user).first()
-        if request.method == 'POST':
-            dias_ads = request.POST.getlist('dias')
-            partida = request.POST.get('partida')
-
-            if partida:
-                partida_obj = Partida.objects.get(id=int(partida))
-
-                # dias_disponiveis = dict(ads_dias_disponiveis())
-
-                ads_criar = []
-                for dias in dias_ads:
-                    dia = datetime.datetime.strptime(dias, "%d/%m/%Y").date()
-                    if ADSData.objects.filter(date=dia,
-                                              status=1).exists():
-                        ads_criar = []
-                        break
-                    ads_criar.append(ADSData(partida=partida_obj, date=dia))
-
-                if ads_criar:
-                    ADSData.objects.bulk_create(ads_criar)
-                    return redirect('/ads/')
-
-        ads_ativos = ADSData.objects.filter(status=1)
-        datas_indisponiveis = []
-
-        # TODO: Datas indisponíveis
-
-        partidas_ads_datas = {}
-        hoje = datetime.date.today()
-        for partida_especial in Partida.objects.filter(tipo_rodada__gt=1, data_partida__gte=hoje):
-            partida_especiais_datas_ads = [x.date for x in partida_especial.adsdata_set.filter(status=1)]
-            partidas_ads_datas[partida_especial] = partida_especiais_datas_ads
-
-        partidas_ads = []
-        for partida, datas_ocupadas in partidas_ads_datas.items():
-
-            diferenca_data_partida = partida.data_partida.date() - hoje
-            limite = diferenca_data_partida.days
-            if diferenca_data_partida.days > 15:
-                limite = 15
-            count_days = 0
-            date_list = []
-            while count_days <= limite:
-                data_temp = partida.data_partida.date() - datetime.timedelta(days=count_days)
-                if not ADSData.objects.filter(date=data_temp, status=1):
-                    date_list.append(data_temp)
-                count_days += 1
-            partidas_ads.append(FrontEndADSCriar(partida=partida, datas_disponiveis=sorted(date_list)))
-
-        return render(request, 'criar_ads.html', {
-            'datas_indisponiveis': datas_indisponiveis,
-            'partidas_ads': partidas_ads,
-        })
-    else:
-        return HttpResponse(status=401)
-
-
-@login_required(login_url="/login/")
-def ads_edit(request, id_partida):
-    if request.session['ads'] and request.session['perfil_max'] < 3:
-        partida = Partida.objects.filter(id=id_partida)
-        form = ADSForm(data={'dias': ads_dias_disponiveis(), "partida": partida}, initial={"partida": partida.first()})
-        if request.method == 'POST':
-            form = ADSForm(request.POST, data={'dias': ads_dias_disponiveis()})
-            if form.is_valid():
-                dias_ads = form.cleaned_data['dias']
-                partida = form.cleaned_data['partida']
-                dias_disponiveis = dict(ads_dias_disponiveis())
-                for day_choice in dias_ads:
-                    ADSData.objects.get_or_create(date=dias_disponiveis[int(day_choice)])
-                return redirect('/ads/')
-        return render(request, 'ads_edit.html', {'ads_form': form})
-    else:
-        return HttpResponse(status=401)
-
-
-@login_required(login_url="/login/")
-def status_ads(request, id_ads):
-    if request.session['ads'] and request.session['perfil_max'] < 3:
-        ads_data = ADSData.objects.get(id=id_ads)
-        if ads_data.status == 1:
-            ads_data.status = 2
-        elif ads_data.status == 2:
-            if ADSData.objects.filter(date=ads_data.date,
-                                      status=1):
-                return ads(request, error=" ")
-            else:
-                ads_data.status = 1
-
-        ads_data.save()
-        return redirect("/ads/")
-    else:
-        return HttpResponse(status=401)
-
-
-@login_required(login_url="/login/")
-def deletar_ads(request, id):
-    if request.session['ads'] and request.session['perfil_max'] < 3:
-        ADSData.objects.get(id=id).delete()
-        return redirect('/ads/')
-    else:
-        return HttpResponse(status=401)
 
 
 @login_required(login_url="/login/")
@@ -374,12 +257,10 @@ def ganhadores(request):
     data_fim = datetime.datetime.combine(hoje, datetime.time.max)
     usuario = Usuario.objects.get(usuario=request.user)
     perfil = request.session['perfil_max']
-    pdvs = filtrar_pdv_por_usuario(usuario, perfil)
     itens_pagina = 10
     configuracao = Configuracao.objects.last()
     data_liberacao = datetime.datetime.now() - datetime.timedelta(minutes=configuracao.liberar_resultado_sorteio_em)
-    vencedores = CartelaVencedora.objects.filter(partida__data_partida__lte=data_liberacao,
-                                                 cartela__pdv__in=pdvs).order_by('-id')
+    vencedores = CartelaVencedora.objects.filter(partida__data_partida__lte=data_liberacao).order_by('-id')
     vencedores = vencedores.filter(partida__data_partida__gte=data_inicio, partida__data_partida__lte=data_fim)
     ultima_pagina = 0
     post = False
@@ -391,8 +272,7 @@ def ganhadores(request):
         data_form['perfil'] = request.session['perfil_max']
         data_form['user'] = request.user
         form = GanhadoresForm(data_form)
-        vencedores = CartelaVencedora.objects.filter(partida__data_partida__lte=data_liberacao,
-                                                     cartela__pdv__in=pdvs).order_by('-id')
+        vencedores = CartelaVencedora.objects.filter(partida__data_partida__lte=data_liberacao,).order_by('-id')
         if form.is_valid():
 
             if 'data_inicio' in form.cleaned_data and form.cleaned_data['data_inicio']:
@@ -508,37 +388,13 @@ def criarpartida(request):
             event_tela_partidas(
                 partida.franquias.all())  ## informa aos websockets de tela que houve modificação na tela
             """
-            # Salvando ADS caso exista
-            if "dataAds" in request.POST:
-                data_ads = request.POST.getlist("dataAds")
-                if data_ads:
-                    dias_ads = [datetime.datetime.strptime(data, "%d/%m/%Y").date() for data in data_ads]
-                    ads_criar = []
-                    for day_choice in dias_ads:
-                        if ADSData.objects.filter(status=1, date=day_choice).exists():
-                            ads_criar = []
-                            form.add_error(f"Data {day_choice} indisponível")
-                            break
-                        ads_criar.append(ADSData(partida=partida, date=day_choice))
-
-                    if ads_criar:
-                        ADSData.objects.bulk_create(ads_criar)
-                        return redirect("/partidas/")
-            else:
-                return redirect("/partidas/")
-    status = dict(STATUS_ADS_CHOICES)
-    status = dict((v, k) for k, v in status.items())
-    ads_ativos = ADSData.objects.filter(status=status['Ativo'])
+            return redirect("/partidas/")
 
     valores_disponiveis = VALORES_VOZES
 
-    # EFETIVIDADE E TELAS ONLINE
-    # TODO: datas indisponíveis
-    datas_indisponiveis = {}
-
     return render(request, 'criarpartida.html',
                   {'form': form, 'partidas': partidas,
-                   'datas_indisponiveis': datas_indisponiveis,
+
                    'configuracao': Configuracao.objects.last(),
                    })
 
@@ -596,45 +452,8 @@ def partida_edit(request, partida_id):
                           {'form': form, 'partidas': partidas, 'configuracao': Configuracao.objects.last()})
 
 
-
-
-@login_required(login_url="/login/")
-def user_change_status(request, user_id):
-    u = Usuario.objects.filter(id=user_id).first()
-    if u:
-        perfis = Perfil.objects.filter(tipo__gt=3, tipo__lt=7)
-        if any([x for x in perfis if x in u.perfis.all()]):
-            if u.ativo:
-                gerencias = Gerencia.objects.filter(gerente=u)
-                if gerencias:
-                    for g in gerencias:
-                        for e in g.estabelecimento_set.all():
-                            e.gerencias.remove(g)
-                            e.save()
-                        g.gerente = None
-                        g.save()
-        u.ativo = not u.ativo
-        u.save()
-    return redirect("/usuarios/")
-
-
-def filtrar_cartela_por_perfil(cartelas_lote_qs, usuario, perfil):
-    if perfil < 3:
-        if not cartelas_lote_qs:
-            return CartelasLote.objects.all()
-    elif perfil == 3:
-        franquias = Franquia.objects.filter(dono=usuario)
-        return cartelas_lote_qs.filter(pdv__estabelecimento__franquia__in=franquias)
-    elif perfil < 5:
-        return cartelas_lote_qs.filter(pdv__estabelecimento__franquia__in=usuario.franquias.all())
-    elif perfil == 5:
-        gerencia = Gerencia.objects.filter(gerente=usuario).first()
-        if gerencia:
-            return cartelas_lote_qs.filter(pdv__estabelecimento__gerencias=gerencia)
-        else:
-            return cartelas_lote_qs.none()
-
-    return cartelas_lote_qs
+class CartelasLoteForm(object):
+    pass
 
 
 @login_required(login_url="/login/")
@@ -645,50 +464,11 @@ def cartelas(request):
     cartelas_total = False
     perfil = request.session['perfil_max']
     usuario = Usuario.objects.filter(usuario=request.user).first()
-    if perfil < 3:
-        cartelas = CartelasLote.objects.all().order_by('-id')
-    elif perfil == 3:
-        franquias = Franquia.objects.filter(dono=usuario)
-        estabelecimentos = Estabelecimento.objects.filter(franquia__in=franquias)
-        pdvs = PDV.objects.filter(estabelecimento__in=estabelecimentos)
-        cartelas = CartelasLote.objects.filter(pdv__in=pdvs)
-    elif perfil < 5:
-        estabelecimentos = Estabelecimento.objects.filter(franquia__in=usuario.franquias.all())
-        pdvs = PDV.objects.filter(estabelecimento__in=estabelecimentos)
-        cartelas = CartelasLote.objects.filter(pdv__in=pdvs)
-    elif perfil < 7:
-        gerencias = Gerencia.objects.filter(gerente=usuario)
-        if gerencias:
-            estabelecimentos = Estabelecimento.objects.filter(franquia__in=usuario.franquias.all(),
-                                                              gerencias__in=gerencias)
-            pdvs = PDV.objects.filter(estabelecimento__in=estabelecimentos)
-            cartelas = CartelasLote.objects.filter(pdv__in=pdvs)
-        else:
-            cartelas = CartelasLote.objects.none()
-    elif perfil < 9:
-        pdvs = PDV.objects.filter(vendedor=usuario)
-        if pdvs:
-            cartelas = CartelasLote.objects.filter(pdv__in=pdvs)
-        else:
-            cartelas = CartelasLote.objects.none()
-    elif perfil == 9:
-        pontos_de_arrecadacao = PontoDeArrecadacao.objects.filter(leiturista=usuario).first()
-        if pontos_de_arrecadacao:
-            estabelecimentos = pontos_de_arrecadacao.estabelecimentos.all()
-            pdvs = PDV.objects.filter(estabelecimento__in=estabelecimentos)
-            cartelas = CartelasLote.objects.filter(pdv__in=pdvs)
-        else:
-            cartelas = CartelasLote.objects.none()
-    elif perfil == 10:
-        estabelecimentos = Estabelecimento.objects.filter(dono=usuario)
-        if estabelecimentos:
-            pdvs = PDV.objects.filter(estabelecimento__in=estabelecimentos)
-            cartelas = CartelasLote.objects.filter(pdv__in=pdvs)
-        else:
-            cartelas = CartelasLote.objects.none()
+
+    cartelas = Cartela.objects.all().order_by('-id')
+
     if request.method == "POST":
         data_form = request.POST.dict()
-        data_form['perfil'] = request.session['perfil_max']
         data_form['user'] = request.user
         form = CartelasLoteForm(data_form)
         if form.is_valid():
@@ -696,17 +476,12 @@ def cartelas(request):
                 inicio = datetime.datetime.combine(
                     datetime.datetime.strptime(form.cleaned_data['data_inicio'], "%d/%m/%Y"), datetime.time.min)
                 cartelas = cartelas.filter(comprado_em__gte=inicio)
-                # cartelas = cartelas.filter(
-                # comprado_em__gte=datetime.datetime.strptime(form.cleaned_data['data_inicio'] + " 00:00:00",
-                # "%d/%m/%Y %H:%M:%S"))
+
             if 'data_fim' in form.cleaned_data and form.cleaned_data['data_fim']:
                 fim = datetime.datetime.combine(datetime.datetime.strptime(form.cleaned_data['data_fim'], "%d/%m/%Y"),
                                                 datetime.time.max)
-                # cartelas = cartelas.filter(
-                # comprado_em__lte=datetime.datetime.strptime(form.cleaned_data['data_fim'] + " 23:59:59",
-                #                                               "%d/%m/%Y %H:%M:%S"))
                 cartelas = cartelas.filter(comprado_em__lte=fim)
-                print(fim)
+
             if 'partida' in form.cleaned_data and form.cleaned_data['partida']:
                 cartelas = cartelas.filter(
                     partida=form.cleaned_data['partida'])
@@ -716,7 +491,6 @@ def cartelas(request):
             if 'hash' in form.cleaned_data and form.cleaned_data['hash']:
                 hash = form.cleaned_data['hash']
                 cartelas = cartelas.filter(hash=hash)
-            cartelas = filtrar_cartela_por_perfil(cartelas, usuario, perfil)
         cartelas_total = cartelas
     else:
         hoje = datetime.date.today()
@@ -726,7 +500,7 @@ def cartelas(request):
         data_fim = datetime.datetime.combine(hoje, hora_fim_padrao)
         ordenacao = True
         # cartelas = CartelasLote.objects.filter(comprado_em__gte = data_inicio , comprado_em__lte=data_fim)
-        cartelas_total = CartelasLote.objects.filter(comprado_em__gte=data_inicio, comprado_em__lte=data_fim)
+        cartelas_total = Cartela.objects.filter(comprado_em__gte=data_inicio, comprado_em__lte=data_fim)
         form = CartelasLoteForm(
             data={'user': request.user, 'perfil': request.session['perfil_max']})
         page_number = request.GET.get('pagina')
@@ -831,44 +605,25 @@ def usuario_dict(usuario):
 @login_required(login_url="/login/")
 def usuarios(request):
     form = UsuarioBuscaForm()
-    perfil = request.session['perfil_max']
-    if perfil < 5:
-        usuario = Usuario.objects.filter(usuario=request.user).first()
-        usuarios = []
-        if perfil == 1:
-            usuarios = Usuario.objects.filter(perfis__tipo__gte=perfil).distinct()
-        elif perfil < 3:
-            usuarios = Usuario.objects.filter(perfis__tipo__gt=perfil).distinct()
-        elif perfil == 3:
-            franquias = Franquia.objects.filter(dono=usuario)
-            usuarios = Usuario.objects.filter(
-                franquias__in=franquias, perfis__tipo__gt=perfil).distinct()
-        elif perfil < 5 or perfil == 6:
-            franquias = usuario.franquias.all()
-            usuarios = Usuario.objects.filter(
-                franquias__in=franquias, perfis__tipo__gt=perfil).distinct()
-        elif perfil == 5:
-            franquias = Franquia.objects.filter(dono=usuario)
-            usuarios = Usuario.objects.filter(
-                franquias__in=franquias, perfis__tipo__gt=perfil).distinct()
-        else:
-            usuarios = Usuario.objects.none()
 
-        if request.method == "POST":
-            form = UsuarioBuscaForm(request.POST)
+    usuario = Usuario.objects.filter(usuario=request.user).first()
+    usuarios = Usuario.objects.all()
 
-            if form.is_valid() and usuarios:
-                if 'nome' in form.cleaned_data and form.cleaned_data['nome']:
-                    nome = form.cleaned_data['nome']
-                    usuarios = usuarios.filter(Q(usuario__first_name__icontains=nome) | Q(
-                        usuario__last_name__icontains=nome))
-                if 'login' in form.cleaned_data and form.cleaned_data['login']:
-                    usuarios = usuarios.filter(
-                        usuario__username=form.cleaned_data['login'])
+    if request.method == "POST":
+        form = UsuarioBuscaForm(request.POST)
 
-                form = UsuarioBuscaForm()
+        if form.is_valid() and usuarios:
+            if 'nome' in form.cleaned_data and form.cleaned_data['nome']:
+                nome = form.cleaned_data['nome']
+                usuarios = usuarios.filter(Q(usuario__first_name__icontains=nome) | Q(
+                    usuario__last_name__icontains=nome))
+            if 'login' in form.cleaned_data and form.cleaned_data['login']:
+                usuarios = usuarios.filter(
+                    usuario__username=form.cleaned_data['login'])
 
-                # form_add = UsuarioAddForm(prefix='add')
+            form = UsuarioBuscaForm()
+
+
         if usuarios:
             usuarios = usuarios.order_by('-id')
 
@@ -936,20 +691,6 @@ def usuarios_add_or_edit(request, usuario_id=None):
                                                    endereco_estado=endereco_estado, endereco_cep=endereco_cep,
                                                    email=email, limite_caixa=limite_caixa if limite_caixa else 0)
 
-                    for p in perfis:
-                        u.perfis.add(p)
-
-                    # VERIFICANDO OS PERFIS
-                    perfis = u.perfis.all()
-                    if Perfil.objects.filter(tipo=2).first() in perfis and not Perfil.objects.filter(
-                            tipo=3).first() in perfis:
-                        u.perfis.add(Perfil.objects.filter(tipo=3).first())
-                    if Perfil.objects.filter(tipo=5).first() in perfis and not Perfil.objects.filter(
-                            tipo=9).first() in perfis:
-                        u.perfis.add(Perfil.objects.filter(tipo=9).first())
-
-                    for f in franquias:
-                        u.franquias.add(f)
 
                     u.save()
                     return redirect("/usuario/details/" + str(u.id) + "/")
@@ -998,41 +739,15 @@ def usuario_details(request, usuario_id=None):
 
 @login_required(login_url="/login/")
 def configuracao(request):
-    if request.session['perfil_max'] < 3:
-        c = Configuracao.objects.last()
-        unityName = ''
-        if request.method == "POST":
-            form = ConfiguracaoForm(request.POST, request.FILES, instance=c)
-            if form.is_valid():
-                unity = form.cleaned_data['unity']
-                if unity:
-                    unityName = unity.name
-                    # creating the JSON data as a string
-                    unity = {"version": unity.name, "nameApk": unity.name, "package": "com.DefaultCompany.Keno2D",
-                             "servidorPadrao": "001"}
-                    with open(BASE_DIR + '/static/builds/kenno/' + 'versionManager.json', 'w') as outfile:
-                        json.dump(unity, outfile)
-
-                if form.cleaned_data['ong']:
-                    ong = ONG.objects.create(logo=form.cleaned_data['ong'])
-                request.session['aviso'] = c.notificacao_server
-                form.save()
-
-                if unity:
-                    import shutil
-                    try:
-                        shutil.copyfile(BASE_DIR + '/media/build/' + unityName,
-                                        BASE_DIR + '/static/builds/kenno/' + unityName)
-                        print("Copiado com sucesso.")
-                    except shutil.SameFileError:
-                        print("Source and destination represents the same file.")
-
-        else:
-            form = ConfiguracaoForm(instance=c)
-        return render(request, 'configuracao.html', {'form': form, 'configuracao': c, 'ong': ONG.objects.last()})
+    c = Configuracao.objects.last()
+    if request.method == "POST":
+        form = ConfiguracaoForm(request.POST, request.FILES, instance=c)
+        if form.is_valid():
+            request.session['aviso'] = c.notificacao_server
+            form.save()
     else:
-        return HttpResponse(status=403)
-
+        form = ConfiguracaoForm(instance=c)
+    return render(request, 'configuracao.html', {'form': form, 'configuracao': c})
 
 
 @login_required(login_url="/login/")
@@ -1040,30 +755,11 @@ def cancelar_bilhete(request, hash):
     if "perfil_max" in request.session and request.session['perfil_max'] < 3 and request.session['cancelar_bilhete']:
         usuario = Usuario.objects.filter(usuario=request.user, ativo=True, perfis__lte=2).first()
         if usuario:
-            c = CartelasLote.objects.filter(cancelado=False, hash=hash).first()
+            c = Cartela.objects.filter(cancelado=False, hash=hash).first()
             if c:
                 agora = datetime.datetime.now()
                 if agora < c.partida.data_partida:
-                    if c.cancelar(usuario):
-                        t = Transacao.objects.filter(lote=c, tipo="V").first()
-                        if t:
-                            perfil = Perfil.objects.filter(tipo=7).first()
-                            taxa = perfil.taxa_de_comissao / 100
-                            valor_comissao = float(t.valor) * float(taxa)
-
-                            # Delvolvendo a comissão
-                            Transacao.objects.create(carteira_para=t.carteira_para, tipo="R", valor=valor_comissao,
-                                                     lote=t.lote,
-                                                     franquia=t.franquia)
-                            # Devolvendo o bilhete
-                            Transacao.objects.create(carteira_de=t.carteira_para, tipo="D", valor=t.valor, lote=t.lote,
-                                                     franquia=t.franquia)
-
-                            return redirect('/cartelas/')
-                        else:
-                            return HttpResponse(status=403)
-                    else:
-                        return HttpResponse(status=403)
+                    c.cancelar(usuario)
                 else:
                     return HttpResponse(status=403)
             else:
@@ -1072,12 +768,6 @@ def cancelar_bilhete(request, hash):
             return HttpResponse(status=401)
     else:
         return HttpResponse(status=403)
-
-
-@login_required(login_url="/login/")
-def primeiro_acesso(request):
-    form = PrimeiroAcesso()
-    return render(request, 'first_access.html', {'form': form})
 
 
 @login_required(login_url="/login/")

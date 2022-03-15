@@ -32,22 +32,13 @@
     <script src="/static/assets/js/jquery.dataTables.min.js"></script>
 
     <link rel="stylesheet" href="/static/style/index.css">
-    <link rel="stylesheet" href="/static/style/financeiro.css">
     <link rel="stylesheet" href="/static/style/nav-bar.css">
     <link rel="stylesheet" href="/static/style/cartelas_lote.css">
     <link rel="stylesheet" href="/static/style/criar_partida.css">
     <link rel="stylesheet" href="/static/style/partida.css">
     <link rel="stylesheet" href="/static/style/configuracao.css">
-    <link rel="stylesheet" href="/static/style/recebimentos.css">
-    <link rel="stylesheet" href="/static/style/recebimentos.css">
-    <link rel="stylesheet" href="/static/style/ponto_de_arrecadacao.css">
-    <link rel="stylesheet" href="/static/style/replay.css">
-    <link rel="stylesheet" href="/static/style/first_access.css">
     <link rel="stylesheet" href="/static/style/ganhadores.css">
     <link rel="stylesheet" href="/static/style/help.css">
-    <link rel="stylesheet" href="/static/style/ads_programados.css">
-    <link rel="stylesheet" href="/static/style/transacoes.css">
-    <link rel="stylesheet" href="/static/style/telas.css">
 
 </head>
 
@@ -76,8 +67,8 @@
                         <div class="nk-sidebar-menu" data-simplebar>
                             <ul class="nk-menu">
                                 <section>
-                                    {% if not primeiro_acesso %}
-                                {% if request.session.perfil_max < 7 %}
+
+
                                 <li class="nk-menu-item">
                                     <a href="/" class="nk-menu-link">
                                         <span class="nk-menu-icon"><img src="/static/Icone_Bandeira.svg" style="width: 24px"></img></span>
@@ -92,71 +83,15 @@
                                         </a>
                                     </li>
                                     {% endif %}
-                                {% endif %}
 
-                                {% if request.session.perfil_max < 7  and request.session.ads %}
-                                <li class="nk-menu-item">
-                                    <a href="/ads/" class="nk-menu-link">
-                                        <span class="nk-menu-icon"><img src="/static/Icone_Ads.png" style="width: 24px"></img></span>
-                                        <span class="nk-menu-text">Ads Programados</span>
-                                    </a>
-                                </li>
-                                {% endif %}
 
-                                {% if request.session.automato and request.session.perfil_max < 3 %}
                                 <li class="nk-menu-item">
                                     <a href="/automatos/" class="nk-menu-link">
                                         <span class="nk-menu-icon"><img src="/static/images-logo/icone_automato.svg" class="icon-robo-2"/></span>
                                         <span class="nk-menu-text">Partidas Automaticas</span>
                                     </a>
                                 </li>
-                                {% endif %}
-                                {% if request.session.perfil_max < 7 %}
-                                <li class="nk-menu-item">
-                                    <a href="/movimento_diario/" class="nk-menu-link">
-                                        <span class="nk-menu-icon"><em class="icon ni ni-swap text-amarelo"></em></span>
-                                        <span class="nk-menu-text">Movimento PDV</span>
-                                    </a>
-                                </li>
 
-                                <li class="nk-menu-item">
-                                    <a href="/financeiro/" class="nk-menu-link">
-                                        <span class="nk-menu-icon"><em class="icon ni ni-coin-alt-fill text-verde"></em></span>
-                                        <span class="nk-menu-text">Financeiro</span>
-                                    </a>
-                                </li>
-                                {% endif %}<!-- .nk-menu-item -->
-                                {%if request.session.perfil_max <= 5 %}
-                                <li class="nk-menu-item">
-                                    <a href="/estatisticas/" class="nk-menu-link">
-                                        <span class="nk-menu-icon"><em class="icon ni ni ni-growth-fill text-verde"></em></span>
-                                        <span class="nk-menu-text">Estatísticas</span>
-                                    </a>
-                                </li>
-                                {%endif%}
-                                {% if request.session.perfil_max != 7 %}
-                                <li class="nk-menu-item">
-                                    <a href="/recolhe/" class="nk-menu-link">
-                                        <span class="nk-menu-icon"><em class="icon ni ni-truck text-azul"></em></span>
-                                        <span class="nk-menu-text">Recolhe</span>
-                                    </a>
-                                </li>
-                                {% endif %}
-
-                                <li class="nk-menu-item">
-                                    <a href="/recebimentos/" class="nk-menu-link">
-                                        <span class="nk-menu-icon"><em class="icon ni ni-inbox-in text-verde"></em></span>
-                                        <span class="nk-menu-text">Recebimentos</span>
-                                    </a>
-                                </li><!-- .nk-menu-item -->
-                                {% if request.session.usar_transacoes and  not request.session.perfil_max == 7 %}
-                                <li class="nk-menu-item">
-                                    <a href="/transacoes/" class="nk-menu-link">
-                                        <span class="nk-menu-icon"><em class="icon ni ni-swap text-amarelo"></em></span>
-                                        <span class="nk-menu-text">Transações</span>
-                                    </a>
-                                </li>
-                                {% endif %}
                                 <li class="nk-menu-item">
                                     <a href="/ganhadores/" class="nk-menu-link">
                                         <span class="nk-menu-icon"><em class="icon ni ni-gift text-verde"></em></span>
@@ -164,105 +99,24 @@
                                     </a>
                                 </li>
                                 <!-- .nk-menu-item -->
-                                {% if request.session.perfil_max != 9 %}
                                 <li class="nk-menu-item">
                                     <a href="/cartelas/" class="nk-menu-link">
                                         <span class="nk-menu-icon"><em class="icon ni ni-ticket-fill"></em></span>
                                         <span class="nk-menu-text">Cartelas</span>
                                     </a>
                                 </li>
-                                {% endif %}
                                 </section>
-                                {% endif %}
+
                                 <section>
-                                {% if request.session.perfil_max < 3 %}
-                                <li class="nk-menu-item">
-                                    <a href="/rotas/" class="nk-menu-link">
-                                        <span class="nk-menu-icon"><em class="icon ni ni-map text-azul"></em></span>
-                                        <span class="nk-menu-text">Rotas</span>
-                                    </a>
-                                </li>
-                                {% endif %}<!-- .nk-menu-item -->
-                                    {% if not primeiro_acesso %}
-                                    {% if request.session.perfil_max < 5 %}
-                                <li class="nk-menu-item">
-                                    <a href="/representantes/" class="nk-menu-link">
-                                        <span class="nk-menu-icon"><em class="icon ni ni-user-fill text-verde"></em></span>
-                                        <span class="nk-menu-text">Gerências</span>
-                                    </a>
-                                </li>
-                                {% endif %}<!-- .nk-menu-item -->
-                                    {% if request.session.perfil_max < 7 %}
-                                <li class="nk-menu-item">
-                                    <a href="/leiturista/" class="nk-menu-link">
-                                        <span class="nk-menu-icon"><em class="icon ni ni-property-alt"></em></span>
-                                        <span class="nk-menu-text">Ponto de Arrecadação</span>
-                                    </a>
-                                </li>
-                                {% endif %}<!-- .nk-menu-item -->
-                                {% if request.session.perfil_max != 9 and request.session.perfil_max != 7 %}
-                                <li class="nk-menu-item">
-                                    <a href="/estabelecimentos/" class="nk-menu-link">
-                                        <span class="nk-menu-icon"><em class="icon ni ni-home"></em></span>
-                                        <span class="nk-menu-text">Estabelecimentos</span>
-                                    </a>
-                                </li>
-                                {% endif %}<!-- .nk-menu-item -->
 
-                                    {% if request.session.perfil_max < 7 %}
-                                <li class="nk-menu-item">
-                                    <a href="/pos/" class="nk-menu-link">
-                                        <span class="nk-menu-icon"><em class="icon ni ni-task"></em></span>
-                                        <span class="nk-menu-text">POS</span>
-                                    </a>
-                                </li>
-                                {% endif %}
-
-                                    {% if request.session.perfil_max < 7 or request.session.perfil_max == 9 %}
-                                <li class="nk-menu-item">
-                                    <a href="/telas/" class="nk-menu-link">
-                                        <span class="nk-menu-icon"><em class="icon ni ni-block-over"></em></span>
-                                        <span class="nk-menu-text">Telas</span>
-                                    </a>
-                                </li>
-                                {% endif %}
-
-                                {% if request.session.perfil_max < 7 %}
-                                <li class="nk-menu-item">
-                                    <a href="/vendedores/" class="nk-menu-link">
-                                        <span class="nk-menu-icon"><em class="icon ni ni-users-fill text-verde"></em></span>
-                                        <span class="nk-menu-text">Vendedores</span>
-                                    </a>
-                                </li>
-                                {% endif %}<!-- .nk-menu-item -->
-                                {% if request.session.perfil_max < 5 %}
                                 <li class="nk-menu-item">
                                     <a href="/usuarios/" class="nk-menu-link">
                                         <span class="nk-menu-icon"><em class="icon ni ni-user-fill text-amarelo"></em></span>
                                         <span class="nk-menu-text">Usuários</span>
                                     </a>
                                 </li>
-                                {% endif %}
+
                                 </section>
-
-                                {% if request.session.perfil_max < 6 %}
-                                    {% if request.session.replay%}
-                                        <li class="nk-menu-item">
-                                            <a href="/replay/" class="nk-menu-link">
-                                                <span class="nk-menu-icon"><em class="icon ni ni-video"></em></span>
-                                                <span class="nk-menu-text">Replay</span>
-                                            </a>
-                                        </li>
-                                    {% endif %}
-                                {% endif %}
-
-                                {% if request.session.perfil_max < 3 %}
-                                <li class="nk-menu-item">
-                                    <a href="/perfil_configuracao/" class="nk-menu-link">
-                                        <span class="nk-menu-icon"><em class="icon ni ni-user-fill text-azul"></em></span>
-                                        <span class="nk-menu-text">Perfis</span>
-                                    </a>
-                                </li>
 
                                 <li class="nk-menu-item">
                                     <a href="/configuracao/" class="nk-menu-link">
@@ -270,8 +124,7 @@
                                         <span class="nk-menu-text">Configurações</span>
                                     </a>
                                 </li>
-                                {% endif %}<!-- .nk-menu-item -->
-                                {% endif %}
+
                                 <li class="nk-menu-item">
                                     <a href="/help/" class="nk-menu-link">
                                         <span class="nk-menu-icon"><em class="icon ni ni-help-fill"></em></span>

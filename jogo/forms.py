@@ -281,14 +281,6 @@ class NovaPartidaForm(forms.ModelForm):
                 "O valor da kuadra deve ser menor ou igual que a da kina assim como o valor de ambos deve ser menor que o valor do keno"
             )
 
-class ADSForm(forms.Form):
-    partida = forms.ModelChoiceField(queryset = Partida.objects.all(),required=True,
-                                             widget=forms.Select(attrs={
-                                                 'class': "form-control form-control-lg form-control-outlined input-margin-top", }))
-    dias = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple(attrs={'class': "form-check-input checks"}))
-
-
-
 class GanhadoresForm(forms.Form):
     data_inicio = forms.CharField(required=False, widget=forms.TextInput(attrs={'data-date-format': "dd/mm/yyyy",
                                                                                 'class': "form-control date-picker form-control-lg form-control-outlined input-search-financeiro",

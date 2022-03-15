@@ -2,28 +2,22 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path, include
-from jogo.views import cancelar_template, criar_ads, ads_edit, deletar_ads, index, ads, \
-    partidas, ganhadores, cartela, login_page, logout_page, criarpartida, user_change_status, usuarios, \
+from jogo.views import cancelar_template, index, \
+    partidas, ganhadores, cartela, login_page, logout_page, criarpartida, usuarios, \
     usuarios_add_or_edit, usuario_details, cartelas, configuracao, cancelar_partida, cancelar_bilhete, partida_edit, \
     partida_automatica, automatos, parar_automato, sortear_template, editar_template
 
-from .views import realtime_data, status_ads
+from .views import realtime_data
 
 urlpatterns = [
     path('', index),
     path('logout/',logout_page, name='logout'),
     path('login/',login_page),
     path('partidas/', partidas),
-    path('ads/', ads),
-    path('ads/<int:id_ads>/status/', status_ads),
-    path('criar_ads/',criar_ads),
-    path('ads/<int:id_partida>/edit/', ads_edit),
-    path('ads/<int:id>/delete',deletar_ads),
     path('criar_partida/', criarpartida),
 
     path('ganhadores/', ganhadores),
 
-    path('user/<int:user_id>/status/', user_change_status),
     path('usuarios/',usuarios),
     path('usuario/add/',usuarios_add_or_edit),
     path('usuario/<usuario_id>/',usuarios_add_or_edit),
