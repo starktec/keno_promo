@@ -1,0 +1,89 @@
+{% extends "index.html" %}
+
+{% block nav-bar %}
+<div class="row">
+    <div class="col-12">
+        <div class="card crud-bar">
+            <form class="row container-crud justify-content-center align-items-center form-group"
+            method="post" id="form1">{% csrf_token %}
+
+                <div class="col-md-6 row justify-content-start row-search">
+
+                    <div class="col-sm-6 col-md-2 col-xl-5 container-input-search">
+                        <div class="form-group">
+                            <div class="form-control-wrap has-timepicker">
+                                {{ form.gerente }}
+                                <label class="form-label-outlined label-search" for="id_gerente">Gerente</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-md-2 col-xl-4 container-input-search form-control-wrap">
+                        {{ form.estabelecimento }}
+                        <label class="form-label-outlined label-search" for="id_estabelecimento">Estabelecimento</label>
+                    </div>
+
+                    <div class="col-12 col-sm-12 col-md-1 col-lg-1 col-xl-1 row justify-content-end content-btn-search">
+                            <button type="submit" form='form1' class="col-3 col-sm-3 col-md-12 col-lg-12 btn btn-lg btn-primary btn-search btn-success"><em class="icon ni ni-search"></em></button>
+                        </div>
+                </div>
+
+
+                <div class="col-md-6 btn-container-crud row btn-crud justify-content-end">
+                    <a href="#" class="btn btn-lg text-right btn-success btn-create">
+                        <em class="icon ni ni-plus"></em>
+                        <p>Novo usuario POS</p>
+                    </a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+<!------------------------------------------------------------------------------->
+
+<!-------------------------------tabela de generica de cambistas------------------------------->
+<div class="row my-row">
+    <div class="col-12">
+        <div class="card table-card">
+            <table class="table">
+                <thead class="thead-dark text-center">
+                    <tr>
+                        <th scope="col">Código</th>
+                        <th scope="col">Rota</th>
+                        <th scope="col">PDV</th>
+                        <th scope="col">Nome</th>
+                        <th scope="col">Login</th>
+                        <th scope="col">Ação</th>
+                    </tr>
+                </thead>
+                <tbody class="text-center">
+                {% for pdv in pdvs %}
+                    <tr>
+                        <th scope="row">{{ pdv.vendedor.id }}</th>
+                        <td>{{ pdv.estabelecimento.franquia }}</td>
+                        <td>{{ pdv }}</td>
+                        <td>{{ pdv.vendedor }}</td>
+                        <td>{{ pdv.vendedor.usuario.username }}</td>
+                        <td class="text-center">
+                            <a href="/user/{{ pdv.vendedor.id }}/" class="btn btn-success" data-toggle="modal" data-target="#modalDefault">
+                                <em class="icon ni ni-pen-fill"></em>
+                                <p>Editar</p>
+                            </a>
+                            <a href="/user/{{ pdv.vendedor.id }}/status/"
+                                class="btn {% if pdv.vendedor.ativo %}btn-danger{% else %}btn-success{% endif %}">
+                                <p>{% if pdv.vendedor.ativo %}Desativar{% else %}Ativar{% endif %}</p>
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-------------------------------------------------------------------------------------------->
+
+
+{% endblock %}

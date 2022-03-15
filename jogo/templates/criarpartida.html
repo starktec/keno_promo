@@ -1,0 +1,1023 @@
+{% extends "index.html" %}
+{% block titulo %}
+CRIAR PARTIDA
+{% endblock %}
+{% load l10n %}
+{% block nav-bar %}
+<!------------------------------------------------------------------------------------------------------------>
+    <!-- content @s -->
+        <div class="row my-row">
+            <div class="col-12 container-create-partida">
+                <div class="row safari-container card justify-content-start card-criar-partida">
+                    <div class="alert alert-fill alert-secondary alert-icon header-modal crud-bar-user-header">
+                        <em class="icon ni ni-plus"></em>
+                        <h6>Criar Partida</h6>
+                    </div>
+                    <form id="form_partida" class="row form-group justify-content-start form-create-partida" action="" method="post">{% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                            <div class="errors-box container-error container-center">
+                                {{ form.non_field_errors }}
+                            </div>
+                        {% endif %}
+                        <div class="col-lg-4 col-sm-6 container-input-create">
+                            <div class="form-group">
+                                <div class="form-control-wrap">
+<!--                                    <input type="date" id="id_dia_partida"-->
+<!--                                    class="form-control form-control-lg form-control-outlined"-->
+<!--                                    autocomplete="off"/>-->
+                                    {{ form.dia_partida }}
+<!--                                    <label class="form-label-outlined" for= "{{ form.dia_partida.id_for_label }}">Data da Partida</label>-->
+                                </div>
+                                {% if form.dia_partida.errors %}
+                                    <div class="error-campo">
+                                        {{ form.dia_partida.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-sm-6 container-input-create">
+                            <div class="form-group">
+                                <div class="form-control-wrap">
+                                    {{ form.hora_partida }}
+                                    <label class="form-label-outlined" for="{{ form.hora_partida.id_for_label }}">Hora da Partida</label>
+                                </div>
+                                {% if form.hora_partida.errors %}
+                                    <div class="error-campo">
+                                        {{ form.hora_partida.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-sm-6 container-input-create">
+                            <div class="form-group">
+                                <div class="form-control-wrap">
+                                    {{ form.tipo_rodada }}
+                                </div>
+                                {% if form.tipo_rodada.errors %}
+                                    <div class="error-campo">
+                                        {{ form.tipo_rodada.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-sm-6 container-input-create">
+                            <div class="form-group">
+                                <div class="form-control-wrap">
+                                    {{ form.nome_sorteio }}
+                                    <label class="form-label-outlined" for="id_nome_sorteio">Nome do Sorteio</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        
+                        <div class="col-lg-4 col-sm-6 container-input-create">
+                            <div class="form-group">
+                                <div class="form-control-wrap">
+                                    {{ form.valor_antecipado }}
+                                    <label class="form-label-outlined" for="{{ form.valor_antecipado.id_for_label }}">Valor antecipado</label>
+                                </div>
+                                {% if form.valor_antecipado.errors %}
+                                <div class="error-campo">
+                                    {{ form.valor_antecipado.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        
+                        <div class="col-lg-4 col-sm-6 container-input-create">
+                            <div class="form-group">
+                                <div class="form-control-wrap">
+                                    {{ form.valor_cartela }}
+                                    <label class="form-label-outlined" for="{{ form.valor_cartela.id_for_label }}">Valor do dia</label>
+                                </div>
+                                {% if form.valor_cartela.errors %}
+                                <div class="error-campo">
+                                    {{ form.valor_cartela.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-4 col-sm-6 container-input-create">
+                            <div class="form-group">
+                                <div class="form-control-wrap">
+                                    {{ form.valor_kuadra }}
+                                    <label class="form-label-outlined" for="{{ form.valor_kuadra.id_for_label }}">Kuadra</label>
+                                </div>
+                                <div id="error-campo-valor_kuadra">
+                                    {% if form.valor_kuadra.errors %}
+                                    <div class="error-campo">
+                                        {{ form.valor_kuadra.errors }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-4 col-sm-6 container-input-create">
+                            <div class="form-group">
+                                <div class="form-control-wrap">
+                                    {{ form.valor_kina }}
+                                    <label class="form-label-outlined" for="{{ form.valor_kina.id_for_label }}">Kina</label>
+                                </div>
+                                <div id="error-campo-valor_kina">
+                                    {% if form.valor_kina.errors %}
+                                    <div class="error-campo">
+                                        {{ form.valor_kina.errors }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-4 col-sm-6 container-input-create">
+                            <div class="form-group">
+                                <div class="form-control-wrap">
+                                    {{ form.valor_keno }}
+                                    <label class="form-label-outlined" for="{{ form.valor_keno.id_for_label }}">Keno</label>
+                                </div>
+                                <div id="error-campo-valor_keno">
+                                    {% if form.valor_keno.errors %}
+                                    <div class="error-campo">
+                                        {{ form.valor_keno.errors }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-sm-6 container-input-create">
+                            <div class="form-group">
+                                <div class="form-control-wrap">
+                                    {{ form.hora_virada }}
+                                    <label class="form-label-outlined" for="{{ id_hora_virada }}">Horas antes da partida para virada do antecipado.</label>
+                                </div>
+                                {% if form.hora_virada.errors %}
+                                    <div class="error-campo">
+                                        {{ form.hora_virada.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="row col-lg-12 col-sm-12 container-input-create">
+                            <div class="col-12 row justify-content-center padding-zero">
+                                <p class="title-check col-12 padding-zero">Virada do Antecipado</p>
+                            </div>
+                            <div class="form-check-inline">
+                                <ul id="id_franquias" class="form-check-input checks">
+                                    <li>
+                                        <label for="antecipadodia">
+                                            <input type="radio" name="AntecipadoCheck" class="form-check-input" id="antecipadodia" checked>
+                                            Dia
+                                        </label>                                
+                                    </li>
+                                    <li>
+                                        <label for="antecipadoantes">
+                                            <input type="radio" name="AntecipadoCheck" class="form-check-input" id="antecipadoantes">
+                                            Horas Antes
+                                        </label>                                
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 col-sm-12 container-input-create">
+                            <div class="col-12 row justify-content-center padding-zero">
+                                <p class="title-check col-4 padding-zero">Franquia</p>
+                                <div class="row justify-content-end col-8 padding-zero">
+                                    <a class="btn btn-success btn-create-secondary btn-checkbox checkbox-all" id="checks-all">
+                                        <em class="icon ni ni-check-round"></em>
+                                        <p class="checkbox-text">Selecionar todos</p>
+                                    </a>
+                                    <a class="btn btn-danger btn-create-secondary btn-checkbox checkbox-none checkbox-none-margin" id="checks-none">
+                                        <em class="icon ni ni-square"></em>
+                                        <p class="checkbox-text-none">Desmarcar todos</p>
+                                    </a>
+
+                                    <a class="btn btn-danger btn-create-secondary btn-checkbox btn-informacoes" data-toggle="modal" data-target="#modal-informacao">
+                                        <p>Dados das franquias</p>
+                                    </a>
+
+                                    <div class="modal fade" tabindex="-1" id="modal-informacao" style="display: none;" aria-hidden="true">
+                                        <div class="modal-dialog modal-xl" role="document">
+                                            <div class="modal-content">
+                                                <div class="row modal-body">
+                                                    <a href="#" class="close close-modal" data-dismiss="modal" aria-label="Close">
+                                                        <em class="icon ni ni-cross"></em>
+                                                    </a>
+                                                    <!-- {% for franquia,vendeu,pdvs,tv_online,tv in dados %}
+                                                    <div class="col-sm-6 container-information-franquias">
+                                                        <div class="col-12 card-infomation-franquias">
+                                                            <div class="row justify-content-between itens-infomation-franquias">
+                                                                <h2 class="col-12">{{ franquia.referencia }}</h2>
+                                                            </div>
+                                                            <div class="row justify-content-between itens-infomation-franquias">
+                                                                <h6>Efetividade</h6>
+                                                                <p>{{ vendeu }}/{{ pdvs }}</p>
+                                                            </div>
+                                                            <div class="row justify-content-between itens-infomation-franquias">
+                                                                <h6>Tvs online</h6>
+                                                                <p>{{tv_online}}/{{tv}}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {% endfor %} -->
+                                                    {% for franquia in dados_franquias %}
+                                                    <div class="col-xl-6 margin-franquia-dados">
+                                                        <div class="card card-bordered h-100">
+                                                            <div class="card-inner mb-n2 bg-cinza">
+                                                                <div class="card-title-group">
+                                                                    <div class="card-title title-franquia-dados">
+                                                                        <h6 class="title">{{ franquia.franquia }}</h6>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="nk-tb-list is-loose">
+                                                                <div class="nk-tb-item nk-tb-head bg-cinza">
+                                                                    <div class="nk-tb-col">
+                                                                        <span class="subtitle-franquia-dados">Partidas</span>
+                                                                    </div>
+                                                                    <div class="nk-tb-col">
+                                                                        <span class="subtitle-franquia-dados">Efetividade</span>
+                                                                    </div>
+                                                                    <div class="nk-tb-col text-center">
+                                                                        <span class="subtitle-franquia-dados">% Efetividade</span>
+                                                                    </div>
+                                                                    <div class="nk-tb-col tb-col-sm text-right ">
+                                                                        <span class="subtitle-franquia-dados">Telas online</span>
+                                                                    </div>
+                                                                </div>
+                                                                {% for partida in franquia.partidas %}
+                                                                <div class="nk-tb-item">
+                                                                    <div class="nk-tb-col">
+                                                                        <div class="icon-text">
+                                                                            <span class="tb-lead">{{ partida.id }}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="nk-tb-col">
+                                                                        <span class="tb-sub tb-amount">
+                                                                            <span>{{ partida.efetividade }}/{{ partida.total_pdvs }}</span>
+                                                                        </span>
+                                                                    </div>
+                                                                    <div class="nk-tb-col">
+                                                                        <div class="progress progress-lg progress-alt">
+                                                                            <div class="progress-bar" data-progress="{{ partida.efetividade_percentual }}" style="width: {{ partida.efetividade_percentual }};">{{ partida.efetividade_percentual }}%</div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="nk-tb-col tb-col-sm text-right">
+                                                                        <span class="tb-sub">
+                                                                            <!-- <div class="change down"><em class="icon ni ni-arrow-long-down"></em>-1.48%</div> -->
+                                                                            <div class="change {% if partida.subiu %} up {% else %} down {% endif %}">
+                                                                                {{ partida.telas_partida }}/{{ partida.total_telas }}
+                                                                                <em class="icon ni {% if partida.subiu %} ni-arrow-long-up {% else %} ni-arrow-long-down {% endif %}"></em>
+                                                                            </div>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                                {% endfor %}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {% if form.franquias.errors %}
+                                <div class="error-campo">
+                                {{ form.franquias.errors }}
+                                </div>
+                                
+                            {% endif %}
+                            <div class="form-check-inline">
+                                {{ form.franquias }}
+                            </div>
+                        </div>
+
+                        <div class="row col-lg-12 col-sm-12 container-input-create invisible-box" id="box-ADS">
+                            <div class="col-12 row justify-content-center padding-zero">
+                                <p class="title-check col-12 padding-zero">Deseja fazer uma propaganda?</p>
+                            </div>
+                            <div class="form-check-inline">
+                                <ul id="id_franquias" class="form-check-input checks">
+                                    <li>
+                                        <label for="autorizacaoADS">
+                                            <input type="radio" name="autorizacaoADS" class="form-check-input" id="autorizacaoADS">
+                                            Sim
+                                        </label>                                
+                                    </li>
+                                    <li>
+                                        <label for="autorizacaoADSNot">
+                                            <input type="radio" name="autorizacaoADS" class="form-check-input" id="autorizacaoADSNot">
+                                            Não
+                                        </label>                                
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="row col-lg-12 col-sm-12 container-input-create invisible-box" id="box-dias-ADS">
+                            <div class="col-12 row padding-zero justify-content-between">
+                                <p class="title-check padding-zero">Datas disponiveis</p>
+                                <button type="button" class="btn btn-create-secondary btn-checkbox btn-informacoes"
+                                    data-toggle="modal" data-target="#modal-valores">
+                                    <p>Valores disponiveis</p>
+                                </button>
+                            </div>
+                            <div class="modal fade" tabindex="-1" id="modal-valores">
+                                <div class="modal-dialog modal-md" role="document">
+                                    <div class="modal-content">
+                                        <a href="#" class="close" data-dismiss="modal" aria-label="Close">
+                                            <em class="icon ni ni-cross"></em>
+                                        </a>
+            
+                                        <div class="alert alert-fill alert-secondary header-modal">
+                                            <h6 class="center">Valores disponiveis para partidas ESPECIAIS e SUPERESPECIAL</h6>
+                                        </div>
+                                        <div class="modal-body row box-modal">
+                                            {% for valor in valores_disponiveis %}
+                                            <div class="col-4 col-sm-3 col-md-2 content-box-modal">
+                                                <div class="container-box-modal">
+                                                    <p>{{ valor|floatformat:2 }}</p>
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+
+                            <div class="row col-12">
+                                <div class="form-check-inline container-checkbox-parametro" id="dias-ads">
+                                </div>
+                            </div>
+                        </div>
+                        
+
+                        <div class="col-12 row container-btn-createPartida">
+                                <div class="form-group button-partida">
+                                <div class="form-control-wrap">
+                                    <a href="#" class="btn btn-danger btn-create-secondary">
+                                        <em class="icon ni ni-chevron-left-round-fill icon-right"></em>
+                                        <p>Voltar</p>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="form-group button-partida">
+                                <div class="form-control-wrap">
+                                    <button type="button" id="btn_modal_salve" onclick="pegando()" class="btn btn-success btn-create-secondary" data-toggle="modal" data-target="#modalSalvar">
+                                        <p>Salvar</p>
+                                        <em class="icon ni ni-save-fill icon-left"></em>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modal Content Code -->
+                        
+                        <div class="modal fade" tabindex="-1" id="modalSalvar" style="display: none;" aria-hidden="true">
+                            <div class="modal-dialog modal-lg modal-display-none" id="display-modal" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header row">
+                                        <p class="col-sm-6 modal-title">Deseja continuar ?</p>
+                                        <p id="dataPartida" class="col-sm-6 data-partida"></p>
+                                    </div>
+
+                                    <div class="row modal-body">
+                                        <div class="row col-12 card-valor container-padrao padding-zero">
+                                            <div class="col-12 text-center title-card-valor"><h6>Valores Padrão</h6></div>
+                                            <div id="container-sem-padrao" class="row col-12 content-valor"></div>
+                                        </div>
+                                        <div class="row col-12 card-valor padding-zero">
+                                            <div class="col-12 text-center title-card-valor"><h6>Valores Digitados</h6></div>
+                                            <div id="container-padrao" class="row col-12 content-valor"></div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer bg-light row justify-content-between footer-modal">
+                                        <a href="/criar_partida/#" aria-label="Close" data-dismiss="modal" data-toggle="modal" data-target="#modalSalvar" class="btn btn-danger btn-create-secondary">voltar</a>
+                                        <button id="salve_partida" class="btn btn-success btn-create-secondary">Sim</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row my-row ">
+            <div class="col-12 table-create">
+                <div class="card card-table table-responsive-xl overflow-auto">
+                    <table  id="tabelaPartidas" class="table position-relative table-content">
+                        <thead class="thead-dark text-center thead-content">
+                          <tr>
+                            <th scope="col">Sorteio</th>
+                            <th scope="col">Rotas</th>
+                            <th scope="col">Data/Hora</th>
+                            <th scope="col">Ant.</th>
+                            <th scope="col">Dia</th>
+                            <th scope="col">Kuadra</th>
+                            <th scope="col">Kina</th>
+                            <th scope="col">Keno</th>
+                            <th scope="col">Doações</th>
+                            <th scope="col">Resultado</th>
+                            <th scope="col">RTP</th>
+                            <th scope="col">Rodada</th>
+                            <th scope="col"></th>
+                          </tr>
+                        </thead>
+                        <tbody class="text-center tbody-content">
+                        <!--{% if not partidas %}
+                            <tr>
+                                <td colspan="12">Nenhum Resultado encontrado</td>
+                            </tr>
+                        {% endif %}
+                        -->
+                        {% for p in partidas %}
+                          <tr class="">
+                            <th scope="row">{{ p.id }}</th>
+                            <td>{{ p.franquias.all|join:"," }}</td>
+                            <td class="font-table-2">{{ p.data_partida|date:"SHORT_DATETIME_FORMAT" }}</td>
+                            <td>{{ p.valor_antecipado }}</td>
+                            <td>{{ p.valor_cartela }}</td>
+                            <td>{{ p.valor_kuadra }}</td>
+                            <td>{{ p.valor_kina }}</td>
+                            <td>{{ p.valor_keno }}</td>
+                            <td>{{ p.doacoesP|floatformat:2 }}</td>
+                            {% if p.resultado < 0 %}
+                                <td class="negativo font-table-2">{{ p.resultado|floatformat:2 }}</td>
+                            {% else %}
+                                <td class="positivo font-table-2">{{ p.resultado|floatformat:2 }}</td>
+                            {% endif %}
+                            <td class="result">{{ p.rtp|floatformat:2 }}%</td>
+                            <td>{{ p.get_tipo_rodada_display }}</td>
+                            <td><em class="icon ni ni-square-e icon-identificacao
+                                {% if p.data_partida > agora %}
+                                icon-aguarde 
+                                {% elif p.data_partida < agora and not p.bolas_sorteadas %}
+                                icon-cancelado
+                                {% else %}
+                                icon-confirmado
+                                {% endif %}
+                                " ></em></td>
+                          </tr>
+                        {% endfor %}
+
+                        </tbody>
+                      </table>
+
+                </div>
+            </div>
+        </div>
+<!-- content @e -->
+<!------------------------------------------------------------------------------------------------------------>
+
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.15/jquery.mask.min.js">
+$(  ()=>{
+    
+    $('#id_valor_cartela').mask('00,00');
+})
+</script> -->
+
+
+<script>
+
+
+// const datasFranquiasFake = [
+//     {
+//         "franquia": "1",
+//         "datasVal": [
+//             "10/11/2021",
+//             "11/11/2021"
+//         ]
+//     },
+//     {
+//         "franquia": "2",
+//         "datasVal": [
+//             "11/11/2021"
+//         ]
+//     },
+//     {
+//         "franquia": "3",
+//         "datasVal": [
+//             "12/11/2021"
+//         ]
+//     }
+// ]
+
+const datasFranquias = [];
+
+
+let val;
+let dataValue;
+{%  for franquia,datas in datas_indisponiveis.items  %}
+    console.log('{{franquia}}')
+    val = {
+        franquia: '{{franquia}}',
+        datasVal: [],
+    };
+    {% for data in datas %}
+        dataValue = '{{data}}';
+        dataValue = dayjs(new Date(dataValue)).add(1,'day').format('DD/MM/YYYY');
+        val.datasVal.push(dataValue);
+    {% endfor %}
+
+    datasFranquias.push(val);
+{% endfor %}
+
+
+// if (datasFranquias.franquia) {
+    
+// }
+/*************ANTECIPADO*************/
+$(document).ready(function(){
+    const AntecipadoCheck = $(`input[name='AntecipadoCheck']`);
+    if (AntecipadoCheck[0].checked == true){
+        AntecipadoCheck[1].checked = false
+        var hora_virada_input = $('#id_hora_virada')
+        hora_virada_input.attr('disabled',true)
+    }
+});
+$(`input[name='AntecipadoCheck']`).change(()=>{
+    const AntecipadoCheck = $(`input[name='AntecipadoCheck']`);
+    if (AntecipadoCheck[0].checked == true){
+        AntecipadoCheck[1].checked = false
+        var hora_virada_input = $('#id_hora_virada')
+        hora_virada_input.attr('disabled',true)
+    }
+    else{
+        AntecipadoCheck[0].checked = false
+        var hora_virada_input = $('#id_hora_virada')
+        hora_virada_input.attr('disabled',false)
+    }
+
+});
+/*************************************/
+// {% for franquia,datas in datas_indisponiveis_franquias.items %}
+// datasIndisponiveis.push(dayjs(new Date('{{datas}}')).format('DD/MM/YYYY'));
+// {% endfor %}
+const inputDiaPartida = $('#id_dia_partida');
+const blocoCheckDias = $("#dias-ads");
+console.log(datasIndisponiveis)
+$(()=>{
+    const dataHoje = new Date();
+    datapickerADS(dayjs(dataHoje).format('DD/MM/YYYY'));
+})
+
+var datasIndisponiveis = []
+
+$('input[name=franquias]').change(()=>{
+    const selected = [];
+    datasIndisponiveis=[]
+    datasIndisponiveis.slice(0 , datasIndisponiveis.length)
+
+    $('input[name=franquias]:checked').each(function() {
+        selected.push($(this).attr('value'));
+    })
+   
+    selected.map((selectVal,key)=>{
+        datasFranquias.map((franquia,index)=>{
+            if (franquia.franquia === selectVal) {
+                franquia.datasVal.map((datas,key)=>{
+                    datasIndisponiveis.push(datas);
+                    console.log(datasIndisponiveis);
+                })
+            }
+        })
+    })
+    datapickerADS(inputDiaPartida.val());
+});
+
+$(`#checks-all`).click(()=>{
+    console.log(datasFranquias) 
+    console.log(datasFranquias[0]) 
+    datasFranquias.map((valorFranquia,index)=>{
+     
+       console.log(valorFranquia)     
+        valorFranquia.datasVal.map((value,index)=>{
+            datasIndisponiveis.push(value)
+        })
+    })
+    datapickerADS(inputDiaPartida.val());
+})
+
+$('input[name=franquias]').change(()=>{
+    const selected = [];
+    datasIndisponiveis=[]
+    datasIndisponiveis.slice(0 , datasIndisponiveis.length)
+
+    $('input[name=franquias]:checked').each(function() {
+        selected.push($(this).attr('value'));
+    })
+
+
+   
+    selected.map((selectVal,key)=>{
+    console.log(selectVal)
+        datasFranquias.map((franquia,index)=>{
+            if (franquia.franquia === selectVal) {
+                franquia.datasVal.map((datas,key)=>{
+                    datasIndisponiveis.push(datas);
+                })
+            }
+        })
+    })
+    datapickerADS(inputDiaPartida.val());
+});
+
+const datapickerADS=(valor)=>{
+    const startData = dayjs(new Date(valor.slice(6, 10) + '-' + valor.slice(3,5) + '-' + valor.slice(0, 2))).add(1,'day');
+    const endData = dayjs(new Date(startData)).subtract(15, 'day');
+    const endData2 = dayjs().subtract(1,'day')
+    const diferent1 = startData.diff(endData, 'day');
+    const diferent2 = startData.diff(endData2, 'day');
+
+    let bloco = "";
+
+    if (diferent1 < diferent2) {
+        for (let cont = 0; cont < diferent1; cont++) {
+            let dataCont = dayjs(startData).subtract(cont, 'day').format('DD/MM/YYYY');
+
+            if (datasIndisponiveis.indexOf(dataCont) !== (-1)) {
+                bloco += ' ';    
+            }else{
+                bloco +=`<li>
+                    <label for="id_ADS_${cont}">
+                        <input type="checkbox" name="dataAds[]" value="${dataCont}" class="form-check-input" id="id_ADS_${cont}">
+                        ${dataCont}
+                    </label>
+                </li>`;
+            }
+        }
+    }else{
+        for (let cont = 0; cont < diferent2; cont++) {
+            let dataCont = dayjs(startData).subtract(cont, 'day').format('DD/MM/YYYY');
+            if (datasIndisponiveis.indexOf(dataCont) !== (-1)) {
+                bloco += ' ';    
+            }else{
+                bloco +=`<li>
+                    <label for="id_ADS_${cont}">
+                        <input type="checkbox" name="dataAds" value="${dataCont}" class="form-check-input" id="id_ADS_${cont}">
+                        ${dataCont}
+                    </label>
+                </li>`;
+            }
+        }
+    }
+    
+    blocoCheckDias.html(bloco)
+}
+
+const autorizacaoADS = $(`input[name='autorizacaoADS']`);
+const blocoDias = $('#box-dias-ADS')
+
+$(autorizacaoADS).change(()=>{
+    if(autorizacaoADS[0].checked){
+        blocoDias.css('display','flex');
+        
+    }
+
+    if(autorizacaoADS[1].checked){
+        blocoDias.css('display','none');
+    }
+})
+
+/************************************************/
+const valoresDisponiveis = [];
+
+const kuadra = $('#id_valor_kuadra');
+const kina = $('#id_valor_kina');
+const keno = $('#id_valor_keno');
+const btnSave = $('#btn_modal_salve');
+const mensagem = `  <div class="error-campo">
+                        <ul class="errorlist"><li>Valor indisponivel</li></ul>
+                    </div>`;
+const boxErroKuadra = $('#error-campo-valor_kuadra');
+const boxErroKina = $('#error-campo-valor_kina');
+const boxErroKeno = $('#error-campo-valor_keno');
+{% for valores in valores_disponiveis %}
+valoresDisponiveis.push(parseFloat(("{{valores}}").replace(',', '.')));
+{% endfor %}
+
+$(kuadra).change(()=>{
+    const kuadraValor = parseFloat(kuadra.val());
+    const kinaValor = parseFloat(kina.val());
+    const kenoValor = parseFloat(keno.val());
+    let tipoRodada = rodadaInput.val();
+    if (valoresDisponiveis.indexOf(kuadraValor) === (-1) && (tipoRodada === "3" || tipoRodada === "2")) {
+        boxErroKuadra.html(mensagem);
+        btnSave.attr('disabled',true);
+    }
+    if ((valoresDisponiveis.indexOf(kuadraValor) !== (-1) && (tipoRodada === "3" || tipoRodada === "2")) || 
+    (valoresDisponiveis.indexOf(kuadraValor) === (-1) && (tipoRodada === "1"))) {
+        boxErroKuadra.empty();
+        if (
+            (valoresDisponiveis.indexOf(kuadraValor) !== (-1)) &&
+            (valoresDisponiveis.indexOf(kinaValor) !== (-1)) &&
+            (valoresDisponiveis.indexOf(kenoValor) !== (-1))
+        ) {
+            btnSave.attr('disabled',false);
+        }
+    }
+})
+
+$(kina).change(()=>{
+    const kuadraValor = parseFloat(kuadra.val());
+    const kinaValor = parseFloat(kina.val());
+    const kenoValor = parseFloat(keno.val());
+    let tipoRodada = rodadaInput.val();
+    if (valoresDisponiveis.indexOf(kinaValor) === (-1) && (tipoRodada === "3" || tipoRodada === "2")) {
+        boxErroKina.html(mensagem);
+        btnSave.attr('disabled',true);
+    }
+    if ((valoresDisponiveis.indexOf(kinaValor) !== (-1) && (tipoRodada === "3" || tipoRodada === "2")) || 
+    (valoresDisponiveis.indexOf(kinaValor) === (-1) && (tipoRodada === "1"))) {
+        boxErroKina.empty();
+        if (
+            valoresDisponiveis.indexOf(kuadraValor) !== (-1) &&
+            valoresDisponiveis.indexOf(kinaValor) !== (-1) &&
+            valoresDisponiveis.indexOf(kenoValor) !== (-1)
+        ) {
+            btnSave.attr('disabled',false);   
+        }
+    }
+})
+
+$(keno).change(()=>{
+    const kuadraValor = parseFloat(kuadra.val());
+    const kinaValor = parseFloat(kina.val());
+    const kenoValor = parseFloat(keno.val());
+    let tipoRodada = rodadaInput.val();
+    if (valoresDisponiveis.indexOf(kenoValor) === (-1) && (tipoRodada === "3" || tipoRodada ==="2")) {
+        boxErroKeno.html(mensagem);
+        btnSave.attr('disabled',true);
+    }
+    if ((valoresDisponiveis.indexOf(kenoValor) !== (-1) && (tipoRodada === "3" || tipoRodada === "2")) || 
+    (valoresDisponiveis.indexOf(kenoValor) === (-1) && (tipoRodada === "1"))) {
+        boxErroKeno.empty();
+        if (
+            valoresDisponiveis.indexOf(kuadraValor) !== (-1) &&
+            valoresDisponiveis.indexOf(kinaValor) !== (-1) &&
+            valoresDisponiveis.indexOf(kenoValor) !== (-1)
+        ) {
+            btnSave.attr('disabled',false);   
+        }
+    }
+})
+
+
+/*************ADS*************/
+const rodadaInput = $('#id_tipo_rodada');
+const boxADS = $('#box-ADS');
+
+
+$(()=>{
+    if(rodadaInput.val() === "2" | rodadaInput.val() === "3"){
+        boxADS.css('display','flex');
+    }
+})
+
+$(rodadaInput).change(()=>{
+    const kuadraValor = parseFloat(kuadra.val());
+    const kinaValor = parseFloat(kina.val());
+    const kenoValor = parseFloat(keno.val());
+
+    if(rodadaInput.val() === "1"){
+        boxADS.css('display','none');
+
+        btnSave.attr('disabled',false);
+
+        boxErroKuadra.html(``);
+        boxErroKina.html(``);
+        boxErroKeno.html(``);
+           
+        
+    }
+
+    if (rodadaInput.val() === "3" || rodadaInput.val() === "2") {
+        boxADS.css('display','flex');
+        if (
+            (valoresDisponiveis.indexOf(kuadraValor) === (-1) && isNaN(kuadraValor) === false) ||
+            (valoresDisponiveis.indexOf(kinaValor) === (-1) && isNaN(kinaValor) === false) ||
+            (valoresDisponiveis.indexOf(kenoValor) === (-1) && isNaN(kenoValor) === false)
+        ) {
+            btnSave.attr('disabled',true);
+            if (valoresDisponiveis.indexOf(kuadraValor) === (-1)){
+                boxErroKuadra.html(mensagem);
+            }
+            if (valoresDisponiveis.indexOf(kinaValor) === (-1)){
+                boxErroKina.html(mensagem);
+            }
+            if (valoresDisponiveis.indexOf(kenoValor) === (-1)){
+                boxErroKeno.html(mensagem);
+            } 
+        }
+    }
+})
+
+/*******************************/
+
+$('#id_valor_antecipado').keypress(()=>{
+    $('this').mask('00.00');
+})
+
+$(()=>{
+    let checkboxAll = $('#checks-all');
+    let checkboxRemove = $('#checks-none');
+    let checks = $('.checks');
+
+    $(checkboxAll).click(()=>{
+        checks.attr("checked", true);
+    })
+
+    $(checkboxRemove).click(()=>{
+        checks.attr("checked", false);
+    })
+})
+
+
+/*let selectTipo = $('#id_tipo_rodada');
+let inputNome = $('#nome_sorteio');
+let selectBlock = $('#select-block')
+
+$(selectTipo).change(function () {
+    if (selectTipo.val() == 1) {
+        inputNome.css('display','none');
+        selectBlock.removeClass('col-lg-3 col-sm-6')
+        selectBlock.addClass('col-lg-6 col-sm-6')
+    }
+    if (selectTipo.val() == 2) {
+        inputNome.css('display','block');
+        selectBlock.removeClass('col-lg-6 col-sm-6')
+        selectBlock.addClass('col-lg-3 col-sm-6')
+    }
+    if (selectTipo.val() == 3) {
+        inputNome.css('display','block');
+        selectBlock.removeClass('col-lg-6 col-sm-6')
+        selectBlock.addClass('col-lg-3 col-sm-6')
+    }
+})*/
+
+$(function() {
+    let btnSubmit = $('#btn-submit');
+    btnSubmit.prop('disabled',true);
+})
+
+
+var valid_data = {% if form.dia_partida.errors %}false{% else %}true{% endif %};
+var valid_hora = {% if form.hora_partida.errors %}false{% else %}true{% endif %};
+var valid_rodada = {% if form.tipo_rodada.errors %}false{% else %}true{% endif %};
+var valid_cartela = {% if form.valor_cartela.errors %}false{% else %}true{% endif %};
+var valid_antecipado = {% if form.valor_antecipado.errors %}false{% else %}true{% endif %};
+var valid_kuadra = {% if form.valor_kuadra.errors %}false{% else %}true{% endif %};
+var valid_kina = {% if form.valor_kina.errors %}false{% else %}true{% endif %};
+var valid_keno = {% if form.valor_keno.errors %}false{% else %}true{% endif %};
+var valid_franquias = {% if form.franquias.errors %}false{% else %}true{% endif %};
+
+
+
+$(function() {
+    if (valid_data == false) {
+        var data = $('#id_dia_partida');
+        data.addClass('is-invalid');
+    }
+})
+
+$(function() {
+    if (valid_hora == false) {
+        var hora = $('#id_hora_partida');
+        hora.addClass('is-invalid');
+    }
+})
+
+$(function() {
+    if (valid_rodada == false) {
+        var rodada = $('#id_tipo_rodada');
+        rodada.addClass('is-invalid');
+    }
+})
+
+$(function() {
+    if (valid_cartela == false) {
+        var cartela = $('#id_valor_cartela');
+        cartela.addClass('is-invalid');
+    }
+})
+
+$(function() {
+    if (valid_antecipado == false) {
+        var antecipado = $('#id_valor_antecipado');
+        antecipado.addClass('is-invalid');
+    }
+})
+
+$(function() {
+    if (valid_kuadra == false) {
+        var valor_kuadra = $('#id_valor_kuadra');
+        valor_kuadra.addClass('is-invalid');
+    }
+})
+
+$(function() {
+    if (valid_kina == false) {
+        var valor_kina = $('#id_valor_kina');
+        valor_kina.addClass('is-invalid');
+    }
+})
+
+$(function() {
+    if (valid_keno == false) {
+        var valor_keno = $('#id_valor_keno');
+        valor_keno.addClass('is-invalid');
+    }
+})
+
+
+function pegando() {
+  const containerModal = $('#display-modal');
+
+  const cartelaPadrao = {{ configuracao.valor_dia_aviso|unlocalize }};
+  const kuadraPadrao = {{ configuracao.valor_kuadra_aviso|unlocalize }};
+  const kinaPadrao = {{ configuracao.valor_kina_aviso|unlocalize }};
+  const kenoPadrao = {{ configuracao.valor_keno_aviso|unlocalize }};
+
+  const dataHora = $('#dataPartida')
+  const containerPadrao = $('#container-padrao');
+  const conatinerSemPadrao = $('#container-sem-padrao');
+  const form = $('#form_partida');
+
+  var hora = $('#id_hora_partida').val();
+  var data = $('#id_dia_partida').val();
+  var antecipado = $('#id_valor_antecipado').val();
+  var cartela = $('#id_valor_cartela').val();
+  var kuadra = $('#id_valor_kuadra').val();
+  var kina = $('#id_valor_kina').val();
+  var keno = $('#id_valor_keno').val();
+
+  dataHora.text(`Data da partida: ` + data + ` || ` + hora);
+  
+  /*********************************************************/
+
+  if(cartela > cartelaPadrao || kuadra > kuadraPadrao || kina > kinaPadrao || keno > kenoPadrao){
+    containerModal.css('display','flex');
+    let msgPadrao = "";
+    let msg = "";
+
+    if (cartela > cartelaPadrao) {
+        msg += `<p class="col-sm-6 col-md-4 col-lg-3 text-center margin-zero text-bold">Cartela: <span class="text-red">`+ cartela +`</span></p>`;
+    }else{
+        msg += `<p class="col-sm-6 col-md-4 col-lg-3 text-center margin-zero text-bold">Cartela: <span class="text-green">`+ cartela +`</span></p>`;
+    }
+    if (kuadra > kuadraPadrao) {
+        msg += `<p class="col-sm-6 col-md-4 col-lg-3 text-center margin-zero text-bold">Kuadra: <span class="text-red">`+ kuadra +`</span></p>`;
+        
+    }else{
+        msg += `<p class="col-sm-6 col-md-4 col-lg-3 text-center margin-zero text-bold">kuadra: <span class="text-green">`+ kuadra +`</span></p>`;
+    }
+    if (kina > kinaPadrao) {
+        msg += `<p class="col-sm-6 col-md-4 col-lg-3 text-center margin-zero text-bold">kina: <span class="text-red">`+ kina +`</span></p>`;
+        
+    }else{
+        msg += `<p class="col-sm-6 col-md-4 col-lg-3 text-center margin-zero text-bold">kina: <span class="text-green">`+ kina +`</span></p>`;
+    }
+    if (keno > kenoPadrao) {
+        msg += `<p class="col-sm-6 col-md-4 col-lg-3 text-center margin-zero text-bold">keno: <span class="text-red">`+ keno +`</span></p>`;
+    }else{
+        msg += `<p class="col-sm-6 col-md-4 col-lg-3 text-center margin-zero text-bold">keno: <span class="text-green">`+ keno +`</span></p>`;
+    }
+
+    msgPadrao += `<p class="col-sm-6 col-md-4 col-lg-3 text-center margin-zero text-valor text-black">Cartela: <span>`+ cartelaPadrao +`</span></p>`;
+    msgPadrao += `<p class="col-sm-6 col-md-4 col-lg-3 text-center margin-zero text-valor text-black">Kuadra: <span>`+ kuadraPadrao +`</span></p>`;
+    msgPadrao += `<p class="col-sm-6 col-md-4 col-lg-3 text-center margin-zero text-valor text-black">Kina: <span>`+ kinaPadrao +`</span></p>`;
+    msgPadrao += `<p class="col-sm-6 col-md-4 col-lg-3 text-center margin-zero text-valor text-black">Keno: <span>`+ kenoPadrao +`</span></p>`;
+
+    conatinerSemPadrao.html(msgPadrao);
+    containerPadrao.html(msg);
+
+  }else {
+    form.submit();
+    $('#btn_modal_salve').attr('disabled','true');
+  }
+}
+
+let submitado = false;
+$('#form_partida').on('submit',function (evento) {
+    if (submitado) {
+        evento.preventDefault();
+    }
+    submitado = true;
+    $('#salve_partida').attr('disabled','true')
+})
+
+
+</script>
+
+{% endblock %}

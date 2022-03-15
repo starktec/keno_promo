@@ -1,0 +1,114 @@
+{% extends "index.html" %}
+{% load l10n %}
+{% block nav-bar %}
+<div class="container-fluid">
+    <div class="nk-content-inner">
+        <div class="nk-content-body">
+            <div class="nk-block">
+                <div class="card card-bordered">
+                    <div class="card-aside-wrap">
+                        <div class="card-inner card-inner-lg">
+                            <div class="nk-block-head nk-block-head-lg">
+                                <div class="nk-block-between">
+                                    <div class="nk-block-head-content">
+                                        <h4 class="nk-block-title">Perfil de Usuario</h4>
+                                    </div>
+                                    <div class="nk-block-head-content align-self-start d-lg-none">
+                                        <a href="#" class="toggle btn btn-icon btn-trigger mt-n1" data-target="userAside"><em class="icon ni ni-menu-alt-r"></em></a>
+                                    </div>
+                                </div>
+                            </div><!-- .nk-block-head -->
+                            <div class="nk-block">
+                                <div class="nk-data data-list">
+
+                                    <div class="data-item" data-toggle="modal" data-target="#profile-edit">
+                                        <div class="data-col">
+                                            <span class="data-label">Nome</span>
+                                            <span class="data-value">{{ usuario.usuario.get_full_name }}</span>
+                                        </div>
+                                        <div class="data-col data-col-end"><span class="data-more disable"><em class="icon ni ni-lock-alt"></em></span></div>
+                                    </div><!-- data-item -->
+
+                                    <div class="data-item" data-toggle="modal" data-target="#profile-edit">
+                                        <div class="data-col">
+                                            <span class="data-label">Login</span>
+                                            <span class="data-value">{{ usuario.usuario.username }}</span>
+                                        </div>
+                                        <div class="data-col data-col-end"><span class="data-more disable"><em class="icon ni ni-lock-alt"></em></span></div>
+                                    </div><!-- data-item -->
+
+                                    <form class="data-item" method="post">
+                                        {% csrf_token %}
+                                        <div class="data-col">
+                                            <span class="data-label">Senha</span>
+                                            <span class="data-value">
+                                                <div class="form-group">
+                                                    <div class="form-control-wrap">
+                                                        {{ form.senha }}
+                                                        <label class="form-label-outlined" for="Nova_senha">Nova senha</label>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <div class="form-control-wrap">
+                                                        {{ form.repetir_senha }}
+                                                        <label class="form-label-outlined" for="Confirmar_senha">Confirmar senha</label>
+                                                    </div>
+                                                </div>
+                                            </span>
+                                        </div>
+                                        <div class="data-col data-col-end"><button class="btn-update-perfil btn btn-success"><em class="icon ni ni-forward-ios"></em></button></div>
+                                    </form><!-- data-item -->
+
+                                    <div class="data-item" data-toggle="modal" data-target="#profile-edit">
+                                        <div class="data-col">
+                                            <span class="data-label">Email</span>
+                                            <span class="data-value text-soft">
+                                                <span class="data-value">{{ usuario.email }}</span>
+                                            </span>
+                                        </div>
+                                        <div class="data-col data-col-end"><span class="data-more disable"><em class="icon ni ni-lock-alt"></em></span></div>
+                                    </div><!-- data-item -->
+
+                                    <div class="data-item" data-toggle="modal" data-target="#profile-edit">
+                                        <div class="data-col">
+                                            <span class="data-label">Telefone</span>
+                                            <span class="data-value text-soft">
+                                                <span class="data-value">{{ usuario.fone }}</span>
+                                            </span>
+                                        </div>
+                                        <div class="data-col data-col-end"><span class="data-more disable"><em class="icon ni ni-lock-alt"></em></span></div>
+                                    </div><!-- data-item -->
+
+                                </div><!-- data-list -->
+                            </div><!-- .nk-block -->
+                        </div>
+                        <div class="card-aside card-aside-left user-aside toggle-slide toggle-slide-left toggle-break-lg" data-content="userAside" data-toggle-screen="lg" data-toggle-overlay="true">
+                            <div class="card-inner-group" data-simplebar>
+                                <div class="card-inner">
+                                    <div class="user-card">
+                                        <div class="user-avatar bg-primary">
+                                            <span>{{ request.user.first_name.0 }}{{ request.user.last_name.0 }}</span>
+                                        </div>
+                                        <div class="user-info">
+                                            <span class="lead-text">{{ request.user.get_fullnema }}</span>
+                                            <span class="sub-text">{{ usuario.email }}</span>
+                                        </div>
+
+                                    </div><!-- .user-card -->
+                                </div><!-- .card-inner -->
+                                <div class="card-inner p-0">
+                                    <ul class="link-list-menu">
+                                        <li><a class="active" href=""><em class="icon ni ni-user-fill-c"></em><span>Informações Pessoais</span></a></li>
+                                    </ul>
+                                </div><!-- .card-inner -->
+                            </div><!-- .card-inner-group -->
+                        </div><!-- card-aside -->
+                    </div><!-- .card-aside-wrap -->
+                </div><!-- .card -->
+            </div><!-- .nk-block -->
+        </div>
+    </div>
+</div>
+
+{% endblock%}

@@ -1,0 +1,284 @@
+{% extends "index.html" %}
+{% load l10n %}
+{% block titulo %}
+INFORMAÇÕES DO ADS
+{% endblock %}
+{% block nav-bar %}
+<!------------------------------------------------------------------------------------------------------------> 
+            {% comment %} <!-------------------------------barra de pesquisa-------------------------------> {% endcomment %}
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card crud-bar">
+                        <div class="row justify-content-center align-items-center">
+                            <form action="/partidas/" method="post" class="col-xs-12 col-sm-12 col-md-12 col-lg-8 col-xl-8 row justify-content-start" id="form1">
+                                {% csrf_token %}
+                                <div class="col-lg-5 col-md-5 col-sm-6">
+                                    <div class="form-group">
+                                        <div class="form-control-wrap">
+                                            <div class="form-icon form-icon-right">
+                                                <em class="icon ni ni-calendar-alt"></em>
+                                            </div>
+                                            <input type="text" value="{{ data_inicial }}" autocomplete="off" data-date-format="dd/mm/yyyy" class="form-control form-control-lg form-control-outlined date-picker input-search-financeiro margin-zero"
+                                                   id="outlined-initial-date-picker" name="outlined-initial-date-picker">
+                                            <label class="form-label-outlined" for="outlined-initial-date-picker">Data Inicial</label>
+                                  
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-5 col-md-5 col-sm-6">
+                                    <div class="form-group">
+                                        <div class="form-control-wrap">
+                                            <div class="form-icon form-icon-right">
+                                                <em class="icon ni ni-calendar-alt"></em>
+                                            </div>
+                                            <input type="text"{% if data_final %} value="{{ data_final }}" {% endif %} autocomplete="off" data-date-format="dd/mm/yyyy" class="form-control form-control-lg form-control-outlined date-picker input-search-financeiro margin-zero"
+                                                   id="outlined-final-date-picker" name="outlined-final-date-picker">
+                                            <label class="form-label-outlined" for="outlined-final-date-picker">Data Final</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-12 col-md-2 col-lg-2 col-xl-2 container-input-search text-right form-group">
+                                    <button id="validate-data" class="col-3 col-sm-2 col-md-12 col-lg-12 justify-content-center btn btn-success btn-search form-control-lg">
+                                        <em class="icon ni ni-search"></em>
+                                    </button>
+                                </div>
+
+                            </form>
+
+                            {% if request.session.perfil_max < 5 %}
+                            <div class="col-md-12 col-lg-4 col-xl-4 row container-btn-create">
+                                {% if request.session.automato %}
+
+                                {% endif %}
+                                <a href="/criar_ads/" class="btn btn-md btn-success btn-create">
+                                    <em class="icon ni ni-plus"></em>
+                                    <p>Novo Anúncio</p>
+                                </a>
+                            </div>
+                            <div class="col-md-12 row container-input-search form-group container-btn-create justify-content-end">
+                                <button type="button" class="btn btn-create-secondary btn-checkbox btn-informacoes" 
+                                data-toggle="modal" data-target="#modal-valores">
+                                    <p>Valores disponiveis</p>
+                                </button>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal fade" tabindex="-1" id="modal-valores">
+                <div class="modal-dialog modal-md" role="document">
+                    <div class="modal-content">
+                        <a href="#" class="close" data-dismiss="modal" aria-label="Close">
+                            <em class="icon ni ni-cross"></em>
+                        </a>
+
+                        <div class="alert alert-fill alert-secondary header-modal">
+                            <h6 class="center">Valores disponiveis para partidas ESPECIAIS e SUPERESPECIAL</h6>
+                        </div>
+                        <div class="modal-body row box-modal">
+                            {% for valor in valores_disponiveis %}
+                            <div class="col-4 col-sm-3 col-md-2 content-box-modal">
+                                <div class="container-box-modal">
+                                    <p>{{ valor|floatformat:2 }}</p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+            {% if error %}
+                    <div class="modal show" tabindex="-1" id="modalAlert" style="display: block;" aria-modal="true" aria-hidden="true" role="dialog">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-body modal-body-lg text-center">
+                                    <div class="nk-modal">
+                                        <em class="nk-modal-icon icon icon-circle icon-circle-xxl ni ni-cross bg-danger"></em>
+                                        <div class="nk-modal-text">
+                                            <p class="text-soft">Já existe ADS nesta data!</p>
+                                        </div>
+                                        <div class="nk-modal-action mt-5">
+                                            <a href="/ads/" class="btn btn-secondary" data-dismiss="modal">Fechar <a/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            {% endif %}
+            <!--tabela-->
+            <div class="row my-row">
+                <div class="col-12">
+                    <div class="card card-table table-responsive-xl overflow-auto">
+                        <table  id="tabelaPartidas" class="table position-relative table-content">
+                            <thead class="thead-dark text-center thead-content">
+                                <tr>
+                                    <th scope="col"></th>
+                                    <th scope="col">Sorteio</th>
+                                    <th scope="col">Keno</th>
+                                    <th scope="col">Rodada</th>
+                                    <th scope="col">Rotas</th>
+                                    <th scope="col">Data/Hora</th>
+                                    <th scope="col"></th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-center tbody-content">
+
+                            {% for a in ads %}
+
+                                <td>
+                                    {% if a.status == 1 %}
+                                    <a href="/ads/{{ a.id }}/status/" class="btn btn-icon btn-round btn-sm btn-warning">
+                                        <em class="icon ni ni-pause"></em></a>
+                                        <p>pause</p>
+                                    </a>
+                                    {% elif a.status == 2 %}
+                                    <a href="/ads/{{ a.id }}/status/" class="btn btn-icon btn-round btn-sm btn-info">
+                                        <em class="icon ni ni-play"></em></a>
+                                        <p>play</p>
+                                    </a>
+                                    {% else %}
+                                    <a href="/ads/{{ a.id }}/status/" class="btn btn-icon btn-round btn-sm btn-success">
+                                        <em class="icon ni ni-check-thick"></em>
+                                    </a>
+                                        <p>  </p>
+                                    {% endif %}
+                                </td>
+
+                                <td>{{ a.partida }}</td>
+                                <td>
+                                    <button class="btn btn-primary btn-create-secondary" data-toggle="modal" data-target="#modal-equipamento">
+                                        <em class="icon ni ni-eye"></em>
+                                    </button>
+                                </td>
+                                <div class="modal fade" tabindex="-1" id="modal-equipamento">
+                                    <div class="modal-dialog modal-md" role="document">
+                                        <div class="modal-content">
+                                            <a href="#" class="close" data-dismiss="modal" aria-label="Close">
+                                                <em class="icon ni ni-cross"></em>
+                                            </a>
+                
+                                            <div class="alert alert-fill alert-secondary header-modal">
+                                                <h6 class="center">{% if a.partida.nome %}{{ a.partida.nome }}{% else %}{{ a.partida }}{% endif %}</h6>
+                                            </div>
+                                            <div class="modal-body row box-modal">
+                                                <div class="col-sm-12 content-box-modal">
+                                                    <div class="container-box-modal center">
+                                                        <p></p>{{ a.partida.franquias.all|join:" | " }}
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 content-box-modal">
+                                                    <div class="container-box-modal center">{{ a.partida.valor_antecipado|localize }}</div>
+                                                </div>
+                                                <div class="col-sm-4 content-box-modal">
+                                                    <div class="container-box-modal center">{{ a.partida.valor_cartela|localize }}</div>
+                                                </div>
+                                                <div class="col-sm-4 content-box-modal">
+                                                    <div class="container-box-modal center {% if a.partida.get_tipo_rodada_display == 'ESPECIAL'%} color-yellow
+                                                    {% elif a.partida.get_tipo_rodada_display == 'SUPER ESPECIAL'%} color-green {% endif %}">{{ a.partida.get_tipo_rodada_display }}</div>
+                                                </div>
+                                                <div class="col-sm-4 content-box-modal">
+                                                    <div class="container-box-modal">
+                                                        <h4>Kuadra</h4>
+                                                        <p>{{ a.partida.valor_kuadra }}</p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 content-box-modal">
+                                                    <div class="container-box-modal">
+                                                        <h4>kina</h4>
+                                                        <p>{{ a.partida.valor_kina }}</p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 content-box-modal">
+                                                    <div class="container-box-modal">
+                                                        <h4>keno</h4>
+                                                        <p>{{ a.partida.valor_keno }}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                                <td class="{% if a.partida.get_tipo_rodada_display == 'ESPECIAL'%} color-yellow
+                                {% elif a.partida.get_tipo_rodada_display == 'SUPER ESPECIAL'%} color-green {% endif %}">{{ a.partida.get_tipo_rodada_display }}</td>
+
+                                <td>{{ a.partida.franquias.all|join:"," }}</td>
+                                <td>{{ a.date }}</td>
+                            {% if a.status != 3 %}
+                                <td>
+                                    <a href="ads/{{a.id}}/delete" class="btn btn-danger btn-create-secondary">
+                                        <em class="icon ni ni-cross circle-fill"></em>
+                                    </a>
+                                </td>
+
+                                
+                                {% endif %}
+                              </tr>
+                            {% endfor %}
+
+                            </tbody>
+                          </table>
+
+                    </div>
+                </div>
+            </div>
+    <!-- content @e -->
+    <!--------Paginação -------->
+    <div class="row my-row pagination-container">
+        <div class="col-12 row justify-content-center">
+            <nav aria-label="Navegação de página exemplo">
+                <ul class="pagination">
+                        {% if pagina_anterior > 0 %}
+                        <li class="pageitem button-paginação">
+                            <button class="page-link button-paginação" aria-hidden="true" onclick=test(1)>&laquo;</button>
+                        </li> 
+                        <li class="page-item button-paginação">
+                            <button class="page-link button-paginação" class="sr-only" onclick=test({{pagina_anterior}})>&lt;</button>
+                        </li>
+                        {%endif%}  
+                        <li class="page-item button-paginação">
+                            <a class="page-link button-paginação">{{ pagina_atual }}</a>
+                        </li>
+                        {% if ultima_pagina != pagina_atual %}
+                        <li class="page-item button-paginação">
+                            <button class="page-link button-paginação" class="sr-only" onclick=test({{proxima_pagina}})>&gt;</button>
+                        </li>  
+                        <li class="page-item button-paginação">
+                            <button class="page-link button-paginação" aria-hidden="true" onclick=test({{ultima_pagina}})>&raquo;</button>
+                        </li>
+                        {%endif%}
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <!------------------------------------------------------------------------------------------------------------>
+    <script>
+        $(document).ready( function () {
+            $('#tabelaPartidas').DataTable({
+                "language": {
+                    "url":"https://cdn.datatables.net/plug-ins/1.10.24/i18n/Portuguese-Brasil.json",
+                },
+                "dom": '',
+                paging: false,
+                columnDefs: [
+                    { orderable: false, targets: [0,1,12,13,14,16] }
+                ],
+                "order": [[ 3, "desc" ]],  
+            });
+        } );
+        let clickado = false
+        function test(pagina){
+            if(clickado == false){
+                $('#form1').attr('action', $('#form1').attr('action') +'?pagina='+parseInt(pagina));
+                $('#form1').submit();   
+                clickado = true
+            }
+        }
+    </script> 
+{% endblock %}
+

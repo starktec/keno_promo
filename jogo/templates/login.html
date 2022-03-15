@@ -1,0 +1,59 @@
+{% load static %}
+{% load pwa %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if titulo %}{{ titulo }}{% else %}Mr Keno{% endif %}</title>
+    <link rel="shortcut icon" href="{% if favicon %}{{ favicon.url }}{% else %}
+        {% static 'images-logo/favicon.png' %}{% endif %}"/>
+    <link rel="stylesheet" href="/static/login.css">
+
+    <style>
+        
+
+        .logo-login{
+            width: 250px;
+        }
+
+    </style>
+    {% progressive_web_app_meta %}
+</head>
+
+    <div class="container-login">
+        <form class="form-container-login" action="" method="post">
+            {% csrf_token %}
+            <div class="container-logo-login">
+                <img src="{% if imagem %}{{ imagem.url }}{% else %}
+                    /static/images-logo/mr-keno-login.png{% endif %}" class="logo-login"> </div>
+            {% if error %}
+            <div class="" style="background-color:red;">{{ error }}</div>
+            {% endif %}
+            <div class="container-input-login">
+                <label class="label-login" for="user"><img class="icon-login" src="/static/assets-login/man-user (1).svg" alt=""></label>
+                <input class="input-login" type="text" placeholder="usuário" id="user" name="user">
+            </div>
+            
+            <div class="container-input-login">
+                <label class="label-login" for="password"><img class="icon-login" src="/static/assets-login/lock (1).svg" alt=""></label>
+                <input class="input-login" type="password" placeholder="senha" id="password" name="password">
+            </div>
+
+            <div class="container-btn-login">
+                <input type="submit" class="btn-login" value="Entrar"/>
+            </div>
+            <div class="row">
+                <div>
+                    <p style="color:#027d9c !important;">{% if versao %}Versão: {{ versao }}{% endif %}</p>
+                </div>
+            </div>
+        </form>
+
+    </div>
+
+
+    
+</body>
+</html>

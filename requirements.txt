@@ -1,0 +1,15 @@
+django==3.2
+djangorestframework
+pillow
+apscheduler
+psycopg2-binary
+django_extensions
+gunicorn
+requests
+channels
+channels-redis
+django-cors-headers
+uvicorn[standard]
+backports.zoneinfo
+instagrapi
+django-easy-audit

@@ -1,0 +1,95 @@
+
+{% extends "nav-bar.html" %}
+{% block nav-bar %}
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="card crud-bar">
+                    <h4 class="card-title text-center">Faturamento Mensal</h4>
+                    <canvas id="lineChart" ></canvas>
+                </div>
+            </div>
+
+            <div class="col-sm-6">
+                <div class="card crud-bar">
+                    <h4 class="card-title text-center">Faturamento por região</h4>
+                    <canvas id="myChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card table-card">
+                    <table class="table text-center">
+                        <thead class="thead-dark row row-table">
+                          <tr class="col-xl-12 row row-table">
+                            <th class="col-sm-1" scope="row">ID ponto</th>
+                            <th class="col-sm-5">Vendedor</th>
+                            <th class="col-sm-4">Valor das vendas</th>
+                            <th class="col-sm-2">Cartelas vendidas</th>
+                          </tr>
+                        </thead>
+                        <tbody class="thead-dark row row-table">
+                          <tr class="col-xl-12 row row-table">
+                            <td class="col-sm-1">02186</td>
+                            <td class="col-sm-5">Bar do Nego</td>
+                            <td class="col-sm-4">R$ 15.000,00</td>
+                            <td class="col-sm-2">100</td>
+                          </tr>
+                          <tr class="col-xl-12 row row-table">
+                            <td class="col-sm-1">02186</td>
+                            <td class="col-sm-5">Bar do Nego</td>
+                            <td class="col-sm-4">R$ 15.000,00</td>
+                            <td class="col-sm-2">100</td>
+                          </tr>
+                          <tr class="col-xl-12 row row-table">
+                            <td class="col-sm-1">02186</td>
+                            <td class="col-sm-5">Bar do Nego</td>
+                            <td class="col-sm-4">R$ 15.000,00</td>
+                            <td class="col-sm-2">100</td>
+                          </tr>
+                          <tr class="col-xl-12 row row-table">
+                            <td class="col-sm-1">02186</td>
+                            <td class="col-sm-5">Bar do Nego</td>
+                            <td class="col-sm-4">R$ 15.000,00</td>
+                            <td class="col-sm-2">100</td>
+                          </tr>
+                          <tr class="col-xl-12 row row-table">
+                            <td class="col-sm-1">02186</td>
+                            <td class="col-sm-5">Bar do Nego</td>
+                            <td class="col-sm-4">R$ 15.000,00</td>
+                            <td class="col-sm-2">100</td>
+                          </tr>
+                          <tr class="col-xl-12 row row-table">
+                            <td class="col-sm-1">02186</td>
+                            <td class="col-sm-5">Bar do Nego</td>
+                            <td class="col-sm-4">R$ 15.000,00</td>
+                            <td class="col-sm-2">100</td>
+                          </tr>
+                          <tr class="col-xl-12 row row-table">
+                            <td class="col-sm-1">02186</td>
+                            <td class="col-sm-5">Bar do Nego</td>
+                            <td class="col-sm-4">R$ 15.000,00</td>
+                            <td class="col-sm-2">100</td>
+                          </tr>
+                          <tr class="col-xl-12 row row-table">
+                            <td class="col-sm-1">02186</td>
+                            <td class="col-sm-5">Bar do Nego</td>
+                            <td class="col-sm-4">R$ 15.000,00</td>
+                            <td class="col-sm-2">100</td>
+                          </tr>
+                          <tr class="col-xl-12 row row-table">
+                            <td class="col-sm-1">02186</td>
+                            <td class="col-sm-5">Bar do Nego</td>
+                            <td class="col-sm-4">R$ 15.000,00</td>
+                            <td class="col-sm-2">100</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}

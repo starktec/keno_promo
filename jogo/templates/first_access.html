@@ -1,0 +1,235 @@
+{% extends "index.html" %}
+{% block titulo %}
+VENDEDORES
+{% endblock %}
+{% block nav-bar %}
+
+<div class="row justify-content-center">
+  <div class="col-lg-10">
+    <div class="card crud-bar">
+      <form class="row justify-content-center align-items-center form-group">
+
+        <div class="row col-12 header-first-access">
+          <div id="block-title-one" class="col-md-6 container-item-selecionado">
+            <h1 id="title-one" class="title-item">Cadastro de Franquia</h1>
+          </div>
+          <div id="block-title-two" class="col-md-6 container-item">
+            <h1 id="title-two" class="title-item">Cadastro de Gerencia</h1>
+          </div>
+        </div>
+
+        <div id="body-first-access-one" class="row col-12 body-first-access">
+          <div class="row col-12 body-first-access">
+            <div class="col-lg-6 col-sm-6 container-input-create">
+              <div class="form-group">
+                <div class="form-control-wrap">
+                    {{ form.franquia }}
+                    <label class="form-label-outlined background-label-access" for="id_nome_sorteio">Franquia</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-6 col-sm-6 container-input-create">
+              <div class="form-group">
+                <div class="form-control-wrap">
+                    {{ form.localidade }}
+                    <label class="form-label-outlined background-label-access" for="id_nome_sorteio">Localidade</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row col-12 body-first-access">
+            <div class="col-12 container-input-create">
+              <div><h4 class="subtitle-item">Dono da Franquia</h4></div>
+            </div>
+            <div class="col-lg-6 col-sm-6 container-input-create">
+              <div class="form-group">
+                <div class="form-control-wrap">
+                    {{ form.nome_dono }}
+                    <label class="form-label-outlined background-label-access" for="id_nome_sorteio">Nome</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-6 col-sm-6 container-input-create">
+              <div class="form-group">
+                <div class="form-control-wrap">
+                    {{ form.login }}
+                    <label class="form-label-outlined background-label-access" for="id_nome_sorteio">Login</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-6 col-sm-6 container-input-create">
+              <div class="form-group">
+                <div class="form-control-wrap">
+                    {{ form.senha }}
+                    <label class="form-label-outlined background-label-access" for="id_nome_sorteio">Senha</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-6 col-sm-6 container-input-create">
+              <div class="form-group">
+                <div class="form-control-wrap">
+                    {{ form.confirmar_senha }}
+                    <label class="form-label-outlined background-label-access" for="id_nome_sorteio">Confirmar Senha</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="row justify-content-end col-12 body-first-access">
+            <div class="row justify-content-end col-lg-6 col-sm-6 container-input-create">
+              <div class="form-group">
+                <div class="form-control-wrap">
+                  <button type="button" id="btn-next" class="btn btn-success btn-create-secondary">Proximo</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+
+        <div id="body-first-access-two" class="row col-12 body-first-access">
+          <div class="row col-12 body-first-access">
+            <div class="col-12 container-input-create">
+              <div class="col-12 container-aviso text-center">
+                <p class="aviso">
+                A gerência criada receberá os dados da nova franquia 
+                inserida na etapa anterior. E para a conclusão do 
+                cadastro é necessario apenas o cadastramento de um 
+                gerente e de um leiturista para está gerência.
+                </p>
+              </div>
+            </div>
+            <div class="col-12 container-input-create">
+              <div><h4 class="subtitle-item">Gerente da Gerência</h4></div>
+            </div>
+            <div class="col-lg-6 col-sm-6 container-input-create">
+              <div class="form-group">
+                <div class="form-control-wrap">
+                    {{ form.gerente_nome }}
+                    <label class="form-label-outlined background-label-access" for="id_nome_sorteio">Nome</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-6 col-sm-6 container-input-create">
+              <div class="form-group">
+                <div class="form-control-wrap">
+                    {{ form.gerente_login }}
+                    <label class="form-label-outlined background-label-access" for="id_nome_sorteio">Login</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-6 col-sm-6 container-input-create">
+              <div class="form-group">
+                <div class="form-control-wrap">
+                    {{ form.gerente_senha }}
+                    <label class="form-label-outlined background-label-access" for="id_nome_sorteio">Senha</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-6 col-sm-6 container-input-create">
+              <div class="form-group">
+                <div class="form-control-wrap">
+                    {{ form.gerente_confirmar_senha }}
+                    <label class="form-label-outlined background-label-access" for="id_nome_sorteio">Confirmar Senha</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 container-input-create">
+              <div><h4 class="subtitle-item">Leiturista da Gerência</h4></div>
+            </div>
+
+            <div class="col-lg-6 col-sm-6 container-input-create">
+              <div class="form-group">
+                <div class="form-control-wrap">
+                    {{ form.leiturista_nome }}
+                    <label class="form-label-outlined background-label-access" for="id_nome_sorteio">Nome</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-6 col-sm-6 container-input-create">
+              <div class="form-group">
+                <div class="form-control-wrap">
+                    {{ form.leiturista_login }}
+                    <label class="form-label-outlined background-label-access" for="id_nome_sorteio">Login</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-6 col-sm-6 container-input-create">
+              <div class="form-group">
+                <div class="form-control-wrap">
+                    {{ form.leiturista_senha }}
+                    <label class="form-label-outlined background-label-access" for="id_nome_sorteio">Senha</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-6 col-sm-6 container-input-create">
+              <div class="form-group">
+                <div class="form-control-wrap">
+                    {{ form.leiturista_confirmar_senha }}
+                    <label class="form-label-outlined background-label-access" for="id_nome_sorteio">Confirmar Senha</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6 box-card-input">
+              <div class="row col-md-12 card-input padding-top-botton">
+                  {% if configuracao.favicon %}
+                  <div class="col-4 col-lg-4 col-sm-4 container-img-conf">
+                      <img src="{{ configuracao.favicon.url }}">
+                  </div>
+                  {% else %}
+                  <div class="col-4 col-lg-4 col-sm-4 container-img-conf">
+
+                  </div>
+                  {% endif %}
+                  <div class="row col-8 col-lg-8 col-sm-8 padding-zero conatiner-img-input">
+                      <h4 class="conf-img-title col-12">Logo Favicon</h4>
+                      <div class="d-flex col-12 col-sm-12">
+                          {{ form.favicon }}
+                          <div class="col-9 col-9 name_logo" id="name_favicon"></div>
+                          <button type="button" id="btn_favicon" class="col-3 btn btn_logo"><em class="icon ni ni-arrow-to-up"></em></button>
+                      </div>
+                  </div>
+              </div>
+            </div>
+
+          </div>
+          
+          <div class="row justify-content-end col-12 body-first-access">
+            <div class="row justify-content-start col-lg-6 col-sm-6 container-input-create">
+              <div class="form-group">
+                <div class="form-control-wrap">
+                  <button type="button" id="btn-return" class="btn btn-danger btn-create-secondary">Voltar</button>
+                </div>
+              </div>
+            </div>
+            <div class="row justify-content-end col-lg-6 col-sm-6 container-input-create">
+              <div class="form-group">
+                <div class="form-control-wrap">
+                  <button id="btn-enviar" class="btn btn-success btn-create-secondary">Enviar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="/static/script/first_access.js"></script>
+
+{% endblock %}

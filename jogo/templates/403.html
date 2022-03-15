@@ -1,0 +1,25 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Super Sorte | Painel Administrativo</title>
+  <link rel="shortcut icon" href="{% static 'favicon.png' %}"/>
+  <link rel="stylesheet" href="/static/error.css">
+</head>
+<body>
+  <div class="container">
+    <div class="container-error">
+      <h1 class="title">Oops!</h1>
+      <h2 class="sub-title">403 - Error</h2>
+      <p class="paragrafo">Acesso negado!</p>
+      <p class="sub-paragrafo">Seu perfil não tem permição para acessar essa pagina...</p>
+    </div>
+    <div class="container-icon">
+      <img class="icon-error" src="/static/Icone_Erro_-_404.svg" alt="">
+    </div>
+  </div>
+</body>
+</html>

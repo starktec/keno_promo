@@ -1,0 +1,476 @@
+{% extends "index.html" %}
+{% block titulo %}
+EDITAR ESTABELECIMENTO
+{% endblock %}
+{% block nav-bar %}
+
+
+<div class="modal fade" id="modalErro" tabindex="-1" id="modalAlert2" aria-modal="true" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body modal-body-lg text-center modal-padding-alert">
+                <div class="nk-modal">
+                    <em class="nk-modal-icon icon icon-circle icon-circle-xxl ni ni-cross bg-danger"></em>
+                    <h4 class="nk-modal-title text-bold">Erro!</h4>
+                    <div class="nk-modal-text">
+                        <p class="lead text-bold">Este gerente não esta incluso em nenhuma gerência. Por favor incluí lo 
+                            ou contactar suporte técnico.</p>
+                    </div>
+                    <div class="nk-modal-action mt-5">
+                        <button class="btn btn-lg btn-mw btn-light btn-create-secondary" data-dismiss="modal">Fechar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div class="row my-row">
+        <div class="col-12">
+            <div class="card card-estabelecimento">
+              <div class="row">
+
+                <div class="row col-12">
+                  <div class="col-2">
+                    {% if estabelecimento.logo %}
+                    <img class="logobar" src="{{ estabelecimento.logo.url }}" alt="">
+                    {% else %}
+                    <img class="logobar" src="/static/Super_Sorte.jpeg" alt="">
+                    {% endif %}
+                  </div>
+                  <div class="col-8 header-estab">
+                    <h1 class="title">{{ estabelecimento }}</h1>
+                    <h2 class="sub-title">{{ estabelecimento.dono }}</h2>
+                     <p>
+                         {% if estabelecimento.ativo %}
+                        <a href="/estabelecimento/{{ estabelecimento.id }}/status/"
+                           class="btn btn-danger btn-create-secondary">Desativar</a>
+                        {% else %}
+                        <a href="/estabelecimento/{{ estabelecimento.id }}/status/"
+                           class="btn btn-success btn-create-secondary">Ativar</a>
+                        {% endif %}
+                     </p>
+                  </div>
+                </div>
+
+                <div class="col-sm-6 col-md-6 col-lg-4 content-information">
+                  <h3 class="title">CNPJ</h3>
+                  <h4 class="sub-title">{{ estabelecimento.cnpj }}</h4>
+                </div>
+
+                <div class="col-sm-6 col-md-6 col-lg-8 content-information">
+                  <h3 class="title">Razão Social</h3>
+                  <h4 class="sub-title">{{ estabelecimento.razao_social }}</h4>
+                </div>
+
+                <div class="col-sm-6 col-md-6 col-lg-4 content-information">
+                  <h3 class="title">Rota</h3>
+                  <h4 class="sub-title">{{ estabelecimento.franquia }}</h4>
+                </div>
+
+                <div class="col-sm-6 col-md-6 col-lg-4 content-information">
+                  <h3 class="title">Telefone</h3>
+                  <h4 class="sub-title">{{ estabelecimento.telefone }}</h4>
+                </div>
+
+                <div class="col-sm-6 col-md-6 col-lg-4 content-information">
+                  <h3 class="title">Email</h3>
+                  <h4 class="sub-title">{{ estabelecimento.email }}</h4>
+                </div>
+
+                <div class="col-sm-6 col-md-6 col-lg-4 content-information">
+                  <h3 class="title">Endereço</h3>
+                  <h4 class="sub-title">{{ estabelecimento.endereco }}</h4>
+                </div>
+
+                <div class="col-sm-6 col-md-6 col-lg-8 content-information">
+                  <h3 class="title">Bairro</h3>
+                  <h4 class="sub-title">{{ estabelecimento.endereco_bairro }}</h4>
+                </div>
+
+                <div class="col-sm-6 col-md-6 col-lg-4 content-information">
+                  <h3 class="title">Numero</h3>
+                  <h4 class="sub-title">{{ estabelecimento.endereco_num }}</h4>
+                </div>
+
+                <div class="col-sm-6 col-md-6 col-lg-4 content-information">
+                  <h3 class="title">Cidade</h3>
+                  <h4 class="sub-title">{{ estabelecimento.endereco_cidade }}</h4>
+                </div>
+
+                <div class="col-sm-6 col-md-6 col-lg-4 content-information">
+                  <h3 class="title">Estado</h3>
+                  <h4 class="sub-title">{{ estabelecimento.endereco_estado }}</h4>
+                </div>
+
+                <div class="col-6 row justify-content-start content-information">
+                    <a href="/estabelecimentos/" class="btn btn-danger btn-create-secondary">Voltar</a>
+                </div>
+                {% if estabelecimento.ativo %}
+                <div class="col-6 row justify-content-end content-information">
+                    <a href="/estabelecimento/{{ estabelecimento.id }}/details/" class="btn btn-success btn-create-secondary">
+                        <em class="icon ni ni-pen-fill icon-right"></em>
+                        <p>Editar</p>
+                    </a>
+                </div>
+                {%endif%}
+
+              </div>
+            </div>
+        </div>
+    </div>
+    {% if estabelecimento.ativo %}
+    <!--------------- GERENCIAS ---------------------->
+    {% if perfil < 5%}
+    <div class="row my-row">
+        <div class="col-12">
+            <div class="card table-margin-top table-margin table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col" colspan="4"><h6>Gerentes do {{ estabelecimento }}</h6></th>
+                        </tr>
+                    </thead>
+                    <thead class="thead-dark text-center">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Nome</th>
+                            <th scope="col">Login</th>
+                            <th scope="col">Função atual</th>
+                            <th scope="col">Gerencia</th>
+                            <th scope="col">Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-center">
+                    {% for atual,gerencia in gerentes_atuais %}
+                        <tr>
+                            <td>{{ atual.id }}</td>
+                            <td>{{ atual }}</td>
+                            <td>{{ atual.usuario.username }}</td>
+                            <td>GERENTE </td>
+                            <td>{{ gerencia }}</td>
+                            <td><a href="/estabelecimento/{{ estabelecimento.id }}/{{ gerencia.id }}/2/" class="btn btn-danger btn-create-secondary">Retirar</a></td>
+                        </tr>
+                    {% endfor %}
+                    {% for gerencia ,g in gerentes %}
+                        {% if g %}
+                        <tr>
+                            <td>{{ g.id }}</td>
+                            <td>{{ g }}</td>
+                            <td>{{ g.usuario.username }}</td>
+                            <td></td>
+                            <td>{{gerencia}}</td>
+                            <td class="text-center">
+                                <a href="/estabelecimento/{{ estabelecimento.id }}/{{ gerencia.id }}/1/" class="btn btn-success btn-create-secondary">
+                                    <p>Incluir</p>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endif %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {%endif%}
+
+    <!-------------------------------------Leiturista-------------------------------------->
+    <div class="row my-row">
+        <div class="col-12">
+            <div class="card table-margin-top table-margin table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col" colspan="3"><h6>Leiturista do {{ estabelecimento }}</h6></th>   
+                            <th scope="col" colspan="2" class="text-right"><a href="/estabelecimento/{{ estabelecimento.id }}/leiturista/9999/1/" class="btn btn-success btn-create-secondary">Incluir todos os leituristas</a></th>
+                        </tr>
+                    </thead>
+                    <thead class="thead-dark text-center">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Nome</th>
+                            <th scope="col">Login</th>
+                            <th scope="col">Função atual</th>
+                            <th scope="col">Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-center">
+                    {% for l in leituristas_atuais %}
+                        <tr>
+                            <td>{{ l.id }}</td>
+                            <td>{{ l }}</td>
+                            <td>{{ l.usuario.username }}</td>
+                            <td>LEITURISTA</td>
+                            <td><a href="/estabelecimento/{{ estabelecimento.id }}/leiturista/{{ l.id }}/2/" class="btn btn-danger btn-create-secondary">Retirar</a></td>
+                        </tr>
+                    {% endfor %}
+                    {% for l in leituristas %}
+                        <tr>
+                            <td>{{ l.id }}</td>
+                            <td>{{ l }}</td>
+                            <td>{{ l.usuario.username }}</td>
+                            <td></td>
+                            <td class="text-center">
+                                <a href="/estabelecimento/{{ estabelecimento.id }}/leiturista/{{ l.id }}/1/" class="btn btn-success btn-create-secondary">
+                                    <p>Incluir</p>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!---------------------Equipamentos---------------------->
+    <div class="row my-row">
+        <div class="col-12">
+            <div class="card card-btn">
+                <div class="container-between row">
+                    <div class="col-6 card-btn-div"> 
+                        <h6 class="nk-block-title">Aparelhos do {{ estabelecimento }}</h6>
+                    </div>
+                    <div class="col-6 card-btn-div container-end">
+                        <button id="btn-tv" class="btn btn-success btn-create-secondary" data-toggle="modal" data-target="#modal-equipamento">
+                            <em class="icon ni ni-plus icon-right"></em>
+                            <p>Novo</p>
+                        </button>
+                        <!---------------------------Modal---------------------------->
+                        <div class="modal fade" tabindex="-1" id="modal-equipamento">
+                            <div class="modal-dialog modal-lg" role="document">
+                                <div class="modal-content">
+                                    <a href="#" class="close" data-dismiss="modal" aria-label="Close">
+                                        <em class="icon ni ni-cross"></em>
+                                    </a>
+
+                                    <div class="alert alert-fill alert-secondary alert-icon header-modal">
+                                        <em class="icon ni ni-pen-fill"></em>
+                                        <h6>Adicionar Equipamento</h6>
+                                    </div>
+
+                                    <form class="modal-body" method="post" id="form1">{% csrf_token %}
+
+                                        <div class="form-group" action="" method="post">
+                                            <div class="row container-form-modal">
+
+                                                <div class="col-lg-6 col-sm-6 container-input-create">
+                                                    <div class="form-group">
+                                                        <div class="form-control-wrap">
+                                                            {{ formTvAdd.tipo }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-lg-6 col-sm-12 container-input-create">
+                                                    <div class="form-control-wrap">
+                                                        {{ formTvAdd.android_id }}
+                                                        <label class="form-label-outlined" for="id_android_id">ID</label>
+                                                    </div>
+                                                    {% if formTvAdd.android_id.errors %}
+                                                        <div class="error-campo">
+                                                        {{ formTvAdd.android_id.errors }}
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+
+                                                <div class="col-lg-12 col-sm-6 container-input-create">
+                                                    <div class="form-control-wrap">
+                                                        {{ formTvAdd.descricao }}
+                                                        <label class="form-label-outlined" for="id_tv-descricao">Descrição</label>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
+
+                                        <div class=" row justify-content-end col-12 container-input-create">
+                                            <div class="form-control-wrap">
+                                                <button type="submit" form='form1' class="col-12 col-sm-12 col-md-12 col-lg-12 btn btn-lg btn-primary btn-search btn-success">
+                                                    salvar
+                                                </button>
+
+                                            </div>
+                                        </div>
+
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <!---------------------------------------------------------------->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row my-row">
+        <div class="col-12">
+            <div class="card table-responsive-xl table-margin">
+                <table class="table table-equipamentos">
+                    <thead class="thead-dark text-center">
+                        <tr>
+                        <th scope="col">tipo</th>
+                        <th scope="col">Android ID</th>
+                        <th scope="col">online</th>
+                        <th scope="col">Ativo</th>
+                        <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-center">
+                    {% for tv in tvs %}
+                        <tr>
+                            <td>{{ tv.get_tipo_display }}</td>
+                            <td>{{ tv.android_id }}</td>
+                            <td>
+                                {% if tv.online %}
+                                <p class="tb-status text-success">online</p>
+                                {% else %}
+                                <p class="tb-status text-danger">offline</p>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if tv.ativo %}
+                                <a href="/equipamento/{{ estabelecimento.id }}/{{ tv.id }}/status/"
+                                    class="btn btn-success btn-create-secondary">Desativar</a>
+                                {% else %}
+                                <a href="/equipamento/{{ estabelecimento.id }}/{{ tv.id }}/status/"
+                                    class="btn btn-danger btn-create-secondary">Ativar</a>
+                                {% endif %}
+                            </td>
+
+                            <td class="text-center">
+                                <a href="/equipamento/edit/{{ estabelecimento.id }}/{{ tv.id }}/" class="btn btn-success btn-create-secondary">
+                                    <em class="icon ni ni-pen-fill"></em>
+                                    <p>Editar</p>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    </table>
+
+            </div>
+        </div>
+    </div>
+    <!------------------------------------------------------>
+
+    <!---------------------POS---------------------->
+    <div class="row my-row">
+        <div class="col-12">
+            <div class="card card-btn">
+                <div class="container-between row">
+                    <div class="col-6 card-btn-div">
+                        <h6 class="nk-block-title">POS do {{ estabelecimento }}</h6>
+                    </div>
+                    <div class="col-6 card-btn-div container-end">
+                        <a href="/pos/add/{{ estabelecimento.id }}/" class="btn btn-success btn-create-secondary">
+                            <em class="icon ni ni-plus icon-right"></em>
+                            <p>Novo</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row my-row">
+            <div class="col-12">
+                <div class="card table-responsive-xl table-margin">
+                    <table class="table table-equipamentos">
+                        <thead class="thead-dark text-center">
+                          <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Nome</th>
+                            <th scope="col">Fabricante</th>
+                            <th scope="col">online</th>
+                            <th scope="col">Mac address</th>
+                            <th scope="col">Ativo</th>
+                            <th scope="col">Vendedor</th>
+                            <th scope="col"></th>
+                          </tr>
+                        </thead>
+                        <tbody class="text-center">
+                        {% for pdv in pdvs %}
+
+                            <tr>
+                                <td>{{ pdv.id }}</td>
+                                <td>{{ pdv }}</td>
+                                <td>{{ pdv.fabricante }}</td>
+                                <td>{% if pdv.online %}online{% else %}offline{% endif %}</td>
+                                <td>{{ pdv.mac_address }}</td>
+                                <td>
+                                    {% if pdv.ativo %}
+                                    <a href="/pos/{{ estabelecimento.id }}/{{ pdv.id }}/status/"
+                                       class="btn btn-success btn-create-secondary">Desativar</a>
+                                    {% else %}
+                                    <a href="/pos/{{ estabelecimento.id }}/{{ pdv.id }}/status/"
+                                       class="btn btn-danger btn-create-secondary">Ativar</a>
+                                    {% endif %}
+                                </td>
+                                <td>{% if pdv.vendedor %}{{ pdv.vendedor }}{% endif %}</td>
+                                <td class="text-center">
+                                    <a href="/pos/edit/{{ estabelecimento.id }}/{{ pdv.id }}/" class="btn btn-success btn-create-secondary">
+                                        <em class="icon ni ni-pen-fill icon-right "></em>
+                                        <p>Editar</p>
+                                    </a>
+                                </td>
+
+                            </tr>
+                        {% endfor %}
+                        {% for pdv in pdvs_livres %}
+
+                            <tr>
+                                <td>{{ pdv.id }}</td>
+                                <td>{{ pdv }}</td>
+                                <td>{{ pdv.fabricante }}</td>
+                                <td>{{ pdv.modelo }}</td>
+                                <td>{{ pdv.mac_address }}</td>
+                                <td>
+                                    <td>
+                                    {% if pdv.ativo %}
+                                    <a href="/pos/{{ estabelecimento.id }}/{{ pdv.id }}/status/"
+                                       class="btn btn-success btn-create-secondary">Desativar</a>
+                                    {% else %}
+                                    <a href="/pos/{{ estabelecimento.id }}/{{ pdv.id }}/status/"
+                                       class="btn btn-danger btn-create-secondary">Ativar</a>
+                                    {% endif %}
+                                </td>
+                                </td>
+                                <td>{{ pdv.vendedor }}
+                                <td class="text-center">
+                                    <a href="/pos/{{ estabelecimento.id }}/{{ pdv.id }}/vinculo/" class="btn btn-success">Vincular</a>
+                                </td>
+
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                      </table>
+
+                </div>
+            </div>
+        </div>
+    <!---------------------------------------------->
+    {%endif%}
+    <script>
+    $( document ).ready(function() {
+        let modal = $('#modalErro');
+        const params = new URLSearchParams(window.location.search)
+        console.log(params.get('erro'))
+        if (params.get('erro') == 1){
+            $('#modalErro').modal('show');
+        }
+        
+    });
+    $( () => {
+        const error = {% if formTvAdd.mac_address.errors %} true {% else %} false {% endif %};
+        const btnTv = $('#btn-tv');
+        if (error) {
+            btnTv.trigger('click');
+        }
+    })
+    </script>
+{% endblock %}

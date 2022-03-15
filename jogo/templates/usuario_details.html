@@ -1,0 +1,84 @@
+{% extends "nav-bar.html" %}
+{% block titulo %}
+{% endblock %}
+{% block nav-bar %}
+<div class="row my-row">
+    <div class="col-12">
+        <div class="card card-estabelecimento">
+          <div class="row">
+
+            <div class="row col-12">
+              <div class="col-12 header-estab">
+                <h1 class="title">{{ usuario_obj.usuario.first_name }}</h1>
+                <h2 class="sub-title">{{usuario_obj.perfis.all|join:", "}}</h2>
+              </div>
+            </div>
+
+            <div class="col-sm-6 col-md-6 col-lg-4 content-information">
+              <h3 class="title">CPF</h3>
+              <h4 class="sub-title">{{usuario_obj.cpf}}</h4>
+            </div>
+
+            <div class="col-sm-6 col-md-6 col-lg-4 content-information">
+              <h3 class="title">RG</h3>
+              <h4 class="sub-title">{{usuario_obj.cpf}}</h4>
+            </div>
+
+            <div class="col-sm-6 col-md-6 col-lg-4 content-information">
+              <h3 class="title">Telefone</h3>
+              <h4 class="sub-title">{{usuario_obj.fone}}</h4>
+            </div>
+
+            <div class="col-sm-6 col-md-6 col-lg-4 content-information">
+              <h3 class="title">Email</h3>
+              <h4 class="sub-title">{{usuario.email}}</h4>
+            </div>
+
+            <div class="col-sm-6 col-md-6 col-lg-8 content-information">
+              <h3 class="title">Franquias</h3>
+              <h4 class="sub-title">{{usuario_obj.franquias.all|join:", "}}</h4>
+            </div>
+
+            <div class="col-sm-6 col-md-6 col-lg-4 content-information">
+              <h3 class="title">Endereço</h3>
+              <h4 class="sub-title">{{usuario_obj.endereco}}</h4>
+            </div>
+
+            <div class="col-sm-6 col-md-6 col-lg-4 content-information">
+              <h3 class="title">Bairro</h3>
+              <h4 class="sub-title">{{usuario_obj.endereco_bairro}}</h4>
+            </div>
+
+            <div class="col-sm-6 col-md-6 col-lg-4 content-information">
+              <h3 class="title">Numero</h3>
+              <h4 class="sub-title">{{usuario_obj.endereco_num}}</h4>
+            </div>
+
+            <div class="col-sm-6 col-md-6 col-lg-4 content-information">
+              <h3 class="title">Cidade</h3>
+              <h4 class="sub-title">{{usuario_obj.endereco_cidade}}</h4>
+            </div>
+
+            <div class="col-sm-6 col-md-6 col-lg-4 content-information">
+              <h3 class="title">Estado</h3>
+              <h4 class="sub-title">{{usuario_obj.endereco_estado}}</h4>
+            </div>
+
+            <div class="col-12 row justify-content-between content-information">
+              <a href="/usuarios/" class="btn btn-danger btn-create-secondary">
+                <em class="icon ni ni-chevron-left-round-fill"></em>
+                <p>Voltar</p>
+              </a>
+              <a href="/usuario/{{ usuario_obj.id }}/" class="btn btn-success btn-create-secondary">
+                <em class="icon ni ni-pen-fill"></em>
+                <p>Editar</p>
+              </a>
+            </div>
+
+          </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+

@@ -1,0 +1,116 @@
+{% extends "index.html" %}
+
+{% block nav-bar %}
+<!-------------------------------barra de pesquisa-------------------------------->
+<div class="row">
+    <div class="col-12">
+        <div class="card crud-bar row justify-content-center">
+            <form method="post" class="row row-form container-crud justify-content-center align-items-center form-group" id="form1">
+                {% csrf_token %}
+
+                <div class="col-12 row justify-content-center row-search row-search-primary">
+                    <div class="col-lg-5 col-md-5 col-sm-6 container-input-create-secundary">
+                        <div class="form-group">
+                            <div class="form-control-wrap">
+                                <div class="form-control-wrap">
+                                    {{ form.nome }}
+                                    <label class="form-label-outlined"  for="id_nome">Nome</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-5 col-md-5 col-sm-6 container-input-create-secundary">
+                        <div class="form-group">
+                            <div class="form-control-wrap">
+                                <div class="form-control-wrap">
+                                    {{ form.login }}
+                                    <label class="form-label-outlined" for="id_login">Login</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-sm-12 col-md-2 col-lg-2 col-xl-2 container-input-search text-right form-group">
+                        <button type="submit" class="col-3 col-sm-2 col-md-12 col-lg-12 justify-content-center btn btn-success btn-search form-control-lg">
+                            <em class="icon ni ni-search"></em>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 row container-btn-create">
+                    <a href="/usuario/add/?add=1" class="btn btn-lg text-right btn-success btn-create">
+                        <em class="icon ni ni-plus"></em>
+                        <p>Cadastrar Usuário</p>
+                    </a>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+<!-------------------------------------------------------------------------------->
+
+<!-------------------------------tabela de usuarios-------------------------------->
+<div class="row my-row">
+    <div class="col-12">
+        <div class="card table-responsive-xl overflow-auto">
+            <table id="tabelaUsuarios" class="table position-relative table-content">
+                <thead class="thead-dark text-center thead-content">
+                    <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Nome</th>
+                    <th scope="col">Login</th>
+                    <th scope="col">Franquias</th>
+                    <th scope="col">Perfis</th>
+                    <th scope="col">Ativo</th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody class="text-center tbody-content">
+                {% for u in usuarios %}
+                    <tr>
+                        <th scope="row">{{ u.id }}</th>
+                        <td>{{ u }}</td>
+                        <td>{{ u.usuario.username }}</td>
+                        <td>{{ u.franquias.all|join:", "}}</td>
+                        <td>{{ u.perfis.all|join:", " }}</td>
+                        <td>{% if u.ativo %}Sim{% else %}Não{% endif %}</td>
+                        <td class="text-center">
+                            <a href="/usuario/details/{{ u.id }}/" class="btn btn-success btn-create-secondary">
+                                <em class="icon ni ni-eye-fill"></em>
+                                <p>Visualizar</p>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="/user/{{ u.id }}/status/"
+                                class="btn {% if u.ativo %}btn-danger{% else %}btn-success{% endif %} btn-create-secondary btn-tamanho-fixed">
+                                <p>{% if u.ativo %}Desativar{% else %}Ativar{% endif %}</p>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                </table>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready( function () {
+        $('#tabelaUsuarios').DataTable({
+            "language": {
+                "url":"https://cdn.datatables.net/plug-ins/1.10.24/i18n/Portuguese-Brasil.json",
+            },
+            "dom": '',
+            columnDefs: [
+                { orderable: false, targets: 5 }
+            ],
+            paging: false  
+        });
+                
+    } );
+</script>
+{% endblock %}

@@ -1,0 +1,412 @@
+{% extends "index.html" %}
+{% block titulo %}
+REPLAY
+{% endblock %}
+{% block nav-bar %}
+<!-------------------------------barra de pesquisa------------------------------->
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card crud-bar">
+            <div class="row justify-content-center align-items-center form-group">
+                <form class="col-xs-12 col-sm-12 col-md-12 col-xl-12 row justify-content-start"
+                method="get" id = "form1" >
+                    <div class="col-xl-3 col-lg-4 col-md-4 col-sm-6">
+                        <div class="form-group">
+                            <div class="form-control-wrap">
+                                <input type="number" id="id_sorteio" name="sorteio" class="form-control form-control-lg form-control-outlined input-search-financeiro">
+                                <label class="form-label-outlined label-search" for="id_sorteio">Sorteio</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-12 col-md-1 col-lg-1 col-xl-1 container-input-search form-group">
+                        <button class="col-3 col-sm-2 col-md-12 col-lg-12 col-xl-12 justify-content-center btn btn-success btn-search form-control-lg">
+                            <em class="icon ni ni-search"></em>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!------------------------------------------------------------------------------->
+
+<!-------------------------------modal------------------------------->
+<div class="modal fade show modal-aviso" tabindex="-1" id="modalAlert" aria-modal="true" role="dialog">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-body modal-body-lg text-center">
+                <div class="nk-modal">
+                    <em class="nk-modal-icon icon icon-circle icon-circle-xxl ni ni-check bg-success"></em>
+                    <h4 class="nk-modal-title">Replay Enviado</h4>
+                </div>
+            </div><!-- .modal-body -->
+        </div>
+    </div>
+</div>
+<!------------------------------------------------------------------->
+
+<!-------------------------------tabela de generica de cambistas------------------------------->
+<div class="row my-row">
+    <div class="col-md-12">
+        <div class="row card col-md-12 container-card justify-content-center container-center container-tabs">
+            <nav class="col-12 tab">
+                <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                  <button class="nav-link active-tabs-table tabs-margin" id="replay" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Replay</button>
+                  <button class="nav-link deactivate-tabs-table tabs-margin" id="replay-historico" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Historico de replay</button>
+                </div>
+            </nav>
+        </div>
+    </div>
+    <div class="col-12 container-replay">
+        <div class="card table-card table-responsive-xl overflow-auto container-table-tabs">
+            <table id="tabelaReplay" class="table position-relative table-content container-table-tabs">
+                <thead class="thead-dark text-center radius-zero">
+                    <tr>
+                    <th class="radius-zero" scope="col">Sorteio</th>
+                    <th scope="col">Nome</th>
+                    <th scope="col">Franquia</th>
+                    <th scope="col">Data</th>
+                    <th scope="col">Ant.</th>
+                    <th scope="col">Dia</th>
+                    <th scope="col">Kuadra</th>
+                    <th scope="col">Kina</th>
+                    <th scope="col">Keno</th>
+                    <th class="radius-zero" scope="col"></th>
+                    </tr>
+                </thead>
+                    <tbody class="text-center">
+                        {% for p in partidas %}
+                        <tr>
+                            <th scope="row">{{ p.id }}</th>
+                            <td>{{ p.nome_sorteio }}</td>
+                            <td>{{ p.franquias.all|join:"," }}</td>
+                            <td>{{ p.data_partida|date:"SHORT_DATETIME_FORMAT" }}</td>
+                            <td>{{ p.valor_antecipado }}</td>
+                            <td>{{ p.valor_cartela }}</td>
+                            <td>{{ p.valor_kuadra }}</td>
+                            <td>{{ p.valor_kina }}</td>
+                            <td>{{ p.valor_keno }}</td>
+                            <td class="text-center">
+                                <a href="#" class="btn btn-success btn-create-secondary" data-toggle="modal" data-target="#modal_replay_{{ p.id }}">
+                                    <em class="icon ni ni-play-circle-fill"></em>
+                                </a>
+                            </td>
+                            <!-------------------modal------------------->
+                            <div class="modal fade" tabindex="-1" id="modal_replay_{{ p.id }}">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content" id="modal-replay">
+                                        <a href="#" class="close" data-dismiss="modal" aria-label="Close">
+                                            <em class="icon ni ni-cross"></em>
+                                        </a>
+
+                                        <div id="container_title_modal" class="alert alert-fill alert-success alert-icon header-modal">
+                                            <em class="icon ni ni-alert-circle"></em>
+                                            <h6 id="title_modal">Selecione os estabelecimentos que podem rodar o replay do sorteio {{ p.id }}</h6>
+                                        </div>
+
+                                        <form class="modal-body-2" method="post">
+                                        {% csrf_token %}
+                                            <input type="hidden" id="sorteio_id" name="sorteio_id" value="{{ p.id }}">
+                                            <div class="form-group" action="" method="post">
+                                                <div class="row container-form-modal">
+
+                                                    <div class="col-lg-12 col-sm-12 row container-input-create">
+                                                        <h6 class="title-check col-6">Estabelecimentos</h6>
+                                                        <div class="col-6 row justify-content-end">
+                                                            <a class="btn btn-success btn-create-secondary btn-checkbox checkbox-all" value="{{ pa.id }}" id="checkbox-all">
+                                                                <em class="icon ni ni-check-round"></em>
+                                                                <p class="checkbox-text">Selecionar todos</p>
+                                                            </a>
+                                                            <a class="btn btn-danger btn-create-secondary btn-checkbox checkbox-none" id="checkbox-none">
+                                                                <em class="icon ni ni-square"></em>
+                                                                <p class="checkbox-text-none">Desmarcar todos</p>
+                                                            </a>
+                                                        </div>
+                                                        {% for e in estabelecimentos %}
+                                                        <div class="col-sm-6 container-check">
+                                                            <div>
+                                                                <input type="checkbox" id="e_{{ e.id }}" name="e_{{ e.id }}" class="select-all-{{ pa.id }}"
+                                                                       {% if e in pa.estabelecimentos.all %}checked{% endif %}>
+                                                            </div>
+                                                            <label for="e{{ e.id }}" class="label-checkbox">{{ e }}</label>
+                                                        </div>
+                                                        {% endfor %}
+                                                        <script>
+                                                            $('.checkbox-all').click(function () {
+                                                                $('.select-all-{{ pa.id }}').attr("checked", true);
+                                                            })
+
+                                                            $('.checkbox-none').click(function () {
+                                                                $('.select-all-{{ pa.id }}').attr("checked", false);
+                                                            })
+
+                                                        </script>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="modal-footer bg-light">
+                                                <div class="row justify-content-between form-group">
+
+                                                    <div class="form-control-wrap">
+                                                        <button type="submit" class="btn btn-modal btn-success" >Salvar</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+        </div>
+    </div>
+    <div class="col-12 container-replay-historico container-table-tabs">
+        <div class="card table-card table-responsive-xl overflow-auto container-table-tabs">
+            <table id="tabelaReplay" class="table position-relative container-table-tabs">
+                <thead class="thead-dark text-center radius-zero">
+                    <tr class="radius-zero">
+
+                        <th class="radius-zero" scope="col">replay</th>
+                        <th scope="col">Sorteio</th>
+                        <th scope="col">Horário da autorização</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Estabelecimentos</th>
+                        <th class="radius-zero" scope="col"></th>
+                    </tr>
+                </thead>
+                    <tbody class="text-center">
+                        {% for r in replays %}
+                        <tr>
+                            <td>{{ r.0.id }}</td>
+                            <td>{{ r.0.partida.id }}</td>
+                            <td>{{ r.0.data_solicitacao }}</td>
+                            {% if r.0.status == 1 %}
+                            <td class="color-iniciado">Aguardando POS</td>
+                            {% else %}
+                            <td class="color-executado">Executado</td>
+                            {% endif %}
+                            <td>
+                                <p class="paragrafo-pdv" data-toggle="modal" data-target="#modal-replay-{{ r.id }}">{{ r.0.estabelecimentos.all.0 }}... <span class="btn btn-primary span-plus"><em class="icon ni ni-arrow-down"></em></span></p>
+                            </td>
+                            <!-------------------------------modal------------------------------->
+                            <div class="modal fade" tabindex="-1" id="modal-replay-{{ r.id }}" style="display: none;" aria-hidden="true">
+                                <div class="modal-dialog modal-md" role="document">
+                                    <div class="modal-content">
+                                        <a href="#" class="close" data-dismiss="modal" aria-label="Close">
+                                            <em class="icon ni ni-cross"></em>
+                                        </a>
+                                        <div class="modal-header modal-header-estabelecimento row">
+                                            <p class="col-sm-6 modal-title">Estabelecimentos</p>
+                                        </div>
+                                        <div class="row modal-body modal-body-estabelecimento">
+                                            <div class="row justify-content-end col-12 content-legenda">
+                                                <p class="container-legenda"><em class="icon ni ni-square-fill-c color-iniciado"></em>Aguardando POS</p>
+                                                <p class="container-legenda"><em class="icon ni ni-square-fill-c color-etapa-2"></em>Aguardando TV</p>
+                                                <p class="container-legenda"><em class="icon ni ni-square-fill-c color-executado"></em>Executado</p>
+                                            </div>
+                                            <ul class="row col-12">
+                                                {% for estabelecimento in r.0.estabelecimentos.all %}
+                                                {% if not r.1.ativador %}
+                                                <li class="col-sm-6"><p class="container-list-estabelecimento">
+                                                    <em class="icon ni ni-square-fill-c color-iniciado"></em>{{ estabelecimento }}</p>
+                                                </li>
+                                                {% elif r.1.ativador %}
+                                                <li class="col-sm-6"><p class="container-list-estabelecimento">
+                                                    <em class="icon ni ni-square-fill-c color-etapa-2"></em>{{ estabelecimento }}</p>
+                                                </li>
+                                                {% elif data_envio_tv %}
+                                                <li class="col-sm-6"><p class="container-list-estabelecimento">
+                                                    <em class="icon ni ni-square-fill-c color-executado"></em>{{ estabelecimento }}</p>
+                                                </li>
+                                                {% endif %}
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!------------------------------------------------------------------->
+                            <td>
+                                <button class="btn btn-success btn-create-secondary" data-toggle="modal" data-target="#modal-replayEdicao-{{ r.id }}">
+                                    <em class="icon ni ni-pen-fill"></em>
+                                </button>
+                            </td>
+                            <!-------------------------------modal------------------------------->
+                            <div class="modal fade" tabindex="-1" id="modal-replayEdicao-{{ r.id }}">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content" id="modal-replay">
+                                        <a href="#modal-replayEdicao-{{ r.id }}" class="close" data-dismiss="modal" aria-label="Close">
+                                            <em class="icon ni ni-cross"></em>
+                                        </a>
+
+                                        <div id="container_title_modal" class="alert alert-fill alert-success alert-icon header-modal">
+                                            <em class="icon ni ni-alert-circle"></em>
+                                            <h6 id="title_modal">Editar replay {{ r.id }}</h6>
+                                        </div>
+
+                                        <form class="modal-body-2" method="post">
+                                        {% csrf_token %}
+                                            <input type="hidden" id="sorteio_id" name="sorteio_id" value="{{ p.id }}">
+                                            <div class="form-group" action="" method="post">
+                                                <div class="row container-form-modal">
+
+                                                    <div class="col-lg-12 col-sm-12 row container-input-create">
+                                                        <h6 class="title-check col-6">Estabelecimentos</h6>
+                                                        <div class="col-6 row justify-content-end">
+                                                            <a class="btn btn-success btn-create-secondary btn-checkbox checkbox-all" value="{{ pa.id }}" id="checkbox-all">
+                                                                <em class="icon ni ni-check-round"></em>
+                                                                <p class="checkbox-text">Selecionar todos</p>
+                                                            </a>
+                                                            <a class="btn btn-danger btn-create-secondary btn-checkbox checkbox-none" id="checkbox-none">
+                                                                <em class="icon ni ni-square"></em>
+                                                                <p class="checkbox-text-none">Desmarcar todos</p>
+                                                            </a>
+                                                        </div>
+                                                        {% for e in estabelecimentos %}
+                                                        <div class="col-sm-6 container-check">
+                                                            <div>
+                                                                <input type="checkbox" id="e_{{ e.id }}" name="e_{{ e.id }}" class="select-all-{{ pa.id }}"
+                                                                       {% if e in pa.estabelecimentos.all %}checked{% endif %}>
+                                                            </div>
+                                                            <label for="e{{ e.id }}" class="label-checkbox">{{ e }}</label>
+                                                        </div>
+                                                        {% endfor %}
+                                                        <script>
+                                                            $('.checkbox-all').click(function () {
+                                                                $('.select-all-{{ pa.id }}').attr("checked", true);
+                                                            })
+
+                                                            $('.checkbox-none').click(function () {
+                                                                $('.select-all-{{ pa.id }}').attr("checked", false);
+                                                            })
+
+                                                        </script>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="modal-footer bg-light">
+                                                <div class="row justify-content-between form-group">
+
+                                                    <div class="form-control-wrap">
+                                                        <button type="submit" class="btn btn-modal btn-success" >Salvar</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <!------------------------------------------------------------------->
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+        </div>
+    </div>
+</div>
+<!-------------------------------------------------------------------------------------------->
+<script>
+    $(document).ready( function () {
+        $('#tabelaReplay').DataTable({
+            "language": {
+                "url":"https://cdn.datatables.net/plug-ins/1.10.24/i18n/Portuguese-Brasil.json",
+            },
+            "dom": '',
+            paging: false  
+        });
+    });
+
+    $(function () {
+        const modelReplay = $('#modal-replay');
+
+        modelReplay.css('display','flex')
+    })
+
+    $(function () {
+        const novoReplay = {% if novo_replay %} true {% else %} false {% endif %};
+        const modalAviso = $('.modal-aviso');
+        if (novoReplay) {
+            modalAviso.css('display','flex')
+            setTimeout(function() { 
+                modalAviso.css('display','none')
+            }, 3000);
+        }
+    })
+
+    /*******************************************/
+
+    $('.checkbox-all').mouseover(function () {
+        const styleAdd= {
+            display:'flex',
+            color:'#ffffff'
+        }
+        let checkboxText = $('.checkbox-text');
+        checkboxText.css(styleAdd);
+    })
+    
+    $('.checkbox-all').mouseout(function () {
+        const styleRemove = {
+            display:'none'
+        }
+        let checkboxText = $('.checkbox-text');
+        checkboxText.css(styleRemove);
+    })
+
+    /*******************************************/
+
+    $('.checkbox-none').mouseover(function () {
+        const styleAdd= {
+            display:'flex',
+            color:'#ffffff'
+        }
+        let checkboxText = $('.checkbox-text-none');
+        checkboxText.css(styleAdd);
+    })
+
+    $('.checkbox-none').mouseout(function () {
+        const styleRemove = {
+            display:'none'
+        }
+        let checkboxText = $('.checkbox-text-none');
+        checkboxText.css(styleRemove);
+    })
+
+    const replay = $('#replay');
+    const replayHistorico = $('#replay-historico');
+
+    const containerReplay = $('.container-replay')
+    const containerReplayHistorico = $('.container-replay-historico')
+
+    $(replay).click(() =>{
+        replay.removeClass('deactivate-tabs-table');
+        replay.addClass('active-tabs-table');
+        containerReplay.css('display','block');
+
+        replayHistorico.addClass('deactivate-tabs-table');
+        replayHistorico.removeClass('active-tabs-table');
+        containerReplayHistorico.css('display','none');
+    })
+
+    $(replayHistorico).click(() =>{
+        replayHistorico.removeClass('deactivate-tabs-table');
+        replayHistorico.addClass('active-tabs-table');
+        containerReplayHistorico.css('display','block');
+
+        replay.addClass('deactivate-tabs-table');
+        replay.removeClass('active-tabs-table');
+        containerReplay.css('display','none');
+    })
+
+</script>
+
+
+
+{% endblock %}

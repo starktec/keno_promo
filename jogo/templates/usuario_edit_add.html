@@ -1,0 +1,324 @@
+{% extends "index.html" %}
+{% block titulo %}
+USUARIO
+{% endblock %}
+{% block nav-bar %}
+<!-------------------------------barra de pesquisa-------------------------------->
+<div class="row">
+    <div class="col-12">
+        <div class="card card-user crud-bar row justify-content-center container-center crud-bar-user">
+            <div class="alert alert-fill alert-secondary alert-icon header-modal crud-bar-user-header">
+                <em class="icon ni ni-pen-fill"></em>
+                <h6>{% if edit %}Editar{% else %}Criar{% endif %} Usuário</h6>
+            </div>
+
+            <form class="form-create-partida row form-group" action="" method="post">{% csrf_token %}
+                {% if form.non_field_errors %}
+                    <div class="alert-personalizado container-error alert-personalizado-sm alert-danger">{{ form.non_field_errors }}</div>
+                {% endif %}
+                {% if form.fraquia.errors %}
+                    <div class="alert-personalizado container-error alert-danger">{{ form.fraquia.errors }}</div>
+                {% endif %}
+
+                <div class="form-group">
+                    <div class="row container-form-modal">
+
+                        {{ form.usuario_id }}
+
+                        <div class="col-lg-6 col-sm-6 container-input-create">
+                            <div class="form-control-wrap">
+                                {{ form.login }}
+                                <label class="form-label-outlined" for="id_login">Login</label>
+                            </div>
+                            {% if form.login.errors %}
+                                <div class="error-campo">
+                                    {{ form.login.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-lg-6 col-sm-6 container-input-create">
+                            <div class="form-control-wrap">
+                                {{ form.nome }}
+                                <label class="form-label-outlined" for="id_nome">Nome</label>
+                            </div>
+                            {% if form.nome.errors %}
+                                <div class="error-campo">
+                                    {{ form.nome.errors }}
+                                </div>
+                                {% endif %}
+                        </div>
+
+                        <div class="col-lg-6 col-sm-6 container-input-create">
+                            <div class="form-control-wrap">
+                                {{ form.senha }}
+                                <label class="form-label-outlined" for="id_senha">Senha</label>
+                            </div>
+                            {% if form.senha.errors %}
+                                <div class="error-campo">
+                                    {{ form.senha.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-lg-6 col-sm-6 container-input-create">
+                            <div class="form-control-wrap">
+                                {{ form.senha_novamente }}
+                                <label class="form-label-outlined" for="id_senha_novamente">Digite Novamente</label>
+                            </div>
+                                {% if form.senha_novamente.errors %}
+                                <div class="error-campo">
+                                    {{ form.senha_novamente.errors }}
+                                </div>
+                                {% endif %}
+                        </div>
+
+                        <!-- <div class="col-lg-6 col-sm-6 container-input-create">
+                            <div class="form-control-wrap">
+                                {{ form.sobrenome }}
+                                <label class="form-label-outlined" for="id_sobrenome">Sobrenome</label>
+                            </div>
+                            {% if form.sobrenome.errors %}
+                                <div class="error-campo">
+                                    {{ form.sobrenome.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-lg-6 col-sm-6 container-input-create">
+                            <div class="form-control-wrap">
+                                {{ form.cpf }}
+                                <label class="form-label-outlined" for="id_cpf">CPF</label>
+                            </div>
+                            {% if form.cpf.errors %}
+                                <div class="error-campo">
+                                    {{ form.cpf.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-lg-6 col-sm-6 container-input-create">
+                            <div class="form-control-wrap">
+                                {{ form.rg }}
+                                <label class="form-label-outlined" for="id_rg">RG</label>
+                            </div>
+                            {% if form.rg.errors %}
+                                <div class="error-campo">
+                                    {{ form.rg.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-lg-12 col-sm-12 container-input-create">
+                            <div class="form-control-wrap">
+                                {{ form.endereco }}
+                                <label class="form-label-outlined" for="id_endereco">Endereço</label>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3 col-sm-3 col-4 container-input-create">
+                            <div class="form-control-wrap">
+                                {{ form.endereco_num }}
+                                <label class="form-label-outlined" for="id_endereco_num">Numero</label>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-9 col-sm-9 col-8 container-input-create">
+                            <div class="form-control-wrap">
+                                {{ form.endereco_complemento }}
+                                <label class="form-label-outlined" for="id_endereco_complemento">Complemento</label>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-8 col-sm-8 col-12 container-input-create">
+                            <div class="form-control-wrap">
+                                {{ form.endereco_bairro }}
+                                <label class="form-label-outlined" for="id_endereco_bairro">Bairro</label>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-sm-4 col-12 container-input-create">
+                            <div class="form-control-wrap">
+                                {{ form.endereco_cidade }}
+                                <label class="form-label-outlined" for="id_endereco_cidade">Cidade</label>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-sm-4 col-6 container-input-create">
+                            <div class="form-control-wrap">
+                                {{ form.endereco_cep }}
+                                <label class="form-label-outlined" for="id_endereco_cep">CEP</label>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-sm-4 col-6 container-input-create">
+                            <div class="form-control-wrap">
+                                {{ form.endereco_estado }}
+                                <label class="form-label-outlined" for="id_endereco_estado">UF</label>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-sm-4 col-12 container-input-create">
+                            <div class="form-control-wrap">
+                                {{ form.fone }}
+                                <label class="form-label-outlined" for="id_fone">Fone</label>
+                            </div>
+                            {% if form.fone.errors %}
+                                <div class="error-campo">
+                                    {{ form.fone.errors }}
+                                </div>
+                            {% endif %}
+                        </div> -->
+                        
+                        <div class="col-lg-12 col-sm-12 col-12 container-input-create">
+                            <p class="title-check">Franquias</p>
+                            {% if form.franquias.errors %}
+                                <div class="error-campo">
+                                    {{ form.franquias.errors }}
+                                </div>
+                            {% endif %}
+                            <div class="form-check form-check-inline">
+                            {{ form.franquias }}
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12 col-sm-12 container-input-create">
+                            <p class="title-check">Perfis</p>
+                            {% if form.perfis.errors %}
+                                <div class="error-campo">
+                                    {{ form.perfis.errors }}
+                                </div>
+                            {% endif %}
+                            <div class="form-check-inline">
+                                {{ form.perfis }}
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2 col-sm-2 container-input-create">
+                            <p class="title-check">Limite Caixa</p>
+                            {% if form.limite_caixa.errors %}
+                                <div class="error-campo">
+                                    {{ form.limite_caixa.errors }}
+                                </div>
+                            {% endif %}
+                            <div class="form-check-inline">
+                                {{ form.limite_caixa }}
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12 col-sm-12 container-input-create container-btn-create-estabelecimento row justify-content-between">
+                            {% if edit %}
+                                <a href="/usuario/details/{{form.usuario_id.value}}/" class="btn btn-modal btn-danger btn-create-secondary">
+                            {% else %}
+                                <a href="/usuarios/" class="btn btn-modal btn-danger btn-create-secondary">
+                            {% endif %}
+                                <em class="icon ni ni-chevron-left-round-fill"></em>
+                                <p>Voltar</p>
+                            </a>
+                            <button href="#" class="btn btn-modal btn-success btn-modal-footer">
+                                <em class="icon ni ni-save-fill icon-btn-modal"></em>
+                                <p>Salvar</p>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.12/jquery.mask.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.12/jquery.mask.min.js"></script>
+<script>
+    var valid_login = {% if form.login.errors %} false {% else %} true {% endif %}
+    $(function() {
+        if (valid_login == false) {
+            let value = $('#id_login');
+            value.addClass('is-invalid');
+        }
+    })
+
+    var valid_email = {% if form.email.errors %} false {% else %} true {% endif %}
+    $(function() {
+        if (valid_email == false) {
+            let value = $('#id_email');
+            value.addClass('is-invalid');
+        }
+    })
+
+    var valid_senha = {% if form.senha.errors %} false {% else %} true {% endif %}
+    $(function() {
+        if (valid_senha == false) {
+            let value = $('#id_senha');
+            value.addClass('is-invalid');
+        }
+    })
+
+    var valid_senha2 = {% if form.senha_novamente.errors %} false {% else %} true {% endif %}
+    $(function() {
+        if (valid_senha2 == false) {
+            let value = $('#id_senha_novamente');
+            value.addClass('is-invalid');
+        }
+    })
+
+    var valid_nome = {% if form.nome.errors %} false {% else %} true {% endif %}
+    $(function() {
+        if (valid_nome == false) {
+            let value = $('#id_nome');
+            value.addClass('is-invalid');
+        }
+    })
+
+    var valid_sobrenome = {% if form.sobrenome.errors %} false {% else %} true {% endif %}
+    $(function() {
+        if (valid_sobrenome == false) {
+            let value = $('#id_sobrenome');
+            value.addClass('is-invalid');
+        }
+    })
+
+    var valid_fone = {% if form.fone.errors %} false {% else %} true {% endif %}
+    $(function() {
+        if (valid_fone == false) {
+            let value = $('#id_fone');
+            value.addClass('is-invalid');
+        }
+    })
+
+    var valid_cpf = {% if form.cpf.errors %} false {% else %} true {% endif %}
+    $(function() {
+        if (valid_cpf == false) {
+            let value = $('#id_cpf');
+            value.addClass('is-invalid');
+        }
+    })
+
+    var valid_rg = {% if form.rg.errors %} false {% else %} true {% endif %}
+    $(function() {
+        if (valid_rg == false) {
+            let value = $('#id_rg');
+            value.addClass('is-invalid');
+        }
+    })
+
+    var valid_franquias = {% if form.franquias.errors %} false {% else %} true {% endif %}
+    $(function() {
+        if (valid_franquias == false) {
+            let value = $('#id_franquias');
+            value.addClass('is-invalid');
+        }
+    })
+
+    var valid_perfis = {% if form.perfis.errors %} false {% else %} true {% endif %}
+    $(function() {
+        if (valid_perfis == false) {
+            let value = $('#id_perfis');
+            value.addClass('is-invalid');
+        }
+    })
+
+</script>
+{% endblock %}

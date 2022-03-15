@@ -1,0 +1,411 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zxx" class="js">
+
+<head>
+    <base href="../">
+    <meta charset="utf-8">
+    <meta name="author" content="Softnio">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="A powerful and conceptual apps base dashboard template that especially build for developers and programmers.">
+    <meta property="og:title" content="{% if request.session.nome_server %}{{ request.session.nome_server }}
+        {% else %}Mr Keno{% endif %}"/>
+    <meta property="og:image" content="{% if request.session.favicon %}{{ request.session.favicon }}
+        {% else %}/static/images-logo/favicon.png{% endif %}" />
+    <!-- Fav Icon  -->
+    <link rel="shortcut icon" href="{% if request.session.favicon %}{{ request.session.favicon }}
+        {% else %}/static/images-logo/favicon.png{% endif %}"/>
+    <!-- Page Title  -->
+    <!--<title id="server">-->
+    <title>{% if request.session.nome_server %}{{ request.session.nome_server }}
+        {% else %}Mr Keno{% endif %}</title>
+    <!-- StyleSheets  -->
+    <link rel="stylesheet" href="/static/assets/css/dashlite.css?ver=2.2.0">
+    <link id="skin-default" rel="stylesheet" href="/static/assets/css/theme.css?ver=2.2.0">
+    <link rel="stylesheet" href="/static/assets/css/nav-bar.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.js"></script>
+
+    <script type='text/javascript' src='https://code.jquery.com/jquery-1.11.0.js'></script>
+    <script src="https://unpkg.com/dayjs@1.8.21/dayjs.min.js"></script>
+    <script src="/static/assets/js/jquery.dataTables.min.js"></script>
+
+    <link rel="stylesheet" href="/static/style/index.css">
+    <link rel="stylesheet" href="/static/style/financeiro.css">
+    <link rel="stylesheet" href="/static/style/nav-bar.css">
+    <link rel="stylesheet" href="/static/style/cartelas_lote.css">
+    <link rel="stylesheet" href="/static/style/criar_partida.css">
+    <link rel="stylesheet" href="/static/style/partida.css">
+    <link rel="stylesheet" href="/static/style/configuracao.css">
+    <link rel="stylesheet" href="/static/style/recebimentos.css">
+    <link rel="stylesheet" href="/static/style/recebimentos.css">
+    <link rel="stylesheet" href="/static/style/ponto_de_arrecadacao.css">
+    <link rel="stylesheet" href="/static/style/replay.css">
+    <link rel="stylesheet" href="/static/style/first_access.css">
+    <link rel="stylesheet" href="/static/style/ganhadores.css">
+    <link rel="stylesheet" href="/static/style/help.css">
+    <link rel="stylesheet" href="/static/style/ads_programados.css">
+    <link rel="stylesheet" href="/static/style/transacoes.css">
+    <link rel="stylesheet" href="/static/style/telas.css">
+
+</head>
+
+<body class="nk-body bg-lighter npc-general has-sidebar ">
+    <div class="nk-app-root">
+        <!-- main @s -->
+        <div class="nk-main ">
+            <!-- sidebar @s -->
+            <div class="nk-sidebar nk-sidebar-fixed is-dark" data-content="sidebarMenu">
+                <div class="nk-sidebar-element row justify-content-center nk-sidebar-head">
+                    <div class="nk-sidebar-brand container-logo-dash text-center">
+                        <a href="/" class="logo-link nk-sidebar-logo">
+                            <img class="logo-light logo-img"
+                                 src="{% if request.session.logo_dash %}{{ request.session.logo_dash }}
+                                    {% else %}/static/images-logo/mr-keno-dash.png{% endif %}"  alt="logo">
+                        </a>
+                        <!--<p class="versao"><span class="maiusculo" id="server_1"></span></p>-->
+                        <p>{% if request.session.nome_server %}{{ request.session.nome_server|upper }}{% endif %}</p>
+                    </div>
+                    <div class="nk-menu-trigger mr-n2">
+                        <a href="#" class="nk-nav-toggle nk-quick-nav-icon d-xl-none" data-target="sidebarMenu"><em class="icon ni ni-arrow-left"></em></a>
+                    </div>
+                </div><!-- .nk-sidebar-element -->
+                <div class="nk-sidebar-element">
+                    <div class="nk-sidebar-content">
+                        <div class="nk-sidebar-menu" data-simplebar>
+                            <ul class="nk-menu">
+                                <section>
+                                    {% if not primeiro_acesso %}
+                                {% if request.session.perfil_max < 7 %}
+                                <li class="nk-menu-item">
+                                    <a href="/" class="nk-menu-link">
+                                        <span class="nk-menu-icon"><img src="/static/Icone_Bandeira.svg" style="width: 24px"></img></span>
+                                        <span class="nk-menu-text">Partidas</span>
+                                    </a>
+                                </li>
+                                    {% if request.session.real_time %}
+                                    <li class="nk-menu-item">
+                                        <a href="/realtime_data/" class="nk-menu-link">
+                                            <span class="nk-menu-icon"><img src="/static/icons8-relógio.svg" style="width: 24px"></img></span>
+                                            <span class="nk-menu-text">RealTime</span>
+                                        </a>
+                                    </li>
+                                    {% endif %}
+                                {% endif %}
+
+                                {% if request.session.perfil_max < 7  and request.session.ads %}
+                                <li class="nk-menu-item">
+                                    <a href="/ads/" class="nk-menu-link">
+                                        <span class="nk-menu-icon"><img src="/static/Icone_Ads.png" style="width: 24px"></img></span>
+                                        <span class="nk-menu-text">Ads Programados</span>
+                                    </a>
+                                </li>
+                                {% endif %}
+
+                                {% if request.session.automato and request.session.perfil_max < 3 %}
+                                <li class="nk-menu-item">
+                                    <a href="/automatos/" class="nk-menu-link">
+                                        <span class="nk-menu-icon"><img src="/static/images-logo/icone_automato.svg" class="icon-robo-2"/></span>
+                                        <span class="nk-menu-text">Partidas Automaticas</span>
+                                    </a>
+                                </li>
+                                {% endif %}
+                                {% if request.session.perfil_max < 7 %}
+                                <li class="nk-menu-item">
+                                    <a href="/movimento_diario/" class="nk-menu-link">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-swap text-amarelo"></em></span>
+                                        <span class="nk-menu-text">Movimento PDV</span>
+                                    </a>
+                                </li>
+
+                                <li class="nk-menu-item">
+                                    <a href="/financeiro/" class="nk-menu-link">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-coin-alt-fill text-verde"></em></span>
+                                        <span class="nk-menu-text">Financeiro</span>
+                                    </a>
+                                </li>
+                                {% endif %}<!-- .nk-menu-item -->
+                                {%if request.session.perfil_max <= 5 %}
+                                <li class="nk-menu-item">
+                                    <a href="/estatisticas/" class="nk-menu-link">
+                                        <span class="nk-menu-icon"><em class="icon ni ni ni-growth-fill text-verde"></em></span>
+                                        <span class="nk-menu-text">Estatísticas</span>
+                                    </a>
+                                </li>
+                                {%endif%}
+                                {% if request.session.perfil_max != 7 %}
+                                <li class="nk-menu-item">
+                                    <a href="/recolhe/" class="nk-menu-link">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-truck text-azul"></em></span>
+                                        <span class="nk-menu-text">Recolhe</span>
+                                    </a>
+                                </li>
+                                {% endif %}
+
+                                <li class="nk-menu-item">
+                                    <a href="/recebimentos/" class="nk-menu-link">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-inbox-in text-verde"></em></span>
+                                        <span class="nk-menu-text">Recebimentos</span>
+                                    </a>
+                                </li><!-- .nk-menu-item -->
+                                {% if request.session.usar_transacoes and  not request.session.perfil_max == 7 %}
+                                <li class="nk-menu-item">
+                                    <a href="/transacoes/" class="nk-menu-link">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-swap text-amarelo"></em></span>
+                                        <span class="nk-menu-text">Transações</span>
+                                    </a>
+                                </li>
+                                {% endif %}
+                                <li class="nk-menu-item">
+                                    <a href="/ganhadores/" class="nk-menu-link">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-gift text-verde"></em></span>
+                                        <span class="nk-menu-text">Ganhadores</span>
+                                    </a>
+                                </li>
+                                <!-- .nk-menu-item -->
+                                {% if request.session.perfil_max != 9 %}
+                                <li class="nk-menu-item">
+                                    <a href="/cartelas/" class="nk-menu-link">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-ticket-fill"></em></span>
+                                        <span class="nk-menu-text">Cartelas</span>
+                                    </a>
+                                </li>
+                                {% endif %}
+                                </section>
+                                {% endif %}
+                                <section>
+                                {% if request.session.perfil_max < 3 %}
+                                <li class="nk-menu-item">
+                                    <a href="/rotas/" class="nk-menu-link">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-map text-azul"></em></span>
+                                        <span class="nk-menu-text">Rotas</span>
+                                    </a>
+                                </li>
+                                {% endif %}<!-- .nk-menu-item -->
+                                    {% if not primeiro_acesso %}
+                                    {% if request.session.perfil_max < 5 %}
+                                <li class="nk-menu-item">
+                                    <a href="/representantes/" class="nk-menu-link">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-user-fill text-verde"></em></span>
+                                        <span class="nk-menu-text">Gerências</span>
+                                    </a>
+                                </li>
+                                {% endif %}<!-- .nk-menu-item -->
+                                    {% if request.session.perfil_max < 7 %}
+                                <li class="nk-menu-item">
+                                    <a href="/leiturista/" class="nk-menu-link">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-property-alt"></em></span>
+                                        <span class="nk-menu-text">Ponto de Arrecadação</span>
+                                    </a>
+                                </li>
+                                {% endif %}<!-- .nk-menu-item -->
+                                {% if request.session.perfil_max != 9 and request.session.perfil_max != 7 %}
+                                <li class="nk-menu-item">
+                                    <a href="/estabelecimentos/" class="nk-menu-link">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-home"></em></span>
+                                        <span class="nk-menu-text">Estabelecimentos</span>
+                                    </a>
+                                </li>
+                                {% endif %}<!-- .nk-menu-item -->
+
+                                    {% if request.session.perfil_max < 7 %}
+                                <li class="nk-menu-item">
+                                    <a href="/pos/" class="nk-menu-link">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-task"></em></span>
+                                        <span class="nk-menu-text">POS</span>
+                                    </a>
+                                </li>
+                                {% endif %}
+
+                                    {% if request.session.perfil_max < 7 or request.session.perfil_max == 9 %}
+                                <li class="nk-menu-item">
+                                    <a href="/telas/" class="nk-menu-link">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-block-over"></em></span>
+                                        <span class="nk-menu-text">Telas</span>
+                                    </a>
+                                </li>
+                                {% endif %}
+
+                                {% if request.session.perfil_max < 7 %}
+                                <li class="nk-menu-item">
+                                    <a href="/vendedores/" class="nk-menu-link">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-users-fill text-verde"></em></span>
+                                        <span class="nk-menu-text">Vendedores</span>
+                                    </a>
+                                </li>
+                                {% endif %}<!-- .nk-menu-item -->
+                                {% if request.session.perfil_max < 5 %}
+                                <li class="nk-menu-item">
+                                    <a href="/usuarios/" class="nk-menu-link">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-user-fill text-amarelo"></em></span>
+                                        <span class="nk-menu-text">Usuários</span>
+                                    </a>
+                                </li>
+                                {% endif %}
+                                </section>
+
+                                {% if request.session.perfil_max < 6 %}
+                                    {% if request.session.replay%}
+                                        <li class="nk-menu-item">
+                                            <a href="/replay/" class="nk-menu-link">
+                                                <span class="nk-menu-icon"><em class="icon ni ni-video"></em></span>
+                                                <span class="nk-menu-text">Replay</span>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                {% endif %}
+
+                                {% if request.session.perfil_max < 3 %}
+                                <li class="nk-menu-item">
+                                    <a href="/perfil_configuracao/" class="nk-menu-link">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-user-fill text-azul"></em></span>
+                                        <span class="nk-menu-text">Perfis</span>
+                                    </a>
+                                </li>
+
+                                <li class="nk-menu-item">
+                                    <a href="/configuracao/" class="nk-menu-link">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-setting-fill"></em></span>
+                                        <span class="nk-menu-text">Configurações</span>
+                                    </a>
+                                </li>
+                                {% endif %}<!-- .nk-menu-item -->
+                                {% endif %}
+                                <li class="nk-menu-item">
+                                    <a href="/help/" class="nk-menu-link">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-help-fill"></em></span>
+                                        <span class="nk-menu-text">Ajuda</span>
+                                    </a>
+                                </li>
+                            </ul><!-- .nk-menu -->
+                        </div><!-- .nk-sidebar-menu -->
+                    </div><!-- .nk-sidebar-content -->
+                </div><!-- .nk-sidebar-element -->
+            </div>
+            <!-- sidebar @e -->
+
+            <!-- wrap @s -->
+                <div class="nk-wrap body-background">
+                    <!-- main header @s -->
+                    <div class="nk-header nk-header-fixed is-light">
+                        <div class="container-fluid">
+                            <div class="nk-header-wrap">
+                                <div class="nk-menu-trigger d-xl-none ml-n1">
+                                    <a href="#" class="nk-nav-toggle nk-quick-nav-icon" data-target="sidebarMenu"><em class="icon ni ni-menu"></em></a>
+                                </div>
+                                <div class="nk-header-news d-none d-xl-block">
+                                    <div class="nk-news-list">
+                                        <h6><em class="icon ni ni-chevron-right"></em>
+                                            {% block titulo %}
+                                            {{ request.path|upper|slice:"1:-1" }}
+                                            {% endblock %}
+                                        </h6>
+                                    </div>
+                                </div><!-- .nk-header-news -->
+                                <div class="nk-header-tools">
+                                    <ul class="nk-quick-nav">
+                                        <li class="dropdown user-dropdown">
+                                            <p id="information-server"></p>
+                                        </li><!-- .dropdown -->
+                                    </ul><!-- .nk-quick-nav -->
+                                </div>
+                                <div class="nk-header-tools">
+                                    <ul class="nk-quick-nav">
+                                        <li class="dropdown user-dropdown">
+                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                                <div class="user-toggle">
+                                                    <div class="user-avatar sm">
+                                                        <em class="icon ni ni-user-alt"></em>
+                                                    </div>
+                                                    <div class="user-info d-none d-md-block">
+                                                        <div class="user-name dropdown-indicator">{{ request.user.get_full_name }}</div>
+                                                        <div class="user-status">{{ request.session.perfil|title }}</div>
+
+                                                    </div>
+                                                </div>
+                                            </a>
+                                            <div class="dropdown-menu dropdown-menu-md dropdown-menu-right dropdown-menu-s1">
+                                                <div class="dropdown-inner user-card-wrap bg-lighter d-none d-md-block">
+                                                    <div class="user-card">
+                                                        <div class="user-avatar">
+                                                            <span>{{ request.user.first_name.0 }}{{ request.user.last_name.0 }}</span>
+                                                        </div>
+                                                        <div class="user-info">
+                                                            <span class="lead-text">{{ request.user.first_name }}</span>
+                                                            <span class="sub-text">{{ request.user.email }}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="dropdown-inner">
+                                                    <ul class="link-list">
+                                                        <li><a href="/perfil/"><em class="icon ni ni-user-alt"></em><span>Perfil</span></a></li>
+                                                        <!--<li><a href=""><em class="icon ni ni-setting-alt"></em><span>Configurações da Conta</span></a></li>-->
+                                                    </ul>
+                                                </div>
+                                                <div class="dropdown-inner">
+                                                    <ul class="link-list">
+                                                        <li><a href="{% url 'logout' %}"><em class="icon ni ni-signout"></em><span>Sair</span></a></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </li><!-- .dropdown -->
+
+                                    </ul><!-- .nk-quick-nav -->
+                                </div><!-- .nk-header-tools -->
+                            </div><!-- .nk-header-wrap -->
+                            {% if request.session.aviso %}
+                            <div class="nk-header-wrap row justify-content-center">
+                                <div class="col-md-9 col-sm-12 text-center notificacao">
+                                    <h6>{{ request.session.aviso }}</h6>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div><!-- .container-fliud -->
+                    </div>
+                    <!-- main header @e -->
+
+                    <!------------------------------------------------------------------------------------------------------------>
+                    <!-- content @s -->
+                    <!-- <div class="nk-content notificacao-ativa"> -->
+                    <div class="nk-content">
+                    {% block nav-bar %}
+
+                    {% endblock %}
+
+                    </div>
+
+                    <!-- footer @s -->
+                    <div class="nk-footer">
+                        <div class="container-fluid">
+                            <div class="nk-footer-wrap">
+                                <div class="nk-footer-copyright"> &copy;
+                                    {% if request.session.versao %}
+                                        Versão: {{ request.session.versao }}
+                                    {% endif %}
+                                </div>
+                                <div class="nk-footer-links">
+                                    <ul class="nav nav-sm">
+                                        <li class="nav-item"><a class="nav-link" href="#"></a></li>
+                                        <li class="nav-item"><a class="nav-link" href="#"></a></li>
+                                        <li class="nav-item"><a class="nav-link" href="#"></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- footer @e -->
+                </div>
+                <!-- wrap @e -->
+            </div>
+            <!-- main @e -->
+        </div>
+    <!-- app-root @e -->
+    <!-- JavaScript -->
+    <script src="/static/assets/js/bundle.js?ver=2.2.0"></script>
+    <script src="/static/assets/js/scripts.js?ver=2.2.0"></script>
+    <script src="/static/assets/js/charts/gd-default.js?ver=2.2.0"></script>
+</body>
+
+</html>
+

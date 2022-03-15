@@ -1,0 +1,267 @@
+{% extends "nav-bar.html" %}
+{% block titulo %}
+ESTABELECIMENTOS
+{% endblock %}
+{% block nav-bar %}
+        <!-------------------------------barra de pesquisa-------------------------------->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card crud-bar">
+                    <div class="row justify-content-center align-items-center form-group">
+                    {% if perfil < 7 %}
+                        <form class="col-xs-12 col-sm-12 col-md-12 col-xl-12 row justify-content-start  "
+                        method="POST" id="form1"> {% csrf_token %}
+
+                            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 container-input-create-secundary">
+                                <div class="form-group">
+                                    <div class="form-control-wrap">
+                                        {% if form.estabelecimento %}
+                                        {{ form.estabelecimento }}
+                                        <label class="form-label-outlined label-search" for="id_estabelecimento">Estabelecimento</label>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 container-input-create-secundary">
+                                <div class="form-group">
+                                    <div class="form-control-wrap">
+                                        {{ form.estabelecimento_txt }}
+                                        <!--<input type="text" class="form-control form-control-lg form-control-outlined">-->
+                                        <label class="form-label-outlined label-search" for="id_estabelecimento_txt">Estabelecimento</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 container-input-create-secundary">
+                                <div class="form-group">
+                                    <div class="form-control-wrap">
+                                        {% if form.gerente %}
+                                        {{ form.gerente }}
+                                        <label class="form-label-outlined label-search" for="id_gerente">Gerente</label>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 container-input-create-secundary">
+                                <div class="form-group">
+                                    <div class="form-control-wrap">
+                                        {{ form.situacao }}
+                                        <label class="form-label-outlined label-search" for="id_situacao">Situação</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 container-input-create-secundary">
+                                <div class="form-group">
+                                    <div class="form-control-wrap">
+                                        {{ form.rota }}
+                                        <label class="form-label-outlined label-search" for="id_rota">Rota</label>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-12 col-sm-6 col-md-6 col-lg-4 col-xl-4 container-input-search text-right form-group btn-search-financeiro">
+                                <button class="col-3 col-sm-4 col-md-3 col-lg-3 col-xl-2 justify-content-center btn btn-success btn-search form-control-lg">
+                                    <em class="icon ni ni-search"></em>
+                                </button>
+                            </div>
+                        </form>
+                        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 row container-btn-create">
+                            <a href="/estabelecimento/add/" class="btn btn-lg text-right btn-success btn-create">
+                                <em class="icon ni ni-plus"></em>
+                                <p>Criar Estabelecimento</p>
+                            </a>
+                        </div>
+                    {% endif %}
+                    </div>
+                </div>
+                <div class="row my-row">
+                    <div class="col-sm-6 col-md-6 col-lg-4">
+                        <div class="card cards-status">
+                            <div class="row text-center">
+                                <em class="icon ni ni-home-fill icon-card color-card-pos"></em>
+                                <h6 class="title-card color-card-pos">Estabelecimentos</h6>
+                            </div>
+                            <div class="row">
+                                <h6 class="col-12 text-right subtitle-card color-card-online">{{ estabelecimentos|length }}</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-6 col-lg-4">
+                        <div class="card cards-status">
+                            <div class="row text-center">
+                                <em class="icon ni ni-bullet-fill icon-card color-card-pos color-card-online"></em>
+                                <h6 class="title-card color-card-pos">Ativo</h6>
+                            </div>
+                            <div class="row">
+                                <h6 class="col-12 text-right subtitle-card color-card-online">{{ ativo }}</h6>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <div class="col-sm-6 col-md-6 col-lg-4">
+                        <div class="card cards-status">
+                            <div class="row text-center">
+                                <em class="icon ni ni-bullet-fill icon-card color-card-pos color-card-offline"></em>
+                                <h6 class="title-card color-card-pos">Inativo</h6>
+                            </div>
+                            <div class="row">
+                                <h6 class="col-12 text-right subtitle-card color-card-offline">{{ inativo }}</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!------------------------------------------------------------------------------->
+
+        <!-------------------------------Cards de Status
+        <div class="row my-row">
+
+            <div class="col-sm-6 col-md-6 col-lg-3">
+                <div class="card cards-status">
+                    <div class="row text-center">
+                        <em class="icon ni ni-home-fill icon-card color-card-pos"></em>
+                        <h6 class="title-card color-card-pos">Estabelecimentos</h6>
+                    </div>
+                    <div class="row">
+                        <h6 class="col-12 text-right subtitle-card color-card-online">{{ estabelecimentos|length }}</h6>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-md-6 col-lg-3">
+                <div class="card cards-status">
+                    <div class="row text-center">
+                        <em class="icon ni ni-trend-up icon-card color-card-pos"></em>
+                        <h6 class="title-card color-card-pos">on-line</h6>
+                    </div>
+                    <div class="row">
+                        <h6 class="col-12 text-right subtitle-card color-card-online">{{ online }}</h6>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-md-6 col-lg-3">
+                <div class="card cards-status">
+                    <div class="row text-center">
+                        <em class="icon ni ni-sign-mxn icon-card color-card-pos"></em>
+                        <h6 class="title-card color-card-pos">off-line</h6>
+                    </div>
+                    <div class="row">
+                        <h6 class="col-12 text-right subtitle-card color-card-offline">{{ offline }}</h6>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        ------------------------------->
+
+        <!-------------------------------tabela de generica de cambistas-------------------------------->
+        
+        <div class="row my-row">
+            <div class="col-12">
+                <div class="card table-margin table-responsive-xl overflow-auto">
+                    <table id="tabelaEstabelecimento" class="table position-relative table-content">
+                        <thead class="thead-dark text-center thead-content">
+                            <tr>
+                                <th scope="col">id</th>
+                                <th scope="col">Avatar</th>
+                                <th scope="col">Nome</th>
+                                <th scope="col">Dono</th>
+                                <th scope="col">Gerente</th>
+                                <th scope="col">Rota</th>
+                                <th scope="col">Situação</th>
+                                <th scope="col">Status</th>
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-center tbody-content">
+                        {% if not estabelecimentos %}
+                            <tr>
+                                <td colspan="9">Nenhum Resultado encontrado</td>
+                            </tr>
+                        {% endif %}
+                        {% for e,online in estabelecimentos %}
+                            <tr>
+                                <th scope="row">{{ e.id }}</th>
+                                <td>{% if e.logo %}
+                                    <img src="{{ e.logo.url }}" width="50px">
+                                    {% else %}
+                                    <img src="{{ request.session.logo_login }}" width="50px">
+                                    {% endif %}
+                                </td>
+                                <td>{{ e.nome_fantasia }}</td>
+                                <td>{{ e.dono }}</td>
+                                <td>{{ e.gerencias.all|join:", " }}</td>
+                                <td>{{ e.franquia }}</td>
+                                <td>
+                                    {% if e.ativo %}
+                                    <p class="text-success">Ativo</p>
+                                    {% else %}
+                                    <p class="text-danger">Inativo</p>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if e.online %}
+                                    <p class="text-success">Online</p>
+                                    {% else %}
+                                    <p class="text-danger">Offline</p>
+                                    {% endif %}
+                                </td>
+                                {% if perfil < 7 %}
+                                <td class="text-center">
+                                    <a href="/estabelecimento/{{ e.id }}/" class="btn btn-success btn-create-secondary">
+                                        <em class="icon ni ni-pen-fill icon-right"></em>
+                                        <p>Editar</p>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="/estabelecimento/{{ e.id }}/status/"
+                                       class="btn {% if e.ativo %}btn-danger{% else %}btn-success{% endif %} btn-create-secondary btn-tamanho-fixed">
+
+                                        <p>{% if e.ativo %}Desativar{% else %}Ativar{% endif %}</p>
+                                    </a>
+                                </td>
+                                {% else %}
+                                <td class="text-center">
+                                </td>
+                                <td>
+                                </td>
+                                {% endif %}
+
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                      </table>
+
+                </div>
+            </div>
+        </div>
+        <!-------------------------------------------------------------------------------------------->
+    <script>
+        
+        $(document).ready( function () {
+            $('#tabelaEstabelecimento').DataTable({
+                "language": {
+                    "url":"https://cdn.datatables.net/plug-ins/1.10.24/i18n/Portuguese-Brasil.json",
+                },
+                "dom": '',
+                paging: false,
+                columnDefs: [
+                    { orderable: false, targets: [1,8] }
+                ],   
+            });
+        } );
+
+        $('#id_estabelecimento').onChange(function(){
+            const select = $('#id_estabelecimento').val();
+
+            const input = $('#id_estabelecimento_txt');
+        })
+    </script>
+{% endblock %}

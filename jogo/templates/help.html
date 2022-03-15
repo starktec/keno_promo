@@ -1,0 +1,66 @@
+{% extends "index.html" %}
+{% block titulo %}
+EDITAR PARTIDA
+{% endblock %}
+{% load l10n %}
+{% block nav-bar %}
+<div class="row my-row">
+    <div class="col-12 container-create-partida">
+        <div class="row safari-container card card-criar-partida justify-content-start container-card-download">
+            <div class="card-download">
+                <div class="container-img-card-download">
+                    <div class="img-card-download">
+                        <img class="img-card-download" src="" alt="">
+                    </div>
+                </div>
+                <h2 class="description-card-download">
+                    POS
+                </h2>
+                <div class="container-btn-download">
+                    <a href="/media/{{ pos }}" class="btn-download">
+                        <em class="icon ni ni-arrow-to-down icon-right"></em>
+                        <span>Baixar</span>
+                    </a>
+                    <a href="" class="btn-download">Manual</a>
+                </div>
+            </div>
+            <div class="card-download">
+                <div class="container-img-card-download">
+                    <div class="img-card-download">
+                        <img class="img-card-download" src="" alt="">
+                    </div>
+                </div>
+                <h2 class="description-card-download">
+                    Inicializador
+                </h2>
+                <div class="container-btn-download">
+                    <a href="/media/{{ inicializador }}" class="btn-download">
+                        <em class="icon ni ni-arrow-to-down icon-right"></em>
+                        <span>Baixar</span>
+                    </a>
+                    <a href="" class="btn-download">Manual</a>
+                </div>
+            </div>
+            <div class="card-download">
+                <div class="container-img-card-download">
+                    <div class="img-card-download">
+                        <img class="img-card-download" src="" alt="">
+                    </div>
+                </div>
+                <h2 class="description-card-download">
+                    Jogo
+                </h2>
+                <div class="container-btn-download">
+                    <a href="/media/{{ unity }}" class="btn-download">
+                        <em class="icon ni ni-arrow-to-down icon-right"></em>
+                        <span>Baixar</span>
+                    </a>
+                    <a href="" class="btn-download">Manual</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

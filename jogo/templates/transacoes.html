@@ -1,0 +1,177 @@
+{% extends "nav-bar.html" %}
+{% block titulo %}
+TRANSAÇÕES
+{% endblock %}
+{% block nav-bar %}
+<!-------------------------------barra de pesquisa------------------------------>
+<div class="row">
+        <div class="col-lg-12">
+            <div class="card crud-bar">
+                <div class="row justify-content-center align-items-center form-group">
+                    <form action="" method="post" class="col-xs-12 col-sm-12 col-md-12 col-xl-12 row justify-content-start" style="row-gap: 10px;">
+                        {% csrf_token %}
+                        <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 container-input-create-secundary">
+                            <div class="form-group">
+                                <div class="form-control-wrap">
+                                    {{ form.codigo }}
+                                    <label class="form-label-outlined" for="id_codigo">codigo</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 container-input-create-secundary">
+                            <div class="form-group">
+                                <div class="form-control-wrap">
+                                    {% if form.origem %}
+                                    {{ form.origem }}
+                                    <label class="form-label-outlined label-search" for="id_origem">Origem</label>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 container-input-create-secundary">
+                            <div class="form-group">
+                                <div class="form-control-wrap">
+                                    {% if form.destino %}
+                                    {{ form.destino }}
+                                    <label class="form-label-outlined label-search" for="id_destino">Destino</label>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 container-input-create-secundary">
+                        <div class="form-group">
+                            <div class="form-control-wrap">
+                                <div class="form-icon icon-calendar form-icon-right">
+                                    <em class="icon ni ni-calendar-alt"></em>
+                                </div>
+                                {{ form.data_inicio }}
+                                <label class="form-label-outlined label-search" for="id_data_inicio">Data Inicio</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 container-input-create-secundary">
+                        <div class="form-group">
+                            <div class="form-control-wrap">
+                                <div class="form-icon icon-calendar form-icon-right">
+                                    <em class="icon ni ni-calendar-alt"></em>
+                                </div>
+                                {{ form.data_fim }}
+                                <label class="form-label-outlined label-search" for="id_data_fim">Data Fim</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 container-input-create-secundary">
+                        <div class="form-group">
+                            <div class="form-control-wrap">
+                                {{ form.pdv }}
+                                <label class="form-label-outlined label-search" for="id_pdv">PDV</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 container-input-create-secundary">
+                        <div class="form-group">
+                            <div class="form-control-wrap">
+                                {{ form.tipo }}
+                                <label class="form-label-outlined label-search" for="id_tipo">Tipo</label>
+                            </div>
+                        </div>
+                    </div>
+                        <div class="col-12 col-sm-6 col-md-6 col-lg-6 col-xl-4 container-input-search text-right form-group">
+                            <button class="col-3 col-sm-4 col-md-4 col-lg-3 col-xl-3 justify-content-center btn btn-success btn-search form-control-lg">
+                                <em class="icon ni ni-search"></em>
+                            </button>
+                        </div>
+                    </form>
+                    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 row container-btn-create">
+                        <a href="/nova_transferencia/" class="btn btn-lg text-right btn-success btn-create btn-modal">
+                            <em class="icon ni ni-plus"></em>
+                            <p>Nova Transação</p>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+<!------------------------------------------------------------------------------->
+<div class="row">
+    <div class="row col-lg-4 container-saldo">
+    <div class="card col-12 container-comprovante-carteira">
+        <div class="row content-comprovante-carteira">
+            <em class="icon icon-comprovante-carteira ni ni-sign-usd-alt "></em>
+            <h2 class="title-comprovante-carteira">Saldo</h2>
+        </div>
+        <div class="row content-comprovante-carteira justify-content-end">
+            <h3 class="subtitle-comprovante-carteira">R$ {{ saldo_atual|floatformat:2 }}</h3>
+        </div>
+    </div>
+</div>
+<div class="row col-lg-4 container-saldo">
+    <div class="card col-12 container-comprovante-carteira">
+        <div class="row content-comprovante-carteira">
+            <em class="icon icon-comprovante-carteira ni ni-sign-usd-alt "></em>
+            <h2 class="title-comprovante-carteira">Limite Caixa</h2>
+        </div>
+        <div class="row content-comprovante-carteira justify-content-end">
+            <h3 class="subtitle-comprovante-carteira">R$ {{ limite_caixa|floatformat:2 }}</h3>
+        </div>
+    </div>
+</div>
+</div>
+
+
+
+<!-------------------------------tabela de generica de transacoes-------------------------------->
+<div class="row my-row">
+    <div class="col-lg-12">
+        <div class="card table-responsive-xl overflow-auto">
+            <table id="tabelaTransacoes" class="table position-relative table-content">
+                <thead class="thead-dark text-center thead-content">
+                    <tr>
+                    <th scope="col">Codigo</th>
+                    <th scope="col">Data</th>
+                        <th scope="col">Tipo</th>
+                    <th scope="col">De</th>
+                    <th scope="col">Para</th>
+                    <th scope="col">Valor</th>
+                    <th scope="col">Saldo</th>
+                    </tr>
+                </thead>
+
+                <tbody class="text-center tbody-content">
+                {% if not transacoes %}
+                    <tr>
+                        <td colspan="7">Nenhum Resultado encontrado</td>
+                    </tr>
+                    {% endif %}
+
+                {% for t in transacoes %}
+                    <tr>
+                    <td>{{ t.id }}</td>
+                    <td>{{ t.data_transacao|date:"SHORT_DATETIME_FORMAT" }}</td>
+                    <td>{{ t.get_tipo_display }}</td>
+                    <td>{{ t.carteira_de.proprietario }}</td>
+                    <td>{{ t.carteira_para.proprietario }}</td>
+                    <td>{% if t.tipo == "P" or t.tipo == "C" or t.tipo == "T" or t.tipo == "D" %}-{% endif %}{{ t.valor|floatformat:2 }}</td>
+                    <td>
+                        {% if t.tipo == "P" or t.tipo == "C" or t.tipo == "T" or t.tipo == "D" %}
+                        {{ t.saldo_de|floatformat:2 }}
+                        {% else %}
+                        {{ t.saldo_para|floatformat:2 }}
+                        {% endif %}
+                    </td>
+
+                    </tr>
+                {% endfor %}
+                </tbody>
+                </table>
+
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+

@@ -1,0 +1,130 @@
+{% extends "index.html" %}
+{% load l10n %}
+{% block titulo %}
+INFORMAÇÕES DAS PARTIDAS
+{% endblock %}
+{% block nav-bar %}
+            
+    <div class="modal fade show modal-aviso" tabindex="-1" id="modalAlert" aria-modal="true" role="dialog">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-body modal-body-lg text-center">
+                    <div class="nk-modal">
+                        <em class="nk-modal-icon icon icon-circle icon-circle-xxl ni ni-alert-fill bg-danger"></em>
+                        <h4 class="nk-modal-title">Horário do template recalculado!</h4>
+                    </div>
+                </div><!-- .modal-body -->
+            </div>
+        </div>
+    </div>
+    
+
+    <div class="row my-row">
+        <div class="col-12">
+            <div class="card card-table table-responsive-xl overflow-auto">
+                <table  id="tabelaPartidas" class="table position-relative table-content">
+                    <thead class="thead-dark text-center thead-content">
+                        <tr>
+                        <th scope="col"></th>
+                        <th scope="col">Template</th>
+                        <th scpope="col"></th>
+                        <th scope="col">Rotas</th>
+                        <th scope="col">Data/Hora</th>
+                        <th scope="col">Ant.</th>
+                        <th scope="col">Dia</th>
+                        <th scope="col">Kuadra</th>
+                        <th scope="col">Kina</th>
+                        <th scope="col">Keno</th> 
+                        <th scope="col">Tipo</th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-center tbody-content">
+                    
+                    {% for p in partidas %}
+                    <tr class="">
+                        <td> 
+                            {% if p.data_partida > agora %}
+                                <a href="/template/{{p.id}}/edit/" class="btn btn-success btn-create-secondary btn-Branco">
+                                    <em class="icon ni ni-pen-fill"></em>
+                                </a>
+                            {% endif %}
+                        </td>
+                        <th scope="row">{{ p }}</th>
+                        <th scope="row">{{p.inicio}}</th>
+                        <td>{{ p.franquias.all|join:"," }}</td>
+                        <td class="font-table-2">{{ p.data_partida|date:"SHORT_DATETIME_FORMAT" }}</td>
+                        <td>{{ p.valor_antecipado }}</td>
+                        <td>{{ p.valor_cartela|localize }}</td>
+                        <td>{{ p.valor_kuadra }}</td>
+                        <td>{{ p.valor_kina }}</td>
+                        <td>{{ p.valor_keno }}</td>
+                        <td>{{p.get_tipo_rodada_display}}</td>
+                        <td>
+                            {% if p.data_partida > agora%}
+                            <a href="/template/{{ p.id }}/cancelar/" class="btn btn-danger btn-create-secondary btn-Branco">
+                                <em class="icon ni ni-stop-fill"></em>
+                            </a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if p.data_partida > agora%}
+                            <a href="/sortear_template/{{p.id}}/" class="btn btn-success btn-create-secondary btn-Branco">
+                                <em class="icon ni ni-play-fill"></em>
+                            </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                    </tbody>
+                    </table>
+
+            </div>
+        </div>
+    </div>
+    <!-- content @e -->
+    <!------------------------------------------------------------------------------------------------------------>
+    <script>
+        $(document).ready( function () {
+            $('#tabelaPartidas').DataTable({
+                "language": {
+                    "url":"https://cdn.datatables.net/plug-ins/1.10.24/i18n/Portuguese-Brasil.json",
+                },
+                "dom": '',
+                paging: false,
+                columnDefs: [
+                    { orderable: false, targets: [8,9] }
+                ],
+                "order": [[ 3, "desc" ]],  
+            });
+        } );
+
+        /*$('#validate-data').click(function () {
+            let data_inicial = new Date('#outlined-initial-date-picker').val();
+            let data_fim = new Date('#outlined-final-date-picker').val();
+            let block_erro = $('#error-data');
+            let form_pesquisa = $('#pesquisar')
+);
+            }   
+                block_erro.css('display','flex');
+            }else{
+                //form_pesquisa.submit();
+            }
+            
+        });*/
+        $(function () {
+            const novoReplay = {% if info %} true {% else %} false {% endif %};
+            const modalAviso = $('.modal-aviso');
+            if (novoReplay) {
+                modalAviso.css('display','flex')
+                setTimeout(function() { 
+                    modalAviso.css('display','none')
+                }, 3200);
+            }
+        })
+
+    </script> 
+{% endblock %}
+

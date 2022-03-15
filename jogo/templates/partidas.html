@@ -1,0 +1,396 @@
+{% extends "index.html" %}
+{% load l10n %}
+{% block titulo %}
+INFORMAÇÕES DAS PARTIDAS
+{% endblock %}
+{% block nav-bar %}
+<!------------------------------------------------------------------------------------------------------------> 
+
+            {% comment %} <!-------------------------------barra de pesquisa-------------------------------> {% endcomment %}
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card crud-bar">
+                        <div class="row justify-content-center align-items-center">
+                            <form action="/partidas/" method="post" class="col-xs-12 col-sm-12 col-md-12 col-lg-8 col-xl-8 row justify-content-start" id="form1">
+                                {% csrf_token %}
+                                <div class="col-lg-5 col-md-5 col-sm-6">
+                                    <div class="form-group">
+                                        <div class="form-control-wrap">
+                                            <div class="form-icon form-icon-right">
+                                                <em class="icon ni ni-calendar-alt"></em>
+                                            </div>
+                                            <input type="text" value="{{ data_inicial }}" autocomplete="off" data-date-format="dd/mm/yyyy" class="form-control form-control-lg form-control-outlined date-picker input-search-financeiro margin-zero"
+                                                   id="outlined-initial-date-picker" name="outlined-initial-date-picker">
+                                            <label class="form-label-outlined" for="outlined-initial-date-picker">Data Inicial</label>
+                                  
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-5 col-md-5 col-sm-6">
+                                    <div class="form-group">
+                                        <div class="form-control-wrap">
+                                            <div class="form-icon form-icon-right">
+                                                <em class="icon ni ni-calendar-alt"></em>
+                                            </div>
+                                            <input type="text"{% if data_final %} value="{{ data_final }}" {% endif %} autocomplete="off" data-date-format="dd/mm/yyyy" class="form-control form-control-lg form-control-outlined date-picker input-search-financeiro margin-zero"
+                                                   id="outlined-final-date-picker" name="outlined-final-date-picker">
+                                            <label class="form-label-outlined" for="outlined-final-date-picker">Data Final</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-12 col-md-2 col-lg-2 col-xl-2 container-input-search text-right form-group">
+                                    <button id="validate-data" class="col-3 col-sm-2 col-md-12 col-lg-12 justify-content-center btn btn-success btn-search form-control-lg">
+                                        <em class="icon ni ni-search"></em>
+                                    </button>
+                                </div>
+
+                            </form>
+
+
+                            {% if request.session.perfil_max < 5 %}
+                             <div class="col-md-12 col-lg-4 col-xl-4 row container-btn-create">
+                                {% if request.session.automato %}
+                                    <a href="/partidas/criar_automatica/" class="btn btn-md btn-primary container-btn-create-automatica">
+                                        <img src="/static/images-logo/icone_automato.svg" alt="automato" class="icon-robo"></img>
+                                    </a>
+                                {% endif %}
+                                <a href="/criar_partida/" class="btn btn-md btn-success btn-create">
+                                    <em class="icon ni ni-plus"></em>
+                                    <p>Criar Partida</p>
+                                </a>
+                             </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% comment %} <!-------------------------------------------------------------------------------> {% endcomment %}
+            {% comment %} <!-------------------------------Cards de Status-------------------------------> {% endcomment %}
+
+            <div class="row my-row">
+                <div class="col-sm-6 col-md-4 col-lg-3">
+                    <div class="card cards-status">
+                        <div class="row text-center">
+                            <em class="icon ni ni-home icon-card color-card-pos"></em>
+                            <h6 class="title-card color-card-pos">Total Telas</h6>
+                        </div>
+                        <div class="row">
+                            <h6 class="col-12 text-right subtitle-card color-card-pos">{{ pontos }}</h6>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-md-4 col-lg-3">
+                    <div class="card cards-status">
+                        <div class="row text-center">
+                            <em class="icon ni ni-thumbs-up icon-card color-card-pos"></em>
+                            <h6 class="title-card color-card-pos">Telas On-line</h6>
+                        </div>
+                        <div class="row">
+                            <h6 class="col-12 text-right subtitle-card color-card-online">{{ online }}</h6>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-md-4 col-lg-3">
+                    <div class="card cards-status">
+                        <div class="row text-center">
+                            <em class="icon ni ni-thumbs-down icon-card color-card-pos"></em>
+                            <h6 class="title-card color-card-pos">Telas off-line</h6>
+                        </div>
+                        <div class="row">
+                            <h6 class="col-12 text-right subtitle-card color-card-offline">{{ offline }}</h6>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-md-4 col-lg-3">
+                    <div class="card cards-status">
+                        <div class="row text-center">
+                            <em class="icon ni ni-sign-mxn icon-card color-card-pos"></em>
+                            <h6 class="title-card color-card-pos">Doações</h6>
+                        </div>
+                        <div class="row">
+                            <h6 class="col-12 text-right subtitle-card color-card-pos">{{ doacoes|floatformat:2 }}</h6>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-md-4 col-lg-3">
+                    <div class="card cards-status">
+                        <div class="row text-center">
+                            <em class="icon ni ni-thumbs-up icon-card color-card-pos"></em>
+                            <h6 class="title-card color-card-pos">Resultado</h6>
+                        </div>
+                        <div class="row">
+                            <h6 class="col-12 text-right subtitle-card {% if resultado < 0 %} color-card-offline {% else %} color-card-online {% endif %}">{{ resultado|floatformat:2 }}</h6>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-md-4 col-lg-3">
+                    <div class="card cards-status">
+                        <div class="row text-center">
+                            <em class="icon ni ni-thumbs-up icon-card color-card-pos"></em>
+                            <h6 class="title-card color-card-pos">RTP</h6>
+                        </div>
+                        <div class="row">
+                            <h6 class="col-12 text-right subtitle-card {% if rtp < 0 %} color-card-offline {% else %} color-card-online {% endif %}">{{ rtp|floatformat:2 }}%</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-4 col-lg-3">
+                    <div class="card cards-status">
+                        <div class="row text-center">
+                            <em class="icon ni ni-thumbs-up icon-card color-card-pos"></em>
+                            <h6 class="title-card color-card-pos">Bola Acumulado</h6>
+                        </div>
+                        <div class="row">
+                            <h6 class="col-12 text-right subtitle-card color-card-result">{{ bola }}</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-4 col-lg-3">
+                    <div class="card cards-status">
+                        <div class="row text-center">
+                            <em class="icon ni ni-thumbs-up icon-card color-card-pos"></em>
+                            <h6 class="title-card color-card-pos">Valor Acumulado</h6>
+                        </div>
+                        <div class="row">
+                            <h6 class="col-12 text-right subtitle-card color-card-result">{{ acumulado|floatformat:2 }}</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-------------------------------tabela de partidas-------------------------------->
+            <div class="row my-row">
+                <div class="col-12">
+                    <div class="card card-table table-responsive-xl overflow-auto">
+                        <table  id="tabelaPartidas" class="table position-relative table-content">
+                            <thead class="thead-dark text-center thead-content">
+                              <tr>
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+                                <th scope="col">Sorteio</th>
+                                <th scope="col">Rotas</th>
+                                <th scope="col">Data/Hora</th>
+                                <th scope="col">Ant.</th>
+                                <th scope="col">Dia</th>
+                                <th scope="col">Kuadra</th>
+                                <th scope="col">Kina</th>
+                                <th scope="col">Keno</th>
+                                <th scope="col">Doações</th>
+                                <th scope="col">Resultado</th>
+                                <th scope="col">RTP</th>
+                                <th scope="col">Rodada</th>
+                                {% if request.session.perfil_max < 5 and p.cartelas.count == 0 %}
+                                <th scope="col"></th>
+                                {% else %}
+                                <th scope="col"></th>
+                                {% endif %}
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+                              </tr>
+                            </thead>
+                            <tbody class="text-center tbody-content">
+
+                            <!--{% if not partidas %}
+                                <tr>
+                                    <td colspan="12">Nenhum Resultado encontrado</td>
+                                </tr>
+                            {% endif %}
+                            -->
+                            
+                            {% for p in partidas %}
+                              <tr class="">
+                                <td>
+                                    {% if request.session.perfil_max < 4 and request.session.editar_partidas %}
+                                        {% if p.data_partida > agora %}
+                                            <a href="/partida_edit/{{ p.id }}/" class="btn btn-primary btn-create-secondary btn-Branco">
+                                                <em class="icon ni ni-pen-fill"></em>
+                                            </a>
+                                        {% endif %}
+                                    {% endif %}
+                                </td>
+                                <td class="celula-icon">{% if p.id_automato and request.session.automato %}<img src="/static/images-logo/icone_automato.svg" class="icon-robo-2"/>{% endif %}</td>
+                                <td>
+                                    {% if p.ads_status == 0 %}
+
+                                        {% if p.tipo_rodada > 1 %}
+                                            <em class="icon ni ni-video-off  btn btn-ligth btn-create-primary btn-ligth"></em>
+                                        {% endif %}
+                                    {% elif p.ads_status == 1 %}
+                                        <em class="icon ni ni-video btn btn-success btn-create-primary btn-Branco"></em>
+
+                                    {% elif p.ads_status == 2 %}
+                                        <em class="icon ni ni-pause  btn btn-warning btn-create-primary btn-warning"></em>
+
+                                    {% elif p.ads_status == 3 %}
+                                        <em class="icon ni ni-video-off  btn btn-dark btn-create-primary btn-ligth"></em>
+
+                                    {% else %}
+                                        <em class="icon ni ni-loader  btn btn-info btn-create-primary btn-info"></em>
+
+
+
+                                    {% endif %}
+
+                                </td>
+                                <th scope="row">{{ p.id }}</th>
+                                <td>{{ p.franquias.all|join:"," }}</td>
+                                <td class="font-table-2">{{ p.data_partida|date:"SHORT_DATETIME_FORMAT" }}</td>
+                                <td>{{ p.valor_antecipado }}</td>
+                                <td>{{ p.valor_cartela|localize }}</td>
+                                <td>{{ p.valor_kuadra }}</td>
+                                <td>{{ p.valor_kina }}</td>
+                                <td>{{ p.valor_keno }} {%if p.acumulado %}<span style="color:orange">+{{p.acumulado}}</span>{% endif %}</td>
+                                <td>{{ p.doacoesP|floatformat:2 }}</td>
+                                {% if p.bolas_sorteadas %}
+                                    {% if p.resultado < 0 %}
+                                        <td class="negativo font-table-2">{{ p.resultado|floatformat:2 }}</td>
+                                    {% else %}
+                                        <td class="positivo font-table-2">{{ p.resultado|floatformat:2 }}</td>
+                                    {% endif %}
+                                {% else %}
+                                    <td>{{ p.resultado_parcial|floatformat:2 }}</td>
+                                {% endif %}
+                                <td class="result">{{ p.rtp|floatformat:2 }}%</td>
+                                <td class="{% if p.get_tipo_rodada_display == 'ESPECIAL'%} color-yellow
+                                {% elif p.get_tipo_rodada_display == 'SUPER ESPECIAL'%} color-green {% endif %}">{{ p.get_tipo_rodada_display }}</td>
+                                {% if request.session.perfil_max < 5 and p.cartelas.count == 0 %}
+                                <td>
+                                    <a href="/cancelar_partida/{{ p.id }}/" class="btn btn-danger btn-create-secondary">
+                                        <em class="icon ni ni-trash"></em>
+                                    </a>
+                                </td>
+                                {% else %}
+                                <td> </td>
+                                {% endif %}
+                                <td>
+                                    {% if p.data_partida > agora %}
+                                    <em class="icon ni ni-square-fill icon-identificacao icon-aguarde" ></em>
+                                    {% elif p.data_partida < agora and not p.bolas_sorteadas %}
+                                    <a href="partida/{{ p.id }}/force" class="btn btn-danger btn-create-secondary">
+                                        <em class="icon ni ni-play-fill"></em>
+                                    </a>
+                                    {% else %}
+                                    <em class="icon ni ni-square-fill icon-identificacao icon-confirmado"></em>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if p.id_automato and not p.bolas_sorteadas and request.session.automato %}
+                                    <a href="/partida/{{ p.id }}/parar" class="btn btn-danger btn-create-secondary btn-Branco">
+                                        <em class="icon ni ni-stop-fill"></em>
+                                    </a>
+                                    {% endif %}
+                                </td>
+                              </tr>
+                            {% endfor %}
+
+                            </tbody>
+                          </table>
+
+                    </div>
+                </div>
+            </div>
+    <!-- content @e -->
+    <!--------Paginação -------->
+    <div class="row my-row pagination-container">
+        <div class="col-12 row justify-content-center">
+            <nav aria-label="Navegação de página exemplo">
+                <ul class="pagination">
+                        {% if pagina_anterior > 0 %}
+                        <li class="pageitem button-paginação">
+                            <button class="page-link button-paginação" aria-hidden="true" onclick=test(1)>&laquo;</button>
+                        </li> 
+                        <li class="page-item button-paginação">
+                            <button class="page-link button-paginação" class="sr-only" onclick=test({{pagina_anterior}})>&lt;</button>
+                        </li>
+                        {%endif%}  
+                        <li class="page-item button-paginação">
+                            <a class="page-link button-paginação">{{ pagina_atual }}</a>
+                        </li>
+                        {% if ultima_pagina != pagina_atual %}
+                        <li class="page-item button-paginação">
+                            <button class="page-link button-paginação" class="sr-only" onclick=test({{proxima_pagina}})>&gt;</button>
+                        </li>  
+                        <li class="page-item button-paginação">
+                            <button class="page-link button-paginação" aria-hidden="true" onclick=test({{ultima_pagina}})>&raquo;</button>
+                        </li>
+                        {%endif%}
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <!------------------------------------------------------------------------------------------------------------>
+    <script>
+        $(document).ready( function () {
+            $('#tabelaPartidas').DataTable({
+                "language": {
+                    "url":"https://cdn.datatables.net/plug-ins/1.10.24/i18n/Portuguese-Brasil.json",
+                },
+                "dom": '',
+                paging: false,
+                columnDefs: [
+                    { orderable: false, targets: [0,1,12,13,14,16] }
+                ],
+                "order": [[ 17, "desc" ]],  
+            });
+        } );
+        let clickado = false
+        function test(pagina){
+            if(clickado == false){
+                $('#form1').attr('action', $('#form1').attr('action') +'?pagina='+parseInt(pagina));
+                $('#form1').submit();   
+                clickado = true
+            }
+        }
+
+        /*$('#validate-data').click(function () {
+            let data_inicial = new Date('#outlined-initial-date-picker').val();
+            let data_fim = new Date('#outlined-final-date-picker').val();
+            let block_erro = $('#error-data');
+            let form_pesquisa = $('#pesquisar')
+
+            console.log(data_inicial.getDate() + "/" + data_inicial.getMonth + "/" + getFullYear)
+            if (new Date(data_inicial).valueOf() > new Date(data_fim).valueOf()) {
+                console.log('foi')
+                block_erro.css('display','flex');
+            }else{<!--------Paginação -------->
+    <div class="row my-row pagination-container">
+        <div class="col-12 row justify-content-center">
+            <nav aria-label="Navegação de página exemplo">
+                <ul class="pagination">
+                        {% if pagina_anterior > 0 %}
+                        <li class="pageitem button-paginação">
+                            <button class="page-link button-paginação" aria-hidden="true" onclick=test(1)>&laquo;</button>
+                        </li> 
+                        <li class="page-item button-paginação">
+                            <button class="page-link button-paginação" class="sr-only" onclick=test({{pagina_anterior}})>&lt;</button>
+                        </li>
+                        {%endif%}  
+                        <li class="page-item button-paginação">
+                            <a class="page-link button-paginação">{{ pagina_atual }}</a>
+                        </li>
+                        {% if ultima_pagina != pagina_atual %}
+                        <li class="page-item button-paginação">
+                            <button class="page-link button-paginação" class="sr-only" onclick=test({{proxima_pagina}})>&gt;</button>
+                        </li>  
+                        <li class="page-item button-paginação">
+                            <button class="page-link button-paginação" aria-hidden="true" onclick=test({{ultima_pagina}})>&raquo;</button>
+                        </li>
+                        {%endif%}
+                </ul>
+            </nav>
+        </div>
+    </div>
+                //form_pesquisa.submit();
+            }
+            
+        });*/
+
+    </script> 
+{% endblock %}
+

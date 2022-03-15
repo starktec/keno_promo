@@ -1,0 +1,68 @@
+{% extends "index.html" %}
+{% load l10n %}
+{% block titulo %}
+INFORMAÇÕES DOS AUTOMATOS
+{% endblock %}
+{% block nav-bar %}
+<div class="row my-row">
+    <div class="col-12">
+        <div class="card card-table table-responsive-xl overflow-auto">
+            <table  id="tabelaPartidas" class="table position-relative table-content">
+                <thead class="thead-dark text-center thead-content">
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Retenção</th>
+                        <th scope="col">Sorteios Gerados</th>
+                    </tr>
+                </thead>
+                <tbody class="text-center tbody-content">
+                {% for a in automatos %}
+                    <tr>
+                        <td>{{a.id}}</td> 
+                        <td>{{a.lucro_total|floatformat:2}}</td>   
+                        <td>{{a.sorteios_gerados}}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+            <!-------------------------------------------------------------------------------------------->
+
+    <!-- content @e -->
+    <!------------------------------------------------------------------------------------------------------------>
+    <script>
+        $(document).ready( function () {
+            $('#tabelaPartidas').DataTable({
+                "language": {
+                    "url":"https://cdn.datatables.net/plug-ins/1.10.24/i18n/Portuguese-Brasil.json",
+                },
+                "dom": '',
+                paging: false,
+                columnDefs: [
+                    { orderable: false, targets: [0,12,13,14] }
+                ],
+                "order": [[ 3, "desc" ]],  
+            });
+        } );
+
+        /*$('#validate-data').click(function () {
+            let data_inicial = new Date('#outlined-initial-date-picker').val();
+            let data_fim = new Date('#outlined-final-date-picker').val();
+            let block_erro = $('#error-data');
+            let form_pesquisa = $('#pesquisar')
+
+            console.log(data_inicial.getDate() + "/" + data_inicial.getMonth + "/" + getFullYear)
+            if (new Date(data_inicial).valueOf() > new Date(data_fim).valueOf()) {
+                console.log('foi')
+                block_erro.css('display','flex');
+            }else{
+                //form_pesquisa.submit();
+            }
+            
+        });*/
+
+    </script> 
+{% endblock %}
+

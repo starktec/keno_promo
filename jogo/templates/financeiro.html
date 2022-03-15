@@ -1,0 +1,449 @@
+{% extends "nav-bar.html" %}
+{% block titulo %}
+FINANCEIRO
+{% endblock %}
+{% block nav-bar %}
+    <!-------------------------------barra de pesquisa---------------------------------->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card crud-bar">
+                <div class="row justify-content-center align-items-center form-group">
+                    <form action="/financeiro/" method="post" class="col-xs-12 col-sm-12 col-md-12 col-xl-12 row justify-content-start" id="form1" name="form1">
+                    {% csrf_token %}
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 container-input-create-secundary">
+                            <div class="form-group">
+                                <div class="form-control-wrap">
+                                    <div class="form-icon icon-calendar form-icon-right">
+                                        <em class="icon ni ni-calendar-alt"></em>
+                                    </div>
+                                    {{ form.data_inicio }}
+                                    <label class="form-label-outlined label-search" for="id_data_inicio">Data Inicio/Dia</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 container-input-create-secundary">
+                            <div class="form-group">
+                                <div class="form-control-wrap">
+                                    {{form.hora_inicio}}
+                                    <label class="form-label-outlined label-search" for="id_hora_inicio">Hora Inicio</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 container-input-create-secundary">
+                            <div class="form-group">
+                                <div class="form-control-wrap">
+                                    <div class="form-icon icon-calendar form-icon-right">
+                                        <em class="icon ni ni-calendar-alt"></em>
+                                    </div>
+                                    {{ form.data_fim }}
+                                    <label class="form-label-outlined label-search" for="id_data_fim">Data Fim</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 container-input-create-secundary">
+                            <div class="form-group">
+                                <div class="form-control-wrap">
+                                    {{form.hora_fim}}
+                                    <label class="form-label-outlined label-search" for="id_hora_fim">Hora Fim</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 container-input-create-secundary">
+                            <div class="form-group">
+                                <div class="form-control-wrap">
+                                    {{ form.sorteio }}
+                                    <label class="form-label-outlined" for="id_sorteio">Sorteio</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 container-input-create-secundary">
+                            <div class="form-group">
+                                <div class="form-control-wrap">
+                                    {% if form.estabelecimento %}
+                                    {{ form.estabelecimento }}
+                                    <label class="form-label-outlined label-search" for="id_estabelecimento">Estabelecimento</label>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 container-input-create-secundary">
+                            <div class="form-group">
+                                <div class="form-control-wrap">
+                                    {{ form.agrupar_por }}
+                                    <label class="form-label-outlined" for="id_agrupar_por">Agrupar por</label>
+                                </div>
+                            </div>
+                        </div>
+                        {% if form.representante %}
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 container-input-create-secundary">
+                            <div class="form-group">
+                                <div class="form-control-wrap">
+                                    {{ form.representante }}
+                                    <label class="form-label-outlined label-search" for="id_representante">Gerentes</label>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if form.representante %}
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 container-input-search text-right form-group">
+                            <button class="col-3 col-sm-2 col-md-2 col-lg-1 col-xl-1 justify-content-center btn btn-success btn-search form-control-lg">
+                                <em class="icon ni ni-search"></em>
+                            </button>
+                        </div>
+                        {% else %}
+                        <div class="col-xl-4 col-lg-12 col-md-12 col-sm-12 container-input-search text-right form-group">
+                            <button class="col-3 col-sm-2 col-md-2 col-lg-1 col-xl-3 justify-content-center btn btn-success btn-search form-control-lg">
+                                <em class="icon ni ni-search"></em>
+                            </button>
+                        </div>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-------------------------------------------------------------------------------->
+
+    <!-------------------------------Cards de Status-------------------------------->
+    <div class="row my-row">
+
+        <div class="col-md-3">
+            <div class="card cards-status">
+                <div class="row text-center">
+                    <em class="icon ni ni-sign-mxn icon-card color-card-pos"></em>
+                    <h6 class="title-card color-card-pos">Doações</h6>
+                </div>
+                <div class="row">
+                    <h6 class="col-12 text-right subtitle-card color-card-pos">{{ doacoes|floatformat:2 }}</h6>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card cards-status">
+                <div class="row text-center">
+                    <em class="icon ni ni-sign-mxn icon-card color-card-pos"></em>
+                    <h6 class="title-card color-card-pos">Prêmios</h6>
+                </div>
+                <div class="row">
+                    <h6 class="col-12 text-right subtitle-card color-card-offline">{{ premios_pagos|floatformat:2 }}</h6> <!-- alterar variavel -->
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card cards-status">
+                <div class="row text-center">
+                    <em class="icon ni ni-sign-mxn icon-card color-card-pos"></em>
+                    <h6 class="title-card color-card-pos">Saldo</h6>
+                </div>
+                <div class="row">
+                    <h6 class="col-12 text-right subtitle-card {% if saldo < 0 %} color-card-offline {% else %} color-card-online {% endif %}">{{ saldo|floatformat:2 }}</h6>
+                </div>
+            </div>
+        </div>
+
+            <div class="col-md-3">
+            <div class="card cards-status">
+                <div class="row text-center">
+                    <em class="icon ni ni-sign-mxn icon-card color-card-pos"></em>
+                    <h6 class="title-card color-card-pos">Comissão</h6>
+                </div>
+                <div class="row">
+                    <h6 class="col-12 text-right subtitle-card color-card-offline">{{ comissao|floatformat:2 }}</h6>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card cards-status">
+                <div class="row text-center">
+                    <em class="icon ni ni-sign-mxn icon-card color-card-pos"></em>
+                    <h6 class="title-card color-card-pos">Resultado</h6>
+                </div>
+                <div class="row">
+                    <h6 class="col-12 text-right subtitle-card {% if resultado < 0 %} color-card-offline {% else %} color-card-online {% endif %}">{{ resultado|floatformat:2 }}</h6>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card cards-status">
+                <div class="row text-center">
+                    <em class="icon ni ni-trend-up icon-card color-card-pos"></em>
+                    <h6 class="title-card color-card-pos">Sorteios</h6>
+                </div>
+                <div class="row">
+                    <h6 class="col-12 text-right subtitle-card color-card-pos">{{ sorteios }}</h6>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card cards-status">
+                <div class="row text-center">
+                    <em class="icon ni ni-trend-up icon-card color-card-pos"></em>
+                    <h6 class="title-card color-card-pos">Bilhetes</h6>
+                </div>
+                <div class="row">
+                    <h6 class="col-12 text-right subtitle-card color-card-offline">{{ cartelas }}</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card cards-status">
+                <div class="row text-center">
+                    <em class="icon ni ni-trend-up icon-card color-card-pos"></em>
+                    <h6 class="title-card color-card-pos">Ticket Médio</h6>
+                </div>
+                <div class="row">
+                    <h6 class="col-12 text-right subtitle-card color-card-offline">{{ doacoes_bilhetes }}</h6>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <div class="card cards-btn-csv">
+                <div class="row justify-content-end">
+                    <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 container-input-search text-right form-group">
+                        <button onclick=test() class="btn btn-success btn-create-secondary">
+                            <em class="icon ni ni-arrow-to-down icon-right"></em>
+                            <p>Relatorio financeiro</p>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--
+        <div class="col-md-3">
+            <div class="card cards-status">
+                <div class="row text-center">
+                    <em class="icon ni ni-ticket-fill icon-card color-card-pos"></em>
+                    <h6 class="title-card color-card-pos">Resultado</h6>
+                </div>
+                <div class="row">
+                    <h6 class="col-12 text-right subtitle-card color-card-pos">1</h6>
+                </div>
+            </div>
+        </div>
+        -->
+    </div>
+
+    <!-------------------------------tabela de generica de cambistas-------------------------------->
+    {%if not sorteio%}
+    <div class="row my-row">
+        <div class="col-12">
+            <div class="card table-responsive-xl overflow-auto">
+                <table class="table position-relative table-content">
+                    <thead class="thead-dark text-center thead-content">
+                        <th scope="col" colspan="3" class="text-left">Data Inicial: {{ data_inicio|date:"d/m/Y" }} {{ data_inicio|time:"H:i" }}</th>
+                        <th scope="col" colspan="3" class="text-right">Data Fim: {{ data_fim|date:"d/m/Y" }} {{ data_fim|time:"H:i" }}</th>
+                    </thead>
+                </table>
+                <table id="tabelaFinanceiro" class="table position-relative table-content">
+                    <thead class="thead-dark text-center thead-content">
+                        <tr>
+                            <th scope="col">{% if coluna1 == "Estabelecimento" %}{{ coluna1 }}{% elif coluna1 == "Sorteio" %}Sorteio{%else %}Estabelecimento{% endif %}</th>
+                            <th scope="col">Cartelas</th>
+                            <th scope="col">Doações</th>
+                            <th scope="col">Prêmios</th>
+                            <th scope="col">Comissão</th>
+                            <th scope="col">Resultado</th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="text-center tbody-content">
+                        <!--{% if partidas|length == 0 %}
+                        <tr>
+                            <td colspan="8">Nenhum Resultado encontrado</td>
+                        </tr>
+                        {% endif %}-->
+                    {% if coluna1 == "Sorteio" %}
+                        {% for p, num_cartelas, doacoes, valor_pago, comissao, resultado in partidas %}
+                            <tr>
+                                <td>{{ p }}</td>
+                                <td>{{ num_cartelas }}</td>
+                                <td>{{ doacoes|floatformat:2 }}</td>
+                                <td>{{ valor_pago|floatformat:2 }}</td>
+                                <td>{{ comissao|floatformat:2 }}</td>
+                                <td>{{ resultado|floatformat:2 }}</td>
+                            </tr>
+                        {% endfor %}
+                    {%else%}
+                        {% for p,r, num_cartelas, doacoes, valor_pago, comissao, resultado in partidas %}
+                            <tr>
+                                <td>{{ p }}</td>
+                                <td>{{ num_cartelas }}</td>
+                                <td>{{ doacoes|floatformat:2 }}</td>
+                                <td>{{ valor_pago|floatformat:2 }}</td>
+                                <td>{{ comissao|floatformat:2 }}</td>
+                                <td>{{ resultado|floatformat:2 }}</td>
+                            </tr>
+                        {% endfor %}
+                    {%endif%}
+                    </tbody>
+                    </table>
+                
+            </div>
+        </div>
+    </div>
+    {%else%}
+    <div class="row my-row">
+        <div class="col-12">
+            <div class="card table-responsive-xl overflow-auto">
+                <table class="table position-relative table-content">
+                    <thead class="thead-dark text-center thead-content">
+                        <th scope="col" colspan="3" class="text-left">Data Inicial: {{ data_inicio|date:"d/m/Y" }}</th>
+                        <th scope="col" colspan="3" class="text-right">Data Fim: {{ data_fim|date:"d/m/Y" }}</th>
+                    </thead>
+                </table>
+                <table id="tabelaFinanceiro" class="table position-relative table-content">
+                    <thead class="thead-dark text-center thead-content">
+                        <tr>
+                            <th scope="col">{% if coluna1 %}{{ coluna1 }}{% else %}Sorteio{% endif %}</th>
+                            <th scope="col">Cartelas</th>
+                            <th scope="col">Doações</th>
+                            <th scope="col">Prêmios</th>
+                            <th scope="col">Comissão</th>
+                            <th scope="col">Resultado</th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="text-center tbody-content">
+                        <!--{% if partidas|length == 0 %}
+                        <tr>
+                            <td colspan="8">Nenhum Resultado encontrado</td>
+                        </tr>
+                        {% endif %}-->
+                    {% for p, num_cartelas, doacoes, valor_pago, comissao, resultado in partidas %}
+                        <tr>
+                            <td>{{ p }}</td>
+                            <td>{{ num_cartelas }}</td>
+                            <td>{{ doacoes|floatformat:2 }}</td>
+                            <td>{{ valor_pago|floatformat:2 }}</td>
+                            <td>{{ comissao|floatformat:2 }}</td>
+                            <td>{{ resultado|floatformat:2 }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    </table>
+                
+            </div>
+        </div>
+    </div>
+    {%endif%}   
+    <!-------------------------------------------------------------------------------------------->
+
+
+<!-- content @e -->
+
+<script>
+$(document).ready( function () {
+    $('#tabelaFinanceiro').DataTable({
+        "language": {
+            "url":"https://cdn.datatables.net/plug-ins/1.10.24/i18n/Portuguese-Brasil.json",
+        },
+        "dom": '',
+        paging: false  
+    });
+} );
+
+$(function () {
+    let estabelecimento = $('#id_estabelecimento');
+    let sorteio = $('#id_sorteio');
+    let agrupar_por = $('#id_agrupar_por');
+
+    if (estabelecimento.val() != 0) {
+        agrupar_por.prop('disabled',true);
+        agrupar_por.val(0);
+    }
+
+    if (sorteio.val() != 0) {
+        agrupar_por.prop('disabled',true);
+        agrupar_por.val(0);
+    }
+})
+
+$('#id_estabelecimento').change(function () {
+    let estabelecimento = $('#id_estabelecimento');
+    let sorteio = $('#id_sorteio');
+    let agrupar_por = $('#id_agrupar_por');
+
+    if (estabelecimento.val() != 0) {
+        agrupar_por.prop('disabled',true);
+        sorteio.prop('disabled',true);
+        agrupar_por.val(0);
+    }
+    if (estabelecimento.val() == 0) {
+        agrupar_por.prop('disabled',false);
+    }
+})
+
+$('#id_estabelecimento').change(function () {
+    let estabelecimento = $('#id_estabelecimento');
+    let sorteio = $('#id_sorteio');
+    let agrupar_por = $('#id_agrupar_por');
+
+    if (estabelecimento.val() != 0) {
+        agrupar_por.prop('disabled',true);
+        sorteio.prop('disabled',true);
+        agrupar_por.val(0);
+    }
+    if (estabelecimento.val() == 0) {
+        agrupar_por.prop('disabled',false);
+    }
+})
+
+$('#id_sorteio').change(function () {
+    let sorteio = $('#id_sorteio');
+    let estabelecimento = $('#id_estabelecimento');
+    let agrupar_por = $('#id_agrupar_por');
+
+    if (sorteio.val() != 0) {
+        agrupar_por.prop('disabled',true);
+        estabelecimento.prop('disabled',true);
+        agrupar_por.val('sorteio');
+    }
+
+    if (sorteio.val() == 0) {
+        agrupar_por.prop('disabled',false);
+    }
+})
+
+$('#id_agrupar_por').change(function () {
+    let estabelecimento = $('#id_estabelecimento');
+    let sorteio = $('#id_sorteio');
+    let agrupar_por = $('#id_agrupar_por');
+
+    if (agrupar_por.val() == "False") {
+        estabelecimento.prop('disabled',false);
+        sorteio.prop('disabled',false);
+    }
+    if (agrupar_por.val() == 'estabelecimento') {
+        sorteio.prop('disabled',true);
+        estabelecimento.prop('disabled',false);
+    }
+    if (agrupar_por.val() == 'sorteio') {
+        estabelecimento.prop('disabled',true);
+        sorteio.prop('disabled',false);
+    }
+})
+    let clickado = false
+    
+    function test(){ 
+        document.form1.action = "/financeiro/relatorio/"
+        $('#form1').submit();   
+        document.form1.action = "/financeiro/"
+    }
+
+
+
+</script>
+{% endblock %}
+
+

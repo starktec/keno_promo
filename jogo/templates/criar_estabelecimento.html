@@ -1,0 +1,509 @@
+{% extends "index.html" %}
+{% block titulo %}
+CRIAR ESTABELECIMENTOS
+{% endblock %}
+{% block nav-bar %}
+
+    <!-- content @s -->
+
+        <div class="row justify-content-center">
+            <div class="row col-lg-12 safari-container">
+                <div class="row col-12 safari-container card container-card container-center card-criar-partida">
+
+                    <div class="alert alert-fill alert-secondary alert-icon header-modal crud-bar-user-header">
+                        <em class="icon ni ni-plus"></em>
+                        <h6>Criar Estabelecimento</h6>
+                    </div>
+
+                    <form class="row form-group justify-content-start form-create-partida" id="id_form" autocomplete="off" action="" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {% if form.non_field_errors %}
+                            <div class="alert-personalizado container-error alert-danger">{{ form.non_field_errors }}</div>
+                        {% endif %}
+
+                        <div class="row col-12 justify-content-start">
+                            <div class="col-lg-4 col-sm-6 container-input-create">
+                                <div class="form-group">
+                                    <div class="form-control-wrap">
+                                        <p>{{ form.logo.errors }}</p>
+                                        <div class="custom-file">
+                                            {{ form.logo }}
+                                            <label class="custom-file-label" for="validatedCustomFile">Logo</label>
+                                            <div class="invalid-feedback">pesquisar</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+    
+                            <div class="col-lg-4 col-sm-6 container-input-create">
+                                <div class="form-group">
+                                    <div class="form-control-wrap">
+                                        {{ form.cnpj }}
+                                        <label class="form-label-outlined" for= "{{ form.cnpj.id_for_label }}">CNPJ / CPF</label>
+                                    </div>
+                                    {% if form.cnpj.errors %}
+                                        <div class="error-campo">
+                                          {{ form.cnpj.errors }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+    
+                            <div class="col-lg-4 col-sm-6 container-input-create">
+                                <div class="form-group">
+                                    <div class="form-control-wrap">
+                                        {{ form.nome_fantasia }}
+                                        <label class="form-label-outlined" for="id_nome_fantasia">Nome Fantasia</label>
+                                    </div>
+                                    {% if form.nome_fantasia.errors %}
+                                        <div class="error-campo">
+                                          {{ form.nome_fantasia.errors }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+    
+                            <div class="col-lg-4 col-sm-6 container-input-create">
+                                <div class="form-group">
+                                    <div class="form-control-wrap">
+                                        {{ form.franquia }}
+                                        <label class="form-label-outlined" for="id_franquia">Franquia</label>
+                                    </div>
+                                    {% if form.franquia.errors %}
+                                        <div class="error-campo">
+                                          {{ form.franquia.errors }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+    
+                            <div class="col-lg-4 col-md-6 col-sm-6 container-input-create">
+                                <div class="form-group">
+                                    <div class="form-control-wrap">
+                                        {{ form.telefone }}
+                                        <label class="form-label-outlined" for="id_telefone">Telefone</label>
+                                    </div>
+                                    {% if form.telefone.errors %}
+                                        <div class="error-campo">
+                                          {{ form.telefone.errors }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+    
+                            <div class="col-lg-4 col-md-6 col-sm-12 container-input-create">
+                                <div class="form-group">
+                                    <div class="form-control-wrap">
+                                        {{ form.email }}
+                                        <label class="form-label-outlined" for="id_email">Email</label>
+                                    </div>
+                                    {% if form.email.errors %}
+                                        <div class="error-campo">
+                                          {{ form.email.errors }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+    
+                            <div class="col-lg-12 col-md-8 col-sm-8 container-input-create">
+                                <div class="form-group">
+                                    <div class="form-control-wrap">
+                                        {{ form.endereco }}
+                                        <label class="form-label-outlined" for="id_endereco">Endereço</label>
+                                    </div>
+                                </div>
+                            </div>
+    
+                            <div class="col-lg-3 col-sm-3 container-input-create">
+                                <div class="form-group">
+                                    <div class="form-control-wrap">
+                                        {{ form.endereco_num }}
+                                        <label class="form-label-outlined" for="id_endereco_num">Numero</label>
+                                    </div>
+                                    {% if form.endereco_num.errors %}
+                                        <div class="error-campo">
+                                          {{ form.endereco_num.errors }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+    
+                            <div class="col-lg-5 col-sm-9 container-input-create">
+                                <div class="form-group">
+                                    <div class="form-control-wrap">
+                                       {{ form.endereco_complemento }}
+                                        <label class="form-label-outlined" for="id_endereco_complemento">Complemento</label>
+                                    </div>
+                                </div>
+                            </div>
+    
+                            <div class="col-lg-4 col-sm-6 container-input-create">
+                                <div class="form-group">
+                                    <div class="form-control-wrap">
+                                        {{ form.endereco_bairro }}
+                                        <label class="form-label-outlined" for="id_endereco_bairro">Bairro</label>
+                                    </div>
+                                    {% if form.endereco_bairro.errors %}
+                                        <div class="error-campo">
+                                          {{ form.endereco_bairro.errors }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+    
+                            <div class="col-lg-3 col-sm-6 container-input-create">
+                                <div class="form-group">
+                                    <div class="form-control-wrap">
+                                        {{ form.endereco_cidade }}
+                                        <label class="form-label-outlined" for="id_endereco_cidade">Cidade</label>
+                                    </div>
+                                    {% if form.endereco_cidade.errors %}
+                                        <div class="error-campo">
+                                          {{ form.endereco_cidade.errors }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+    
+                            <div class="col-lg-4 col-md-6 col-sm-5 container-input-create">
+                                <div class="form-group">
+                                    <div class="form-control-wrap">
+                                        {{ form.endereco_estado }}
+                                        <label class="form-label-outlined" for="id_endereco_estado">UF</label>
+                                    </div>
+                                    {% if form.endereco_estado.errors %}
+                                        <div class="error-campo">
+                                          {{ form.endereco_estado.errors }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+    
+                            <div class="col-lg-4 col-md-5 col-sm-5 col-9 container-input-create">
+                                <div class="form-group">
+                                    <div class="form-control-wrap">
+                                        {{ form.dono }}
+                                        <label class="form-label-outlined" for="id_dono">Dono</label>
+                                    </div>
+                                    {% if form.dono.errors %}
+                                        <div class="error-campo">
+                                          {{ form.dono.errors }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+    
+                            <div id="container-btn" class="col-lg-1 col-md-1 col-sm-2 col-3 container-input-create">
+                                <button type="button" id="btn-remove" class="remove-dono col-12 btn btn-danger btn-adicionar btn-lg">
+                                    <em class="icon ni ni-minus-sm"></em>
+                                </button>
+                                <button type="button" id="btn-create" class="create-dono col-12 btn btn-success btn-adicionar btn-lg">
+                                    <em class="icon ni ni-plus-sm"></em>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="content-dono" class="row col-12 justify-content-start">
+                            <div class="col-lg-12 row justify-content-between container-input-create form-sub-title">
+                            
+                                <h6>Dono do estabelecimento</h6>
+                            </div>
+    
+                            <div class="col-lg-6 col-sm-6 container-input-create">
+                                <div class="form-group">
+                                    <div class="form-control-wrap">
+                                        {{ form.login }}
+                                        <label class="form-label-outlined" for="id_login">Login</label>
+                                    </div>
+                                    {% if form.login.errors %}
+                                        <div class="error-campo">
+                                          {{ form.login.errors }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+    
+                            <div class="col-lg-6 col-sm-6 container-input-create">
+                                <div class="form-group">
+                                    <div class="form-control-wrap">
+                                        {{ form.nome }}
+                                        <label class="form-label-outlined" for="id_nome">Nome</label>
+                                    </div>
+                                    {% if form.nome.errors %}
+                                        <div class="error-campo">
+                                          {{ form.nome.errors }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+    
+                            <div class="col-lg-6 col-sm-6 container-input-create">
+                                <div class="form-group">
+                                    <div class="form-control-wrap">
+                                        {{ form.senha }}
+                                        <label class="form-label-outlined" for="id_senha">Senha</label>
+                                    </div>
+                                    {% if form.senha.errors %}
+                                        <div class="error-campo">
+                                          {{ form.senha.errors }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+    
+                            <div class="col-lg-6 col-sm-6 container-input-create">
+                                <div class="form-group">
+                                    <div class="form-control-wrap">
+                                        {{ form.senha_novamente }}
+                                        <label class="form-label-outlined" for="id_senha_novamente">Confirmar Senha</label>
+                                    </div>
+                                    {% if form.senha_novamente.errors %}
+                                        <div class="error-campo">
+                                          {{ form.senha_novamente.errors }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-sm-6 container-input-create">
+                                <div class="form-group">
+                                    <div class="form-control-wrap">
+                                        <input type="checkbox" class="check-input" id="id_vendedor_check" name="id_vendedor_check">
+                                        <label class="form-check-label" for="id_vendedor_check">Cadastrar este usuario TAMBÉM como vendedor</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 row container-btn-createPartida">
+                             <div class="form-group">
+                                <div class="form-control-wrap">
+                                    <a href="/estabelecimentos/" class="btn btn-danger">Voltar</a>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="form-control-wrap">
+                                    <button id="btn-form" class="btn btn-success">Salvar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+<!-- content @e -->
+<!------------------------------------------------------------------------------------------------------------>
+
+<script>
+
+// $(function () {
+//     let btn = $('.create-dono');
+//     btn.html('<em class="icon ni ni-plus-sm"></em>')
+// })
+
+$('#btn-create').click(function () {
+    let btn_create = $('#btn-create');
+    btn_create.css('display','none');
+
+    let btn_remove = $('#btn-remove');
+    btn_remove.css('display','flex');
+
+    let bloco = $('#content-dono');
+    bloco.css('display','flex');
+
+    let select = $("#id_dono")
+    select.prop('disabled',true);
+    select.val('')
+})
+
+$('#btn-remove').click(function () {
+    let btn_create = $('#btn-create');
+    btn_create.css('display','flex');
+
+    let btn_remove = $('#btn-remove');
+    btn_remove.css('display','none');
+
+    let bloco = $('#content-dono');
+    bloco.css('display','none');
+
+    let select = $("#id_dono");
+    select.prop('disabled',false);
+})
+
+var valid_nome_user = {% if form.nome.errors %} false {% else %} true {% endif %}
+$(function() {
+    if (valid_nome_user == false) {
+        let value = $('#id_nome');
+        value.addClass('is-invalid');
+
+        let btn_create = $('#btn-create');
+        btn_create.css('display','none');
+
+        let btn_remove = $('#btn-remove');
+        btn_remove.css('display','flex');
+
+        let bloco = $('#content-dono');
+        bloco.css('display','flex');
+
+        let select = $("#id_dono")
+        select.prop('disabled',true);
+        select.val('')
+    }
+})
+
+var valid_login_user = {% if form.login.errors %} false {% else %} true {% endif %}
+$(function() {
+    if (valid_login_user == false) {
+        let value = $('#id_login');
+        value.addClass('is-invalid');
+
+        let btn_create = $('#btn-create');
+        btn_create.css('display','none');
+
+        let btn_remove = $('#btn-remove');
+        btn_remove.css('display','flex');
+
+        let bloco = $('#content-dono');
+        bloco.css('display','flex');
+
+        let select = $("#id_dono")
+        select.prop('disabled',true);
+        select.val('')
+    }
+})
+
+var valid_senha_user = {% if form.senha.errors %} false {% else %} true {% endif %}
+$(function() {
+    if (valid_senha_user == false) {
+        let value = $('#id_senha');
+        value.addClass('is-invalid');
+
+        let btn_create = $('#btn-create');
+        btn_create.css('display','none');
+
+        let btn_remove = $('#btn-remove');
+        btn_remove.css('display','flex');
+
+        let bloco = $('#content-dono');
+        bloco.css('display','flex');
+
+        let select = $("#id_dono")
+        select.prop('disabled',true);
+        select.val('')
+    }
+})
+
+var valid_senha_novamente_user = {% if form.senha_novamente.errors %} false {% else %} true {% endif %}
+$(function() {
+    if (valid_senha_novamente_user == false) {
+        let value = $('#id_senha');
+        value.addClass('is-invalid');
+
+        let btn_create = $('#btn-create');
+        btn_create.css('display','none');
+
+        let btn_remove = $('#btn-remove');
+        btn_remove.css('display','flex');
+
+        let bloco = $('#content-dono');
+        bloco.css('display','flex');
+
+        let select = $("#id_dono")
+        select.prop('disabled',true);
+        select.val('')
+    }
+})
+
+var valid_cnpj = {% if form.cnpj.errors %} false {% else %} true {% endif %}
+$(function() {
+    if (valid_cnpj == false) {
+        let value = $('#id_cnpj');
+        value.addClass('is-invalid');
+    }
+})
+
+var valid_nome_fantasia = {% if form.nome_fantasia.errors %} false {% else %} true {% endif %}
+$(function() {
+    if (valid_nome_fantasia == false) {
+        let value = $('#id_nome_fantasia');
+        value.addClass('is-invalid');
+    }
+})
+
+var valid_dono = {% if form.dono.errors %} false {% else %} true {% endif %}
+$(function() {
+    if (valid_dono == false) {
+        let value = $('#id_dono');
+        value.addClass('is-invalid');
+    }
+})
+
+
+var valid_email = {% if form.email.errors %} false {% else %} true {% endif %}
+$(function() {
+    if (valid_email == false) {
+        let value = $('#id_email');
+        value.addClass('is-invalid');
+    }
+})
+
+/*var valid_endereco = {% if form.endereco.errors %} false {% else %} true {% endif %}
+$(function() {
+    if (valid_endereco == false) {
+        let value = $('#id_endereco');
+        value.addClass('is-invalid');
+    }
+})
+
+var valid_bairro = {% if form.endereco_bairro.errors %} false {% else %} true {% endif %}
+$(function() {
+    if (valid_bairro == false) {
+        let value = $('#id_endereco_bairro');
+        value.addClass('is-invalid');
+    }
+})
+var valid_num = {% if form.endereco_num.errors %} false {% else %} true {% endif %}
+$(function() {
+    if (valid_num == false) {
+        let value = $('#id_endereco_num');
+        value.addClass('is-invalid');
+    }
+})
+
+var valid_cidade = {% if form.endereco_cidade.errors %} false {% else %} true {% endif %}
+$(function() {
+    if (valid_cidade == false) {
+        let value = $('#id_endereco_cidade');
+        value.addClass('is-invalid');
+    }
+})
+
+var valid_cep = {% if form.endereco_cep.errors %} false {% else %} true {% endif %}
+$(function() {
+    if (valid_cep == false) {
+        let value = $('#id_endereco_cep');
+        console.log(value)
+        value.addClass('is-invalid');
+    }
+})*/
+
+var valid_franquia = {% if form.franquia.errors %} false {% else %} true {% endif %}
+$(function() {
+    if (valid_franquia== false) {
+        let value = $('#id_franquia');
+        value.addClass('is-invalid');
+    }
+})
+
+let submitado = false;
+$('#id_form').on('submit',function (evento) {
+    if (submitado) {
+        evento.preventDefault();
+    }
+    submitado = true;
+    $('#btn-form').attr('disabled','true')
+})
+
+</script>
+{% endblock %}

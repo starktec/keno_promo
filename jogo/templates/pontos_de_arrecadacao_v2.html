@@ -1,0 +1,560 @@
+{% extends "index.html" %}
+{% block titulo %}
+PONTO DE ARRECADAÇÃO
+{% endblock %}
+{% block nav-bar %}      
+    <!---------------------------------Criar ponto de arrecadação---------------------------------->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card crud-bar">
+                <div class="row justify-content-center align-items-center form-group">
+                    <div class="col-12 row justify-content-end">
+                        <button type="button" id="cadastrar-ponto" class="btn btn-lg text-right btn-success btn-create btn-create-secondary" data-toggle="modal" data-target="#modal-equipamento">
+                            <em class="icon ni ni-plus"></em>
+                            <p>Criar ponto de arrecadação</p>
+                        </button>
+                        <div class="modal fade" tabindex="-1" id="modal-equipamento">
+                            <div class="modal-dialog modal-md" role="document">
+                                <div class="modal-content">
+                                    <a href="#" class="close" data-dismiss="modal" aria-label="Close">
+                                        <em class="icon ni ni-cross"></em>
+                                    </a>
+
+                                    <div class="alert alert-fill alert-secondary alert-icon header-modal">
+                                        <em class="icon ni ni-pen-fill"></em>
+                                        <h6>Adicionar Ponto de Arrecadação</h6>
+                                    </div>
+
+                                    <form class="modal-body" method="post" id="form1">{% csrf_token %}
+
+                                        <div class="form-group" action="" method="post">
+                                            <div class="row container-form-modal">
+                                                <div class="col-lg-6 col-sm-6 container-input-create">
+                                                    <div class="form-group">
+                                                        <div class="form-control-wrap">
+                                                            {{ form.gerencia }}
+                                                            <label class="form-label-outlined" for="id_franquia">Gerencia</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-5 col-sm-6 container-input-create">
+                                                    <div class="form-group">
+                                                        <div class="form-control-wrap">
+                                                            {{ form.leiturista }}
+                                                            <label class="form-label-outlined" for="id_franquia">Leiturista</label>
+                                                        </div>
+                                                        {% if form.leiturista.errors %}
+                                                        <div class="error-campo">
+                                                            {{ form.leiturista.errors }}
+                                                        </div>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                                <div class="row justify-content-end col-lg-1 col-sm-6 container-input-create">
+                                                    <div class="form-group">
+                                                        <div class="form-control-wrap">
+                                                            <button type="button" id="leiturista-create" class="btn btn-sm btn-success">
+                                                                <em class="icon ni ni-plus"></em>
+                                                            </button>
+                                                            <button type="button" id="leiturista-remove" class="btn btn-sm btn-danger">
+                                                                <em class="icon ni ni-minus-sm"></em>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div id="block" class="row container-form-modal">
+                                                <div class="col-lg-6 col-sm-6 container-input-create">
+                                                    <div class="form-group">
+                                                        <div class="form-control-wrap">
+                                                            {{ form.nome }}
+                                                            <label class="form-label-outlined" for="id_nome">Nome</label>
+                                                        </div>
+                                                        {% if form.nome.errors %}
+                                                        <div class="error-campo">
+                                                            {{ form.nome.errors }}
+                                                        </div>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-sm-6 container-input-create">
+                                                    <div class="form-group">
+                                                        <div class="form-control-wrap">
+                                                            {{ form.login }}
+                                                            <label class="form-label-outlined" for="id_franquia">Login</label>
+                                                        </div>
+                                                        {% if form.login.errors %}
+                                                        <div class="error-campo">
+                                                            {{ form.login.errors }}
+                                                        </div>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-sm-6 container-input-create">
+                                                    <div class="form-group">
+                                                        <div class="form-control-wrap">
+                                                            {{ form.senha }}
+                                                            <label class="form-label-outlined" for="id_franquia">Senha</label>
+                                                        </div>
+                                                        {% if form.senha.errors %}
+                                                        <div class="error-campo">
+                                                            {{ form.senha.errors }}
+                                                        </div>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-sm-6 container-input-create">
+                                                    <div class="form-group">
+                                                        <div class="form-control-wrap">
+                                                            {{ form.confirmar_senha }}
+                                                            <label class="form-label-outlined" for="id_franquia">Confirmar Senha</label>
+                                                        </div>
+                                                        {% if form.confirmar_senha.errors %}
+                                                        <div class="error-campo">
+                                                            {{ form.confirmar_senha.errors }}
+                                                        </div>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row container-form-modal">
+                                                <div class="row justify-content-end col-12 container-input-create">
+                                                    <button type="submit" form='form1' class="btn btn-sm btn-success">
+                                                        salvar
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-------------------------------tabela de generica de franquias-------------------------------->
+
+    <div class="row my-row">
+        <div class="col-12">
+            <div class="card table-margin table-responsive-xl">
+                <table id="tabelaLeiturista" class="table">
+                    <thead class="thead-dark text-center">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Gerência</th>
+                            <th scope="col">Gerente</th>
+                            <th scope="col">Franquia</th>
+                            <th scope="col">Situação</th>
+                            <th scope="col">Leiturista atual</th>
+                            {% if request.session.perfil_max < 5 %}
+                            {% if usuarios %}
+                            <th scope="col">Alterar leiturista para</th>
+                            {% endif %}
+                            {% endif %}
+                            <th scope="col">Estabelecimentos</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-center">
+                    {% for dado in dados %}
+
+                        <tr>
+                            <td>PA-{{ dado.0 }}</td>
+                            <td>GERENCIA-{{ dado.1 }}</td>
+                            <td>{{ dado.3 }}</td>
+                            <td>{{ dado.2 }}</td>
+                            <td>{% if dado.4 %}ATIVO{% else %}INATIVO{% endif %}</td>
+                            <td>{% if dado.5 %}{{ dado.5 }}{% endif %}</td>
+                            {% if request.session.perfil_max < 5 %}
+                                {% if usuarios %}
+                                <td>
+                                    <form method="post">{% csrf_token %}
+                                        <select class="form-control form-select-sm form-control-outlined select-pdv" name="novoleiturista" onchange="this.form.submit();">
+                                            <option value="" selected></option>
+                                            {% for u, franquias in usuarios %}
+                                                {% if dado.6 in franquias %}
+                                                    <option value="{{ dado.0 }},{{ u.id }}">{{ u.usuario.get_full_name }}</option>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                    </form>
+                                </td>
+                                {% endif %}
+                            {% endif %}
+                            <td>
+                                <a onclick="return list_estabelecimentos({{ dado.0 }})" class="paragrafo-pdv" data-toggle="modal" data-target="#modal-arrecadacao-{{ dado.0 }}">
+                                    Listar
+                                    <span class="btn btn-primary span-plus">
+                                        <em class="icon ni ni-arrow-down"></em>
+                                    </span>
+                                </a>
+                            </td>
+                            <div class="modal fade" tabindex="-1" id="modal-arrecadacao-{{ dado.0 }}" style="display: none;" aria-hidden="true">
+                                <div class="modal-dialog modal-md" role="document">
+                                    <div class="modal-content">
+                                        <a href="#" class="close" data-dismiss="modal" aria-label="Close">
+                                            <em class="icon ni ni-cross"></em>
+                                        </a>
+                                        <div class="modal-header modal-header-estabelecimento row">
+                                            <p class="col-sm-6 modal-title">Estabelecimentos</p>
+                                        </div>
+                                        <div class="row modal-body modal-body-estabelecimento">
+                                            <ul class="row col-12" id="modal_list_{{ dado.0 }}">
+
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <td>
+                                <button id="" onclick="return edit_estabelecimentos({{ dado.0 }});" class="btn btn-success btn-create-secondary btn-modal" data-toggle="modal" data-target="#modalDefault{{ dado.0 }}">
+                                    <em class="icon ni ni-plus-sm"></em>
+                                </button>
+                            </td>
+
+                            <!-------------------------modal-------------------------->
+                            <div class="modal fade" tabindex="-1" id="modalDefault{{ dado.0 }}">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content" id="modal-content{{ dado.0 }}">
+                                        <a href="#" class="close" data-dismiss="modal" aria-label="Close">
+                                            <em class="icon ni ni-cross"></em>
+                                        </a>
+                                        
+                                        <div id="container_title_modal" class="alert alert-fill alert-success alert-icon header-modal">
+                                            <em class="icon ni ni-alert-circle"></em>
+                                            <h6 id="title_modal">Estabelecimentos vinculados ao leiturista</h6>
+                                        </div>
+
+                                        <div id="modal_edit_{{ dado.0 }}">
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--
+                            <td class="text-center">
+                                <a href="/franquia/{{ f.id }}/" class="btn btn-success">
+                                    <em class="icon ni ni-pen-fill"></em>
+                                    <p>Editar</p>
+                                </a>
+                                <a href="/user/{{ f.dono.id }}/status/"
+                                    class="btn {% if p.leiturista.ativo %}btn-danger{% else %}btn-success{% endif %}">
+
+                                    <p>{% if p.leiturista.ativo %}Desativar{% else %}Ativar{% endif %}</p>
+                                </a>
+                            </td>
+                            -->
+                        </tr>
+
+                        <script>
+                            $(".select-all-{{ dado.0 }}").click(function () {
+                            console.log("aqui)
+                                $('.checkbox-all-{{ dado.0 }}').attr("checked", true);
+                            })
+
+                            $(".select-all-{{ dado.0 }}").click(function () {
+                            console.log("aqui)
+                                $('.checkbox-none-{{ dado.0 }}').attr("checked", false);
+                            })
+                        </script>
+
+                    {% endfor %}
+
+                    </tbody>
+                    </table>
+
+            </div>
+        </div>
+    </div>
+    <!-------------------------------------------------------------------------------------------->
+    <!-------------------------------tabela de generica de usuarios candidatos a leituristas-------------------------------->
+    <!--
+    <div class="row my-row">
+        <div class="col-12">
+            <div class="card table-margin table-responsive-xl">
+                <table id="tabelaLeiturista" class="table">
+                    <thead class="thead-dark text-center">
+                        <tr>
+                            <th scope="col" colspan="5"><h6 style="color:white" >Lista de candidatos a leiturista</h6></th>
+                        </tr>
+                        <tr>
+                            <th scope="row">#</th>
+                            <th scope="col">nome</th>
+                            <th scope="col">login</th>
+                            <th scope="col">Perfis</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-center">
+                    {% for u in usuarios %}
+                        <tr>
+                            <td scope="row">{{ u.id }}</td>
+                            <td>{{ u.usuario.get_full_name }}</td>
+                            <td>{{ u.usuario.username }}</td>
+                            <td>{{ u.perfis.all|join:", " }}</td>
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+                    </table>
+
+            </div>
+        </div>
+    </div>
+    -->
+    <!-------------------------------------------------------------------------------------------->
+<script>
+    $(function () {
+        let modal = $('#modal-content');
+        modal.css('display','flex')
+    })
+     $(document).ready( function () {
+    //     $('#tabelaCandidato').DataTable({
+    //         "language": {
+    //             "url":"https://cdn.datatables.net/plug-ins/1.10.24/i18n/Portuguese-Brasil.json",
+    //         },
+    //         "dom": '',
+    //         paging: false  
+    //     });
+         $('#tabelaLeiturista').DataTable({
+             "language": {
+                 "url":"https://cdn.datatables.net/plug-ins/1.10.24/i18n/Portuguese-Brasil.json",
+             },
+             "dom": '',
+             paging: false,
+             columnDefs: [
+                 { orderable: false, targets: [5,7] }
+             ],   
+         });
+     } );
+
+    // /*******************************************/
+
+    // $('.checkbox-all').mouseover(function () {
+    //     const styleAdd= {
+    //         display:'flex',
+    //         color:'#ffffff'
+    //     }
+    //     let checkboxText = $('.checkbox-text');
+    //     checkboxText.css(styleAdd);
+    // })
+    
+    // $('.checkbox-all').mouseout(function () {
+    //     const styleRemove = {
+    //         display:'none'
+    //     }
+    //     let checkboxText = $('.checkbox-text');
+    //     checkboxText.css(styleRemove);
+    // })
+
+    // /*******************************************/
+
+    // $('.checkbox-none').mouseover(function () {
+    //     const styleAdd= {
+    //         display:'flex',
+    //         color:'#ffffff'
+    //     }
+    //     let checkboxText = $('.checkbox-text-none');
+    //     checkboxText.css(styleAdd);
+    // })
+
+    // $('.checkbox-none').mouseout(function () {
+    //     const styleRemove = {
+    //         display:'none'
+    //     }
+    //     let checkboxText = $('.checkbox-text-none');
+    //     checkboxText.css(styleRemove);
+    // })
+    
+    const erroCad = {% if form.leiturista.errors or form.nome.errors or form.login.errors or form.senha.errors or form.confirmar_senha.errors %} true {% else %} false {% endif %};
+</script>
+
+<script src="/static/script/ponto_de_arrecadacao.js"></script>
+
+<script>
+function edit_estabelecimentos(pa_id){
+    var div_formulario = document.getElementById('modal_edit_'+pa_id);
+    div_formulario.innerHTML = "<h4>Aguarde os dados serem carregados...</h4>";
+    var oReq = new XMLHttpRequest();
+
+    oReq.onreadystatechange = function(e){
+        dados = JSON.parse(oReq.responseText);
+        div_formulario.innerHTML = "";
+
+        // Criação do Form
+        var formulario = document.createElement("form");
+        formulario.className = "modal-body-2";
+        formulario.method = "get";
+
+        var csrf_input = document.createElement("input");
+        csrf_input.type = "hidden";
+        csrf_input.value = "{{ csrf_token }}";
+
+        var pa_id_input = document.createElement("input");
+        pa_id_input.type = "hidden";
+        pa_id_input.name = "ponto_de_arrecadacao_id";
+        pa_id_input.value = pa_id;
+
+        formulario.appendChild(csrf_input);
+        formulario.appendChild(pa_id_input);
+
+        var div_form_1 = document.createElement("div");
+        div_form_1.className = "form-group";
+
+        var div_form_2 = document.createElement("div");
+        div_form_2.className = "row container-form-modal";
+
+        var div_form_3 = document.createElement("div");
+        div_form_3.className = "col-lg-12 col-sm-12 row container-input-create";
+
+        var h6_text = document.createElement("h6");
+        h6_text.className = "title-check col-6";
+        h6_text.innerText = "Estabelecimento";
+
+        var div_form_4 = document.createElement("div");
+        div_form_4.className = "col-6 row justify-content-end";
+
+        var check_selecionar_todos = document.createElement("a");
+        check_selecionar_todos.className = "btn btn-success btn-create-secondary btn-checkbox checkbox-all-"+pa_id;
+        check_selecionar_todos.value = pa_id;
+        check_selecionar_todos.id = `checkbox-all-${pa_id}`;
+
+        var check_selecionar_todos_em = document.createElement("em");
+        check_selecionar_todos_em.className = "icon ni ni-check-round";
+        var check_selecionar_todos_p = document.createElement("p");
+        check_selecionar_todos_p.className = "checkbox-text";
+        check_selecionar_todos_p.innerText = "Selecionar Todos";
+
+        check_selecionar_todos.appendChild(check_selecionar_todos_em);
+        check_selecionar_todos.appendChild(check_selecionar_todos_p);
+
+        div_form_4.appendChild(check_selecionar_todos);
+
+        var check_deselecionar_todos = document.createElement("a");
+        check_deselecionar_todos.className = "btn btn-danger btn-create-secondary btn-checkbox checkbox-none-" + pa_id;
+        check_deselecionar_todos.id = `checkbox-none-${pa_id}`;
+
+        var check_deselecionar_todos_em = document.createElement("em");
+        check_deselecionar_todos_em.className = "icon ni ni-square";
+        var check_deselecionar_todos_p = document.createElement("p");
+        check_deselecionar_todos_p.className = "checkbox-text-none";
+        check_deselecionar_todos_p.innerText = "Desmarcar Todos";
+
+        check_deselecionar_todos.appendChild(check_deselecionar_todos_em);
+        check_deselecionar_todos.appendChild(check_deselecionar_todos_p);
+
+        div_form_4.appendChild(check_deselecionar_todos);
+
+        div_form_5 = document.createElement("div");
+
+        for (var pos=0; pos < dados.estabelecimentos_pa.length; pos++){
+            var id = dados.estabelecimentos_pa[pos].id;
+            var nome = dados.estabelecimentos_pa[pos].nome.toUpperCase();
+            var div1 = document.createElement("div");
+            div1.className = "col-sm-12 container-check";
+            var div2 = document.createElement("div");
+            var input = document.createElement("input");
+            input.type = "checkbox";
+            input.name = id;
+            input.id = "E"+id;
+            input.runat = "server";
+            input.className = "select-all-"+pa_id;
+            input.click();
+            div2.appendChild(input);
+            var label = document.createElement("label");
+            label.className = "label-checkbox";
+            label.innerHTML = nome;
+            div1.appendChild(div2);
+            div1.appendChild(label);
+            div_form_5.appendChild(div1);
+
+        }
+        for (var pos=0; pos < dados.estabelecimentos.length; pos++){
+            var id = dados.estabelecimentos[pos].id;
+            var nome = dados.estabelecimentos[pos].nome.toUpperCase();
+            var div1 = document.createElement("div");
+            div1.className = "col-sm-12 container-check";
+            var div2 = document.createElement("div");
+            var input = document.createElement("input");
+            input.type = "checkbox";
+            input.name = id;
+            input.id = "E"+id;
+            input.runat = "server";
+            input.className = "select-all-"+pa_id;
+            div2.appendChild(input);
+            var label = document.createElement("label");
+            label.className = "label-checkbox";
+            label.innerHTML = nome;
+            div1.appendChild(div2);
+            div1.appendChild(label);
+            div_form_5.appendChild(div1);
+
+        }
+
+        div_form_3.appendChild(h6_text);
+        div_form_3.appendChild(div_form_4);
+        div_form_3.appendChild(div_form_5);
+        div_form_2.appendChild(div_form_3);
+        div_form_1.appendChild(div_form_2);
+        formulario.appendChild(div_form_1);
+
+        var div_form_6 = document.createElement("div");
+        div_form_6.className = "modal-footer bg-light";
+        var div_form_7 = document.createElement("div");
+        div_form_7.className = "row justify-content-between form-group";
+        var div_form_8 = document.createElement("div");
+        div_form_8.className = "form-control-wrap";
+
+        var submit_button = document.createElement("button");
+        submit_button.type = "submit";
+        submit_button.className = "btn btn-modal btn-success";
+        submit_button.innerText = "Salvar";
+
+        div_form_8.appendChild(submit_button);
+        div_form_7.appendChild(div_form_8);
+        div_form_6.appendChild(div_form_7);
+
+        formulario.appendChild(div_form_6);
+
+        div_formulario.appendChild(formulario);
+
+
+    }
+
+    oReq.open("get", "/leiturista/"+pa_id+"/todos/", true);
+    oReq.send();
+}
+function list_estabelecimentos(pa_id){
+    var lista = document.getElementById('modal_list_'+pa_id);
+    var oReq = new XMLHttpRequest();
+
+    oReq.onreadystatechange = function(e){
+        lista.innerHTML = "";
+
+        dados = JSON.parse(oReq.responseText);
+
+        for (var pos=0; pos < dados.estabelecimentos_pa.length; pos++){
+            var nome_fantasia = dados.estabelecimentos_pa[pos].nome_fantasia;
+            var li = document.createElement("li");
+            li.className = "col-sm-6";
+            var p = document.createElement("p");
+            p.className = "container-list-estabelecimento";
+            var em = document.createElement("em");
+            em.className = "icon ni ni-square-fill-c";
+            p.appendChild(em);
+            p.innerText = nome_fantasia.toUpperCase();
+            li.appendChild(p);
+            lista.appendChild(li);
+        }
+
+    }
+    oReq.open("get", "/leiturista/"+pa_id+"/", true);
+    oReq.send();
+}
+</script>
+
+    <!-- content @e -->
+{% endblock %}
