@@ -1,5 +1,7 @@
 env/
 .idea/
 logs/
-migratgions/
+migrations/
 __pycache__/
+*.py[cod]
+
