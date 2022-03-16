@@ -464,6 +464,7 @@ class CartelaVencedora(models.Model):
     cartela = models.ForeignKey(Cartela, on_delete=models.PROTECT)
     premio = models.PositiveSmallIntegerField(choices=PREMIO_CHOICES)
     linha_vencedora = models.SmallIntegerField(default=-1)
+    valor_premio = models.FloatField(default=0.0)
 
     def __str__(self):
         return str(self.cartela)

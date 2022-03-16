@@ -7,6 +7,7 @@ from decimal import Decimal
 
 from backports import zoneinfo
 
+from jogo.constantes import NOME_PESSOAS
 from jogo.consultas_banco import cartelas_sql_teste
 
 from jogo.websocket_triggers_bilhete import event_bilhete_sorteio
@@ -124,8 +125,11 @@ class Agenda():
                             cartelas_numeros_restantes[c['codigo']] = [
                                 numeros1, numeros2, numeros3
                             ]
-                            codigo_cartela_nome[c['codigo']] = (
-                                "".join([n for n in c['nome'] if n.isalnum() or n == " "]).strip(),
+                            nome = c.get("nome")
+                            if not nome:
+                                nome = NOME_PESSOAS[random.randint(0,len(NOME_PESSOAS)-1)]
+                            codigo_cartela_nome[c['codigo']] = (nome,
+                                #"".join([n for n in c['nome'] if n.isalnum() or n == " "]).strip(),
                                 c['id']
                             )
 
@@ -304,9 +308,8 @@ class Agenda():
                         msg += "keno:["
                         for v_keno in list(set(vencedores_keno)):
                             valor = partida.valor_keno / len(vencedores_keno)
-                            ganhou_acumulado = False
                             CartelaVencedora.objects.create(partida=partida, cartela_id=codigo_cartela_nome[v_keno[0]][1], premio=3,
-                                                            valor_premio=valor, ganhou_acumulado=ganhou_acumulado,linha_vencedora=3)
+                                                            valor_premio=valor,linha_vencedora=3)
                             msg += str(v_keno[0]) + "," + str(valor)
                             msg += "],"
 

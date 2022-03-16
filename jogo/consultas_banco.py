@@ -16,7 +16,7 @@ def cartelas_sql_teste(partida_id):
     with connection.cursor() as cursor: 
         cursor.execute(f"""
             select jogo_cartela.id,codigo,linha1,linha2,linha3,vencedor_kuadra,vencedor_kina,vencedor_keno,jogo_jogador.nome 
-            from jogo_cartela inner join jogo_jogador on jogo_cartela.jogador_id = jogo_jogador.id             
+            from jogo_cartela left join jogo_jogador on jogo_cartela.jogador_id = jogo_jogador.id             
             where partida_id = {partida_id} and cancelado = false
             """
         )

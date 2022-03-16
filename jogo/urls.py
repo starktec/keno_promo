@@ -10,8 +10,7 @@ from jogo.views import cancelar_template, index, \
 from .views import realtime_data
 from .views_api_media import media_login, nome_server, media_logo, media_favicon
 from .views_api_online import dados_bilhete, proximos_kol, data_hora_servidor, ultimos_ganhadores_kol
-from .views_api_tela import resultado_sorteio, proximos, proximos_especiais, historico, status, ultimos_ganhadores, \
-    replay_tela
+from .views_api_tela import resultado_sorteio, proximos, proximos_especiais, historico, status, ultimos_ganhadores
 
 urlpatterns = [
     path('', index),
@@ -48,7 +47,6 @@ urlpatterns = [
             path('historico/', historico),
             path('status/<str:partida_id>/',status),
             path('ultimos_ganhadores/',ultimos_ganhadores),
-            path('replay/',replay_tela),
         ]
     )),
 
