@@ -19,37 +19,7 @@ from django.utils.crypto import get_random_string
 # Create your models here.
 from jogo import local_settings
 from jogo.choices import AcaoTipoChoices
-from jogo.consts import StatusSolicitacaoRecolhe, TipoSolicitacaoRecolhe
-from jogo.websocket_triggers import event_doacoes, event_pos, event_tela, event_tela_partidas
 
-UF_CHOICES = (
-    ('AC', 'Acre'),
-    ('AL', 'Alagoas'),
-    ('AP', 'Amapá'),
-    ('BA', 'Bahia'),
-    ('CE', 'Ceará'),
-    ('DF', 'Distrito Federal'),
-    ('ES', 'Espírito Santo'),
-    ('GO', 'Goiás'),
-    ('MA', 'Maranão'),
-    ('MG', 'Minas Gerais'),
-    ('MS', 'Mato Grosso do Sul'),
-    ('MT', 'Mato Grosso'),
-    ('PA', 'Pará'),
-    ('PB', 'Paraíba'),
-    ('PE', 'Pernambuco'),
-    ('PI', 'Piauí'),
-    ('PR', 'Paraná'),
-    ('RJ', 'Rio de Janeiro'),
-    ('RN', 'Rio Grande do Norte'),
-    ('RO', 'Rondônia'),
-    ('RR', 'Roraima'),
-    ('RS', 'Rio Grande do Sul'),
-    ('SC', 'Santa Catarina'),
-    ('SE', 'Sergipe'),
-    ('SP', 'São Paulo'),
-    ('TO', 'Tocantins')
-)
 
 def configuracao_images_path(instance, filename):
     return 'configuracao/{0}'.format(filename)
@@ -222,7 +192,8 @@ class Partida(models.Model):
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
         super().save(force_insert, force_update, using, update_fields)
-        event_doacoes()
+        # notificar?
+        #event_doacoes()
 
     def __str__(self):
         data = self.data_partida
@@ -242,11 +213,8 @@ class Partida(models.Model):
     def nome_sorteio_text(self):
         return self.nome_sorteio if self.nome_sorteio else ""
 
-    def cartelas_compradas(self):
-        numero = 0
-        if self.doacoes:
-            numero = int(Cartela.objects.filter(partida=self, cancelado=False).count())
-        return numero
+    def num_participantes(self):
+        return Cartela.objects.filter(partida=self,jogador__isnull=False).count()
 
     def sorteadas_list(self):
         if self.bolas_sorteadas:
@@ -472,7 +440,8 @@ class Cartela(models.Model):
             self.linha2 = ",".join([str(x) for x in linhas[1]])
             self.linha3 = ",".join([str(x) for x in linhas[2]])
 
-            self.codigo = str(self.gerar_codigo())
+            if not self.codigo:
+                self.codigo = str(self.gerar_codigo())
 
         super().save(force_insert, force_update, using, update_fields)
 

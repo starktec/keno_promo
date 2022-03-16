@@ -7,18 +7,19 @@ import csv
 import math
 import logging
 
-from jogo.utils import testa_horario
+from jogo.choices import AcaoTipoChoices
+from jogo.utils import testa_horario, comprar_cartelas
 from keno_promo.settings import BASE_DIR
 from jogo.constantes import VALORES_VOZES
 from jogo.frontend_objects import FrontEndFranquia, FrontEndPartida, FrontEndADSCriar
 
-from jogo.websocket_triggers import event_doacoes, event_tela_partidas
 from jogo.websocket_triggers_bilhete import event_bilhete_partida
 
 from jogo.agendamento import Agenda
 from jogo.forms import NovaPartidaAutomatizada, PartidaEditForm, GanhadoresForm, NovaPartidaForm, UsuarioAddForm, \
     ConfiguracaoForm, TemplateEditForm
-from jogo.models import Partida, Automato, Cartela, Usuario, Configuracao, CartelaVencedora, TemplatePartida
+from jogo.models import Partida, Automato, Cartela, Usuario, Configuracao, CartelaVencedora, TemplatePartida, Regra, \
+    Acao
 
 logger = logging.getLogger(__name__)
 
@@ -96,17 +97,15 @@ def login_page(request):
 @login_required(login_url="/login/")
 def logout_page(request):
     logout(request)
-    if "perfil_max" in request.session:
-        del request.session['perfil_max']
     return redirect('/')
 
 
 @login_required(login_url="/login/")
 def cancelar_partida(request, partida_id):
-    p = Partida.objects.filter(id=partida_id, doacoes=0.00)
+    p = Partida.objects.get(id=partida_id)
     if not Cartela.objects.filter(partida=p,jogador__isnull=False).exists():
         p.delete()
-        event_doacoes()
+        #event_doacoes()
     # TODO: WEBSOCKET
     ##event_tela_partidas(franquias)  ## informa aos websockets de tela que houve modificação na tela
     return redirect("/")
@@ -122,59 +121,57 @@ def index(request):
 def partida_automatica(request):
     usuario = Usuario.objects.filter(usuario=request.user).first()
     form = NovaPartidaAutomatizada()
-    if request.session['automato']:
-        if request.method == 'POST':
-            form = NovaPartidaAutomatizada(request.POST)
-            if form.is_valid():
-                dia_partida_inicial = form.cleaned_data['dia_partida_inicial']
-                hora_partida_inicial = form.cleaned_data['hora_partida_inicial']
-                data_partida = datetime.datetime.strptime(
-                    dia_partida_inicial + " " + hora_partida_inicial, "%d/%m/%Y %H:%M")
-                if data_partida < datetime.datetime.now():
-                    form.add_error('dia_partida_inicial', 'data/hora inválido(a)')
-                valor_kuadra_inicial = form.cleaned_data['valor_kuadra_inicial']
-                valor_kina_inicial = form.cleaned_data['valor_kina_inicial']
-                valor_keno_inicial = form.cleaned_data['valor_keno_inicial']
-                tempo_partidas = form.cleaned_data['tempo_partidas']
-                limite_partidas = form.cleaned_data['limite_partidas']
-                cartelas_iniciais = form.cleaned_data['cartelas_iniciais']
+    if request.method == 'POST':
+        form = NovaPartidaAutomatizada(request.POST)
+        if form.is_valid():
+            dia_partida_inicial = form.cleaned_data['dia_partida_inicial']
+            hora_partida_inicial = form.cleaned_data['hora_partida_inicial']
+            data_partida = datetime.datetime.strptime(
+                dia_partida_inicial + " " + hora_partida_inicial, "%d/%m/%Y %H:%M")
+            if data_partida < datetime.datetime.now():
+                form.add_error('dia_partida_inicial', 'data/hora inválido(a)')
+            valor_kuadra_inicial = form.cleaned_data['valor_kuadra_inicial']
+            valor_kina_inicial = form.cleaned_data['valor_kina_inicial']
+            valor_keno_inicial = form.cleaned_data['valor_keno_inicial']
+            tempo_partidas = form.cleaned_data['tempo_partidas']
+            limite_partidas = form.cleaned_data['limite_partidas']
+            cartelas_iniciais = form.cleaned_data['cartelas_iniciais']
 
-                tipo_crescimento = form.cleaned_data['tipo_crescimento']
+            tipo_crescimento = form.cleaned_data['tipo_crescimento']
 
-                tipo_rodada = form.cleaned_data['tipo_rodada']
+            tipo_rodada = form.cleaned_data['tipo_rodada']
 
-                if form.errors:
-                    return render(request, "partida_automatizada.html", {'form': form})
-                with transaction.atomic():
-                    if int(tipo_crescimento) == 1:
-                        automato = Automato.objects.create(
-                            usuario=usuario,
-                            tempo=tempo_partidas,
-                            quantidade_sorteios=limite_partidas,
-                            cartelas_minimas=cartelas_iniciais,
-                            tipo_crescimento=int(tipo_crescimento),
-                        )
-                    
-
-                    partida_inicial = Partida.objects.create(
-                        valor_kuadra=valor_kuadra_inicial,
-                        valor_kina=valor_kina_inicial,
-                        valor_keno=valor_keno_inicial,
-                        data_partida=data_partida,
+            if form.errors:
+                return render(request, "partida_automatizada.html", {'form': form})
+            with transaction.atomic():
+                if int(tipo_crescimento) == 1:
+                    automato = Automato.objects.create(
                         usuario=usuario,
-                        id_automato=automato.id,
-                        partida_automatizada=True,
-                        tipo_rodada=tipo_rodada,
+                        tempo=tempo_partidas,
+                        quantidade_sorteios=limite_partidas,
+                        cartelas_minimas=cartelas_iniciais,
+                        tipo_crescimento=int(tipo_crescimento),
                     )
-                    partida_inicial.save()
-                    agenda.agendar(partida_inicial)
-                    for numero in range(cartelas_iniciais):
-                        Cartela.objects.create(partida=partida_inicial)
-                #event_tela_partidas(franquias)
-                return redirect('/partidas/')
-        return render(request, "partida_automatizada.html", {'form': form})
-    else:
-        return HttpResponse(status=401)
+
+
+                partida_inicial = Partida.objects.create(
+                    valor_kuadra=valor_kuadra_inicial,
+                    valor_kina=valor_kina_inicial,
+                    valor_keno=valor_keno_inicial,
+                    data_partida=data_partida,
+                    usuario=usuario,
+                    id_automato=automato.id,
+                    partida_automatizada=True,
+                    tipo_rodada=tipo_rodada,
+                )
+                partida_inicial.save()
+                agenda.agendar(partida_inicial)
+                for numero in range(cartelas_iniciais):
+                    Cartela.objects.create(partida=partida_inicial)
+            #event_tela_partidas(franquias)
+            return redirect('/partidas/')
+    return render(request, "partida_automatizada.html", {'form': form})
+
 
 
 @login_required(login_url="/login/")
@@ -228,25 +225,21 @@ def partidas(request):
         ultima_pagina = 1
 
     total_participantes = 0
-    total_online = 0
-    total_offline = 0
+    total_sorteios = len(partidas)
+    total_premios = 0
     agora = datetime.datetime.now()
     if partidas:
-        proxima_partida = partidas[len(partidas)-1]
-        for p in partidas:
-            if p < agora:
-                break
-            else:
-                proxima_partida = p
-
-        total_participantes = Cartela.objects.filter(partida=proxima_partida, jogador__isnull=False).count()
+        for partida in partidas:
+            total_participantes += Cartela.objects.filter(partida=partida, jogador__isnull=False).count()
+            if partida.bolas_sorteadas:
+                total_premios += partida.premios()
 
     return render(request, 'partidas.html', {'data_inicial': data_inicial.strftime("%d/%m/%Y"),
                                              'data_final': data_final.strftime("%d/%m/%Y") if data_final else None,
                                              'partidas': partidas, 'agora': agora, 'pagina_atual': pagina,
                                              'ultima_pagina': ultima_pagina, 'proxima_pagina': proxima_pagina,
-                                             'pagina_anterior': pagina_anterior, "participantes":total_participantes,
-                                             'online':total_online,'offline':total_offline
+                                             'pagina_anterior': pagina_anterior, "total_participantes":total_participantes,
+                                             'total_sorteios':total_sorteios,'total_premios':total_premios
                                              })
 
 
@@ -255,21 +248,18 @@ def ganhadores(request):
     hoje = datetime.date.today()
     data_inicio = datetime.datetime.combine(hoje, datetime.time.min)
     data_fim = datetime.datetime.combine(hoje, datetime.time.max)
-    usuario = Usuario.objects.get(usuario=request.user)
-    perfil = request.session['perfil_max']
+    usuario = request.user.usuario
     itens_pagina = 10
     configuracao = Configuracao.objects.last()
-    data_liberacao = datetime.datetime.now() - datetime.timedelta(minutes=configuracao.liberar_resultado_sorteio_em)
+    data_liberacao = datetime.datetime.now()
     vencedores = CartelaVencedora.objects.filter(partida__data_partida__lte=data_liberacao).order_by('-id')
     vencedores = vencedores.filter(partida__data_partida__gte=data_inicio, partida__data_partida__lte=data_fim)
     ultima_pagina = 0
     post = False
-    form = GanhadoresForm(
-        data={'user': request.user, 'perfil': request.session['perfil_max']})
+    form = GanhadoresForm()
     if request.method == "POST":
         post = True
         data_form = request.POST.dict()
-        data_form['perfil'] = request.session['perfil_max']
         data_form['user'] = request.user
         form = GanhadoresForm(data_form)
         vencedores = CartelaVencedora.objects.filter(partida__data_partida__lte=data_liberacao,).order_by('-id')
@@ -306,7 +296,6 @@ def ganhadores(request):
 
 
     partidas_vencedores = {}
-
 
     kuadra, kina, keno, acumulado = (0, 0, 0, 0)
     partidas = []
@@ -348,41 +337,49 @@ def ganhadores(request):
                    'pagina_anterior': pagina_anterior, 'ultima_pagina': ultima_pagina, 'flag': post, 'form': form,
                    'kuadra': kuadra, 'kina': kina,
                    'keno': keno, 'acumulado': acumulado, 'total': total,
-                   # 'pago':pago,
-                   # 'apagar':apagar
                    })
-
-
-class UsuarioBuscaForm(forms.Form):
-    nome = forms.CharField(required=False, widget=forms.TextInput(
-        attrs={'class': "form-control form-control-lg form-control-outlined"}))
-    login = forms.CharField(required=False, widget=forms.TextInput(
-        attrs={'class': "form-control form-control-lg form-control-outlined"}))
 
 
 @login_required(login_url="/login/")
 def criarpartida(request):
     usuario = Usuario.objects.filter(usuario=request.user).first()
     hoje = date.today()
-    form = NovaPartidaForm(initial={'dia_partida': hoje},
-                           data={'user': request.user})
-    yesterday = datetime.datetime.now() - datetime.timedelta(days=1)
-    partidas = Partida.objects.filter(data_partida__gte=yesterday).distinct()
-
+    form = NovaPartidaForm(initial={'dia_partida': hoje})
+    ontem = datetime.datetime.now() - datetime.timedelta(days=1)
+    partidas = Partida.objects.filter(data_partida__gte=ontem)
 
     if request.method == "POST":
-        form = NovaPartidaForm(request.POST, data={'perfil': request.session["perfil_max"], 'user': request.user})
+        form = NovaPartidaForm(request.POST)
 
         if form.is_valid():
+            # Definição de Ações
+            regra, regra_criado = Regra.objects.get_or_create(nome="PROMO")
+            acoes_select = request.POST.getlist("acoes_select")
+            acoes_url = request.POST.getlist("acoes_url")
+
+            dados = list(zip(acoes_select,acoes_url))
+
+            for dado in dados:
+                acao, acao_criado = Acao.objects.get_or_create(
+                    tipo = dado[0],url = dado[1], regra = regra
+                )
+
             dia_partida = form.cleaned_data['dia_partida']
             hora_partida = form.cleaned_data['hora_partida']
             partida = form.save(commit=False)
+            partida.regra = regra
             partida.data_partida = datetime.datetime.strptime(
                 dia_partida + " " + hora_partida, "%d/%m/%Y %H:%M")
             partida.usuario = usuario
             partida.save()
-            form.save_m2m()
+
+            # comprando cartelas
+            configuracao = Configuracao.objects.last()
+            comprar_cartelas(partida,configuracao.quantidade_cartelas_compradas)
+
+            # Agendando sorteio
             agenda.agendar(partida)
+
             # TODO: abaixo
             """
             event_tela_partidas(
@@ -391,11 +388,12 @@ def criarpartida(request):
             return redirect("/partidas/")
 
     valores_disponiveis = VALORES_VOZES
+    acoes_tipo = AcaoTipoChoices.choices
 
     return render(request, 'criarpartida.html',
                   {'form': form, 'partidas': partidas,
-
-                   'configuracao': Configuracao.objects.last(),
+                    'valores_disponiveis':valores_disponiveis,
+                   'configuracao': Configuracao.objects.last(),"acoes_tipo":acoes_tipo,
                    })
 
 
@@ -452,9 +450,6 @@ def partida_edit(request, partida_id):
                           {'form': form, 'partidas': partidas, 'configuracao': Configuracao.objects.last()})
 
 
-class CartelasLoteForm(object):
-    pass
-
 
 @login_required(login_url="/login/")
 def cartelas(request):
@@ -463,14 +458,15 @@ def cartelas(request):
     ordenacao = False
     cartelas_total = False
     perfil = request.session['perfil_max']
-    usuario = Usuario.objects.filter(usuario=request.user).first()
+    usuario = request.user.usuario
 
     cartelas = Cartela.objects.all().order_by('-id')
 
     if request.method == "POST":
         data_form = request.POST.dict()
         data_form['user'] = request.user
-        form = CartelasLoteForm(data_form)
+        #form = CartelasForm(data_form)
+        form = None
         if form.is_valid():
             if 'data_inicio' in form.cleaned_data and form.cleaned_data['data_inicio']:
                 inicio = datetime.datetime.combine(
@@ -501,8 +497,11 @@ def cartelas(request):
         ordenacao = True
         # cartelas = CartelasLote.objects.filter(comprado_em__gte = data_inicio , comprado_em__lte=data_fim)
         cartelas_total = Cartela.objects.filter(comprado_em__gte=data_inicio, comprado_em__lte=data_fim)
+        """
         form = CartelasLoteForm(
             data={'user': request.user, 'perfil': request.session['perfil_max']})
+        """
+        form = None
         page_number = request.GET.get('pagina')
         if not page_number:
             page_number = 1
@@ -577,166 +576,6 @@ class TrocarSenhaForm(forms.Form):
 
 
 
-def usuario_dict(usuario):
-    # print(usuario.id)
-    result = {
-        'usuario_id': usuario.id,
-        'nome': usuario.usuario.first_name,
-        'sobrenome': usuario.usuario.last_name,
-        'login': usuario.usuario.username,
-        'cpf': usuario.cpf,
-        'rg': usuario.rg,
-        'endereco': usuario.endereco,
-        'endereco_num': usuario.endereco_num,
-        'endereco_complemento': usuario.endereco_complemento,
-        'endereco_bairro': usuario.endereco_bairro,
-        'endereco_cidade': usuario.endereco_cidade,
-        'endereco_estado': usuario.endereco_estado,
-        'endereco_cep': usuario.endereco_cep,
-        'fone': usuario.fone,
-        'email': usuario.email,
-        'perfis': usuario.perfis.all(),
-        'franquias': usuario.franquias.all(),
-        'limite_caixa': usuario.limite_caixa
-    }
-    return result
-
-
-@login_required(login_url="/login/")
-def usuarios(request):
-    form = UsuarioBuscaForm()
-
-    usuario = Usuario.objects.filter(usuario=request.user).first()
-    usuarios = Usuario.objects.all()
-
-    if request.method == "POST":
-        form = UsuarioBuscaForm(request.POST)
-
-        if form.is_valid() and usuarios:
-            if 'nome' in form.cleaned_data and form.cleaned_data['nome']:
-                nome = form.cleaned_data['nome']
-                usuarios = usuarios.filter(Q(usuario__first_name__icontains=nome) | Q(
-                    usuario__last_name__icontains=nome))
-            if 'login' in form.cleaned_data and form.cleaned_data['login']:
-                usuarios = usuarios.filter(
-                    usuario__username=form.cleaned_data['login'])
-
-            form = UsuarioBuscaForm()
-
-
-        if usuarios:
-            usuarios = usuarios.order_by('-id')
-
-        return render(request, 'usuarios.html', {'usuarios': usuarios, 'form': form, })
-    else:
-        return HttpResponse(status=403)
-
-
-@login_required(login_url="/login/")
-def usuarios_add_or_edit(request, usuario_id=None):
-    form = None
-    usuario_obj = None
-    if usuario_id:
-        perfil = request.session['perfil_max']
-        usuario_obj = Usuario.objects.filter(id=usuario_id, perfis__tipo__gt=perfil).first()
-        if usuario_obj:
-            form = UsuarioAddForm(initial=usuario_dict(usuario_obj),
-                                  data={'user': request.user, 'perfil': request.session['perfil_max']})
-    else:
-        form = UsuarioAddForm(
-            data={'user': request.user, 'perfil': request.session['perfil_max']})
-
-    if request.method == "POST":
-        form = UsuarioAddForm(request.POST, data={'user': request.user, 'perfil': request.session['perfil_max']})
-        if form.is_valid():
-            login = form.cleaned_data['login']
-            senha = ""
-            if "senha" in form.cleaned_data and form.cleaned_data['senha']:
-                senha = form.cleaned_data['senha']
-            nome = form.cleaned_data['nome']
-            sobrenome = form.cleaned_data['sobrenome']
-            cpf = form.cleaned_data['cpf']
-            rg = form.cleaned_data['rg']
-            endereco = form.cleaned_data['endereco']
-            endereco_num = form.cleaned_data['endereco_num'] if form.cleaned_data['endereco_num'] else 0
-            endereco_complemento = ""
-            if "endereco_complemento" in form.cleaned_data and form.cleaned_data['endereco_complemento']:
-                endereco_complemento = form.cleaned_data['endereco_complemento']
-            endereco_bairro = form.cleaned_data['endereco_bairro']
-            endereco_cidade = form.cleaned_data['endereco_cidade']
-            endereco_estado = form.cleaned_data['endereco_estado']
-            endereco_cep = form.cleaned_data['endereco_cep']
-            fone = form.cleaned_data['fone']
-            email = form.cleaned_data['email']
-            perfis = form.cleaned_data['perfis']
-            franquias = form.cleaned_data['franquias']
-            limite_caixa = form.cleaned_data.get('limite_caixa')
-
-            with transaction.atomic():
-                if not usuario_id and senha:
-
-                    usuario = User.objects.filter(username=login).first()
-                    if not usuario:
-                        usuario = User.objects.create(username=login, password=make_password(senha),
-                                                      first_name=nome, last_name=sobrenome, email=email)
-                        usuario.save()
-
-                    u = Usuario.objects.filter(usuario=usuario).first()
-
-                    if not u:
-                        u = Usuario.objects.create(usuario=usuario, fone=fone, cpf=cpf, rg=rg,
-                                                   endereco=endereco, endereco_num=endereco_num,
-                                                   endereco_complemento=endereco_complemento,
-                                                   endereco_bairro=endereco_bairro, endereco_cidade=endereco_cidade,
-                                                   endereco_estado=endereco_estado, endereco_cep=endereco_cep,
-                                                   email=email, limite_caixa=limite_caixa if limite_caixa else 0)
-
-
-                    u.save()
-                    return redirect("/usuario/details/" + str(u.id) + "/")
-                else:
-                    usuario_obj = Usuario.objects.filter(id=usuario_id).first()
-                    usuario = usuario_obj.usuario
-
-                    # print(usuario_obj)
-                    if usuario:
-                        # print(usuario)
-                        usuario.first_name = nome
-                        usuario.username = login
-                        usuario.last_name = sobrenome
-                        usuario.email = email
-                        if senha:
-                            usuario.set_password(senha)
-                        usuario.save()
-                        usuario_obj.fone = fone
-                        usuario_obj.cpf = cpf
-                        usuario_obj.rg = rg
-                        usuario_obj.endereco = endereco
-                        usuario_obj.endereco_num = endereco_num
-                        usuario_obj.endereco_complemento = endereco_complemento
-                        usuario_obj.endereco_bairro = endereco_bairro
-                        usuario_obj.endereco_cidade = endereco_cidade
-                        usuario_obj.endereco_estado = endereco_estado
-                        usuario_obj.endereco_cep = endereco_cep
-                        usuario_obj.email = email
-                        usuario_obj.perfis.set(perfis)
-                        usuario_obj.franquias.set(franquias)
-                        usuario_obj.limite_caixa = limite_caixa if limite_caixa != None else usuario_obj.limite_caixa
-                        usuario_obj.save()
-                    return redirect("/usuario/details/" + str(usuario_obj.id) + "/")
-
-    return render(request, 'usuario_edit_add.html', {'form': form, 'edit': True if usuario_id else False})
-
-
-@login_required(login_url="/login/")
-def usuario_details(request, usuario_id=None):
-    if usuario_id:
-        usuario = Usuario.objects.filter(id=usuario_id).first()
-        return render(request, 'usuario_details.html', {'usuario_obj': usuario, 'usuario': usuario.usuario})
-    else:
-        return redirect("/usuarios/")
-
-
 @login_required(login_url="/login/")
 def configuracao(request):
     c = Configuracao.objects.last()
@@ -752,37 +591,32 @@ def configuracao(request):
 
 @login_required(login_url="/login/")
 def cancelar_bilhete(request, hash):
-    if "perfil_max" in request.session and request.session['perfil_max'] < 3 and request.session['cancelar_bilhete']:
-        usuario = Usuario.objects.filter(usuario=request.user, ativo=True, perfis__lte=2).first()
-        if usuario:
-            c = Cartela.objects.filter(cancelado=False, hash=hash).first()
-            if c:
-                agora = datetime.datetime.now()
-                if agora < c.partida.data_partida:
-                    c.cancelar(usuario)
-                else:
-                    return HttpResponse(status=403)
+    usuario = Usuario.objects.filter(usuario=request.user, ativo=True, perfis__lte=2).first()
+    if usuario:
+        c = Cartela.objects.filter(cancelado=False, hash=hash).first()
+        if c:
+            agora = datetime.datetime.now()
+            if agora < c.partida.data_partida:
+                c.cancelar(usuario)
             else:
                 return HttpResponse(status=403)
         else:
-            return HttpResponse(status=401)
+            return HttpResponse(status=403)
     else:
-        return HttpResponse(status=403)
+        return HttpResponse(status=401)
+
 
 
 @login_required(login_url="/login/")
 def automatos(request, codigo=0):
     info = False
-    if request.session['automato'] and request.session['perfil_max'] < 3:
-        if codigo:
-            if codigo == 1:
-                info = True
-        partidas = TemplatePartida.objects.filter(play=False, cancelado=False,
-                                                  data_partida__gte=datetime.datetime.now()).order_by('-data_partida')
-        agora = datetime.datetime.now()
-        return render(request, 'template_p_automatos.html', {'partidas': partidas, 'agora': agora, 'info': info})
-    else:
-        return HttpResponse(status=401)
+    if codigo:
+        if codigo == 1:
+            info = True
+    partidas = TemplatePartida.objects.filter(play=False, cancelado=False,
+                                              data_partida__gte=datetime.datetime.now()).order_by('-data_partida')
+    agora = datetime.datetime.now()
+    return render(request, 'template_p_automatos.html', {'partidas': partidas, 'agora': agora, 'info': info})
 
 
 @login_required(login_url="/login/")

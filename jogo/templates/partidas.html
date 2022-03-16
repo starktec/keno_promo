@@ -70,11 +70,23 @@ INFORMAÇÕES DAS PARTIDAS
                 <div class="col-sm-12 col-md-12 col-lg-4">
                     <div class="card cards-status">
                         <div class="row text-center">
-                            <em class="icon ni ni-home icon-card color-card-pos"></em>
+                            <em class="icon ni ni-activity-round icon-card color-card-pos"></em>
+                            <h6 class="title-card color-card-pos">Sorteios</h6>
+                        </div>
+                        <div class="row">
+                            <h6 class="col-12 text-right subtitle-card color-card-pos">{{ total_sorteios }}</h6>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 col-md-12 col-lg-4">
+                    <div class="card cards-status">
+                        <div class="row text-center">
+                            <em class="icon ni ni-users icon-card color-card-pos"></em>
                             <h6 class="title-card color-card-pos">Total Participantes</h6>
                         </div>
                         <div class="row">
-                            <h6 class="col-12 text-right subtitle-card color-card-pos">{{ participantes }}</h6>
+                            <h6 class="col-12 text-right subtitle-card color-card-online">{{ total_participantes }}</h6>
                         </div>
                     </div>
                 </div>
@@ -82,23 +94,11 @@ INFORMAÇÕES DAS PARTIDAS
                 <div class="col-sm-12 col-md-12 col-lg-4">
                     <div class="card cards-status">
                         <div class="row text-center">
-                            <em class="icon ni ni-thumbs-up icon-card color-card-pos"></em>
-                            <h6 class="title-card color-card-pos">Total online</h6>
+                            <em class="icon ni ni-gift icon-card color-card-pos"></em>
+                            <h6 class="title-card color-card-pos">Total Premios</h6>
                         </div>
                         <div class="row">
-                            <h6 class="col-12 text-right subtitle-card color-card-online">{{ online }}</h6>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-sm-12 col-md-12 col-lg-4">
-                    <div class="card cards-status">
-                        <div class="row text-center">
-                            <em class="icon ni ni-thumbs-down icon-card color-card-pos"></em>
-                            <h6 class="title-card color-card-pos">Total off-line</h6>
-                        </div>
-                        <div class="row">
-                            <h6 class="col-12 text-right subtitle-card color-card-offline">{{ offline }}</h6>
+                            <h6 class="col-12 text-right subtitle-card color-card-offline">{{ total_premios }}</h6>
                         </div>
                     </div>
                 </div>
@@ -119,7 +119,9 @@ INFORMAÇÕES DAS PARTIDAS
                                 <th scope="col">Kuadra</th>
                                 <th scope="col">Kina</th>
                                 <th scope="col">Keno</th>
-                                {% if request.session.perfil_max < 5 and p.cartelas.count == 0 %}
+                                  <th scope="col">Tipo</th>
+                                  <th scope="col">Participantes</th>
+                                {% if p.cartelas.count == 0 %}
                                 <th scope="col"></th>
                                 {% else %}
                                 <th scope="col"></th>
@@ -146,7 +148,7 @@ INFORMAÇÕES DAS PARTIDAS
                                         </a>
                                     {% endif %}
                                 </td>
-                                <td class="celula-icon">{% if p.id_automato and request.session.automato %}<img src="/static/images-logo/icone_automato.svg" class="icon-robo-2"/>{% endif %}</td>
+                                <td class="celula-icon">{% if p.id_automato %}<img src="/static/images-logo/icone_automato.svg" class="icon-robo-2"/>{% endif %}</td>
 
                                 <th scope="row">{{ p.id }}</th>
                                 <td class="font-table-2">{{ p.data_partida|date:"SHORT_DATETIME_FORMAT" }}</td>
@@ -156,6 +158,9 @@ INFORMAÇÕES DAS PARTIDAS
 
                                 <td class="{% if p.get_tipo_rodada_display == 'ESPECIAL'%} color-yellow
                                 {% elif p.get_tipo_rodada_display == 'SUPER ESPECIAL'%} color-green {% endif %}">{{ p.get_tipo_rodada_display }}</td>
+
+                                  <td>{{ p.num_participantes }}</td>
+
                                 {% if p.cartelas.count == 0 %}
                                 <td>
                                     <a href="/cancelar_partida/{{ p.id }}/" class="btn btn-danger btn-create-secondary">
@@ -177,7 +182,7 @@ INFORMAÇÕES DAS PARTIDAS
                                     {% endif %}
                                 </td>
                                 <td>
-                                    {% if p.id_automato and not p.bolas_sorteadas and request.session.automato %}
+                                    {% if p.id_automato and not p.bolas_sorteadas %}
                                     <a href="/partida/{{ p.id }}/parar" class="btn btn-danger btn-create-secondary btn-Branco">
                                         <em class="icon ni ni-stop-fill"></em>
                                     </a>

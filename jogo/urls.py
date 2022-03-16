@@ -3,11 +3,15 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path, include
 from jogo.views import cancelar_template, index, \
-    partidas, ganhadores, cartela, login_page, logout_page, criarpartida, usuarios, \
-    usuarios_add_or_edit, usuario_details, cartelas, configuracao, cancelar_partida, cancelar_bilhete, partida_edit, \
+    partidas, ganhadores, cartela, login_page, logout_page, criarpartida, \
+    cartelas, configuracao, cancelar_partida, cancelar_bilhete, partida_edit, \
     partida_automatica, automatos, parar_automato, sortear_template, editar_template
 
 from .views import realtime_data
+from .views_api_media import media_login, nome_server, media_logo, media_favicon
+from .views_api_online import dados_bilhete, proximos_kol, data_hora_servidor, ultimos_ganhadores_kol
+from .views_api_tela import resultado_sorteio, proximos, proximos_especiais, historico, status, ultimos_ganhadores, \
+    replay_tela
 
 urlpatterns = [
     path('', index),
@@ -18,17 +22,11 @@ urlpatterns = [
 
     path('ganhadores/', ganhadores),
 
-    path('usuarios/',usuarios),
-    path('usuario/add/',usuarios_add_or_edit),
-    path('usuario/<usuario_id>/',usuarios_add_or_edit),
-    path('usuario/details/<usuario_id>/',usuario_details),
-
     path('cartelas/', cartelas),
     path('configuracao/', configuracao),
 
     path('cancelar_partida/<int:partida_id>/',cancelar_partida),
     path('cancelar_bilhete/<str:hash>/',cancelar_bilhete),
-    path('usuario_details/', usuario_details),
     path('partida_edit/<int:partida_id>/', partida_edit),
 
     path('partidas/criar_automatica/', partida_automatica),
@@ -41,6 +39,38 @@ urlpatterns = [
     #path('templates/',templates),
 
     path('realtime_data/',realtime_data),
+
+    path('api/v1/', include(
+        [
+            path('sorteio/<int:local_id>/<int:sorteio_id>/', resultado_sorteio),
+            path('proximossorteios/', proximos),
+            path('proximos_especiais/', proximos_especiais),
+            path('historico/', historico),
+            path('status/<str:partida_id>/',status),
+            path('ultimos_ganhadores/',ultimos_ganhadores),
+            path('replay/',replay_tela),
+        ]
+    )),
+
+    path('api/kol/', include(
+        [
+            path('bilhete/<str:hash>/', dados_bilhete),
+            path('proximossorteios/', proximos_kol),
+            path('data_hora/', data_hora_servidor),
+            path('ultimos_ganhadores/', ultimos_ganhadores_kol),
+            path('ultimos_ganhadores/<int:sorteio_id>/', ultimos_ganhadores_kol),
+        ]
+
+    )),
+
+    path('api/media/', include(
+        [
+            path('logo/', media_logo),
+            path('favicon/',media_favicon),
+            path('login/',media_login),
+            path('nome/',nome_server)
+        ]
+    )),
 
 ]
 

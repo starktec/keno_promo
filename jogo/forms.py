@@ -4,7 +4,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 
 from jogo.consts import NamesValidations
-from jogo.models import TemplatePartida, Usuario, Partida, PARTIDA_TIPOS_CHOICES, UF_CHOICES, \
+from jogo.models import TemplatePartida, Usuario, Partida, PARTIDA_TIPOS_CHOICES, \
     Configuracao, TEMPO_CHOICES, TEMPO_LIBERAR_CHOICES, TEMPO_MINIMO_ANTECIPADO
 from jogo.utils import testa_horario
 

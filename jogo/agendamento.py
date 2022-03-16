@@ -9,13 +9,9 @@ from backports import zoneinfo
 
 from jogo.consultas_banco import cartelas_sql_teste
 
-from jogo.websocket_triggers import event_doacoes, event_tela_partidas, event_tela_sorteio
 from jogo.websocket_triggers_bilhete import event_bilhete_sorteio
 
-
 from django.conf import settings
-
-
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from django.db import transaction
@@ -337,8 +333,7 @@ class Agenda():
                     partida.save()
 
                     self.log("Disparando eventos WebSocket")
-                    event_doacoes()
-                    event_tela_sorteio(partida.id, partida.franquias.all())
+
                     event_bilhete_sorteio(partida.id)
 
                     if partida.partida_automatizada and partida.id_automato:
@@ -400,7 +395,6 @@ class Agenda():
                     template.play =True
                     template.save()
                     comprar_cartelas(p,automato.cartelas_minimas)
-            event_tela_partidas(template.franquias.all()) # websocket
         except Exception as e:
             self.log(str(traceback.extract_stack()))
             self.log(str(e))
