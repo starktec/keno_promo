@@ -1,4 +1,4 @@
-/home/project/bingo/logs/gunicorn.log {
+/home/project/keno_promo/logs/gunicorn.log {
     daily
     missingok
     delaycompress

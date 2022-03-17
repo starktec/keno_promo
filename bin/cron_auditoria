@@ -1,1 +1,1 @@
-0 4 * * *   bash   /home/project/bingo/bin/limpar_auditoria.sh > /home/project/cron
+0 4 * * *   bash   /home/project/keno_promo/bin/limpar_auditoria.sh > /home/project/cron

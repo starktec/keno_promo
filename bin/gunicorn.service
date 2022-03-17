@@ -12,8 +12,8 @@ User=root
 # DynamicUser=yes
 # see http://0pointer.net/blog/dynamic-users-with-systemd.html
 RuntimeDirectory=gunicorn
-WorkingDirectory=/home/project/bingo
-ExecStart=/home/project/bingo/bin/gunicorn_start
+WorkingDirectory=/home/project/keno_promo
+ExecStart=/home/project/keno_promo/bin/gunicorn_start
 ExecReload=/bin/kill -s HUP $MAINPID
 KillMode=mixed
 TimeoutStopSec=5

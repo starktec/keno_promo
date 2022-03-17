@@ -2,7 +2,7 @@ upstream keno_app_server {
 # fail_timeout=0 means we always retry an upstream even if it failed
 # to return a good HTTP response (in case the Unicorn master nukes a
 # single worker for timing out).
-server unix:/home/project/bingo/bin/gunicorn.sock fail_timeout=0;
+server unix:/home/project/keno_promo/bin/gunicorn.sock fail_timeout=0;
 }
 
 map $http_upgrade $connection_upgrade {
@@ -15,16 +15,16 @@ server {
 listen   80;
 server_name 130.185.238.121;
 client_max_body_size 4G;
-access_log /home/project/bingo/logs/nginx-access.log;
-error_log /home/project/bingo/logs/nginx-error.log;
+access_log /home/project/keno_promo/logs/nginx-access.log;
+error_log /home/project/keno_promo/logs/nginx-error.log;
 location /static/ {
-alias   /home/project/bingo/static/;
+alias   /home/project/keno_promo/static/;
 }
 location /media/ {
-alias   /home/project/bingo/media/;
+alias   /home/project/keno_promo/media/;
 }
 location /ws/ {
-    proxy_pass http://unix:/home/project/bingo/bin/gunicorn.sock;
+    proxy_pass http://unix:/home/project/keno_promo/bin/gunicorn.sock;
     proxy_http_version 1.1;
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header Connection $connection_upgrade;
@@ -58,6 +58,6 @@ break;
 # Error pages
 error_page 500 502 503 504 /500.html;
 location = /500.html {
-root /home/project/bingo/static/;
+root /home/project/keno_promo/static/;
 }
 }

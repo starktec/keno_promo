@@ -1,23 +1,23 @@
 #!/bin/bash
 # Name of the application
-NAME="keno_online"
+NAME="keno_promo"
 # Django project directory
-DJANGODIR=/home/project/bingo
+DJANGODIR=/home/project/keno_promo
 # we will communicte using this unix socket
-SOCKFILE=/home/project/bingo/bin/gunicorn.sock
+SOCKFILE=/home/project/keno_promo/bin/gunicorn.sock
 # how many worker processes should Gunicorn spawn
 NUM_WORKERS=8
 # which settings file should Django use
-DJANGO_SETTINGS_MODULE=bingo.settings
+DJANGO_SETTINGS_MODULE=keno_promo.settings
 # WSGI module name
-#DJANGO_WSGI_MODULE=bingo.wsgi
-DJANGO_ASGI_MODULE=bingo.asgi
+#DJANGO_WSGI_MODULE=keno_promo.wsgi
+DJANGO_ASGI_MODULE=keno_promo.asgi
 # Gunicorn Log file
-LOGFILE=/home/project/bingo/logs/gunicorn.log
+LOGFILE=/home/project/keno_promo/logs/gunicorn.log
 echo "Starting $NAME as `whoami`"
 # Activate the virtual environment
 cd $DJANGODIR
-source /home/project/bingo/env/bin/activate
+source /home/project/keno_promo/env/bin/activate
 export DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE
 export PYTHONPATH=$DJANGODIR:$PYTHONPATH
 # Create the run directory if it doesn't exist
