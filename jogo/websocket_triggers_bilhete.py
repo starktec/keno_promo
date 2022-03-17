@@ -29,7 +29,6 @@ def event_fechar_grupo_sorteio(id_sorteio):
             for canal in canais:
                 async_to_sync(layer.group_discard)(grupo.nome, canal.nome)
 
-            print(grupo.nome)
             async_to_sync(layer.group_send)(grupo.nome, {"type":"websocket_disconnect"})
             grupo.delete()
 

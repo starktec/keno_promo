@@ -1,3 +1,5 @@
+import base64
+
 from django.db import models
 
 # Create your models here.
@@ -10,11 +12,9 @@ from datetime import timedelta, datetime, date, time
 from django.db.models import Sum, Q
 
 from django.conf import settings
-from django.core.exceptions import ValidationError
-from django.db import models, transaction
+from django.db import models
 from django.contrib.auth.models import User
 
-from django.utils.crypto import get_random_string
 
 # Create your models here.
 from jogo import local_settings
@@ -149,13 +149,21 @@ class Regra(models.Model):
         return self.nome
 
 # NOVA CLASSE
+class PerfilSocial(models.Model):
+    url = models.CharField(max_length=255, unique=True)
+    perfil_id = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.url
+
+# NOVA CLASSE
 class Acao(models.Model):
     regra = models.ForeignKey(Regra, on_delete=models.PROTECT)
     tipo = models.CharField(max_length=20, choices=AcaoTipoChoices.choices)
-    url = models.CharField(max_length=255)
+    perfil_social = models.ForeignKey(PerfilSocial, on_delete=models.PROTECT)
 
     def __str__(self):
-        return self.get_tipo_display() + " " + self.url
+        return self.get_tipo_display() + " " + str(self.perfil_social)
 
 
 class Partida(models.Model):
@@ -348,6 +356,7 @@ class TemplatePartida(models.Model):
 class Jogador(models.Model):
     nome = models.CharField(max_length=255)
     usuario = models.CharField(max_length=255,unique=True)
+    usuario_token = models.CharField(max_length=255)
     seguidores = models.BigIntegerField()
     cadastrado_em = models.DateTimeField(auto_now_add=True)
 
@@ -356,6 +365,7 @@ class Jogador(models.Model):
         if not self.id:
             if not self.nome:
                 self.nome = self.usuario
+            self.usuario_token = base64.b64encode(self.usuario.encode("ascii")).decode("ascii")
         super().save(force_insert,force_update,using,update_fields)
 
 class Cartela(models.Model):

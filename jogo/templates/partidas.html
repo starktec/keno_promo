@@ -121,11 +121,7 @@ INFORMAÇÕES DAS PARTIDAS
                                 <th scope="col">Keno</th>
                                   <th scope="col">Tipo</th>
                                   <th scope="col">Participantes</th>
-                                {% if p.cartelas.count == 0 %}
                                 <th scope="col"></th>
-                                {% else %}
-                                <th scope="col"></th>
-                                {% endif %}
                                 <th scope="col"></th>
                                 <th scope="col"></th>
                               </tr>
@@ -161,7 +157,7 @@ INFORMAÇÕES DAS PARTIDAS
 
                                   <td>{{ p.num_participantes }}</td>
 
-                                {% if p.cartelas.count == 0 %}
+                                {% if p.num_participantes == 0 %}
                                 <td>
                                     <a href="/cancelar_partida/{{ p.id }}/" class="btn btn-danger btn-create-secondary">
                                         <em class="icon ni ni-trash"></em>

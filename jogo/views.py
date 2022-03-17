@@ -9,17 +9,15 @@ import logging
 
 from jogo.choices import AcaoTipoChoices
 from jogo.utils import testa_horario, comprar_cartelas
-from keno_promo.settings import BASE_DIR
 from jogo.constantes import VALORES_VOZES
-from jogo.frontend_objects import FrontEndFranquia, FrontEndPartida, FrontEndADSCriar
-
-from jogo.websocket_triggers_bilhete import event_bilhete_partida
 
 from jogo.agendamento import Agenda
 from jogo.forms import NovaPartidaAutomatizada, PartidaEditForm, GanhadoresForm, NovaPartidaForm, UsuarioAddForm, \
     ConfiguracaoForm, TemplateEditForm
 from jogo.models import Partida, Automato, Cartela, Usuario, Configuracao, CartelaVencedora, TemplatePartida, Regra, \
-    Acao
+    Acao, PerfilSocial
+from jogo.views_social_instagram import CLIENT
+from jogo.websocket_triggers_bilhete import event_bilhete_partida
 
 logger = logging.getLogger(__name__)
 
@@ -357,35 +355,49 @@ def criarpartida(request):
             acoes_select = request.POST.getlist("acoes_select")
             acoes_url = request.POST.getlist("acoes_url")
 
-            dados = list(zip(acoes_select,acoes_url))
+            if len(acoes_url) == len([x for x in acoes_url if x.startswith("https://www.instagram.com/")]):
 
-            for dado in dados:
-                acao, acao_criado = Acao.objects.get_or_create(
-                    tipo = dado[0],url = dado[1], regra = regra
-                )
+                dados = list(zip(acoes_select,acoes_url))
 
-            dia_partida = form.cleaned_data['dia_partida']
-            hora_partida = form.cleaned_data['hora_partida']
-            partida = form.save(commit=False)
-            partida.regra = regra
-            partida.data_partida = datetime.datetime.strptime(
-                dia_partida + " " + hora_partida, "%d/%m/%Y %H:%M")
-            partida.usuario = usuario
-            partida.save()
+                for dado in dados:
+                    url_social = dado[1]
 
-            # comprando cartelas
-            configuracao = Configuracao.objects.last()
-            comprar_cartelas(partida,configuracao.quantidade_cartelas_compradas)
+                    perfil_social = PerfilSocial.objects.filter(url = url_social).first()
+                    if not perfil_social:
+                        try:
+                            perfil = url_social.split("www.instagram.com/")[1]
+                            if perfil.endswith("/"):
+                                perfil = perfil[:-1]
+                            perfil_id = CLIENT.user_id_from_username(perfil)
+                            perfil_social = PerfilSocial.objects.create(
+                                url = url_social, perfil_id = perfil_id
+                            )
+                        except:
+                            raise ValidationError("Perfil não existe")
 
-            # Agendando sorteio
-            agenda.agendar(partida)
+                    acao, acao_criado = Acao.objects.get_or_create(
+                        tipo = dado[0],perfil_social=perfil_social, regra = regra
+                    )
 
-            # TODO: abaixo
-            """
-            event_tela_partidas(
-                partida.franquias.all())  ## informa aos websockets de tela que houve modificação na tela
-            """
-            return redirect("/partidas/")
+                dia_partida = form.cleaned_data['dia_partida']
+                hora_partida = form.cleaned_data['hora_partida']
+                partida = form.save(commit=False)
+                partida.regra = regra
+                partida.data_partida = datetime.datetime.strptime(
+                    dia_partida + " " + hora_partida, "%d/%m/%Y %H:%M")
+                partida.usuario = usuario
+                partida.save()
+
+                # comprando cartelas
+                configuracao = Configuracao.objects.last()
+                comprar_cartelas(partida,configuracao.quantidade_cartelas_compradas)
+
+                # Agendando sorteio
+                agenda.agendar(partida)
+
+                return redirect("/partidas/")
+            else:
+                form.add_error(None,"Um ou mais urls não está escrito corretamente")
 
     valores_disponiveis = VALORES_VOZES
     acoes_tipo = AcaoTipoChoices.choices
@@ -439,7 +451,6 @@ def partida_edit(request, partida_id):
                     if not antigadata == novadata:
                         agenda.agendar(partida)
 
-                    # TODO: #event_tela_partidas(franquias)
                     event_bilhete_partida(partida.id)
                     return redirect("/partidas/")
 

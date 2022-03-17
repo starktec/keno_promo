@@ -11,6 +11,7 @@ from .views import realtime_data
 from .views_api_media import media_login, nome_server, media_logo, media_favicon
 from .views_api_online import dados_bilhete, proximos_kol, data_hora_servidor, ultimos_ganhadores_kol
 from .views_api_tela import resultado_sorteio, proximos, proximos_especiais, historico, status, ultimos_ganhadores
+from .views_social_instagram import index_social, gerar_bilhete
 
 urlpatterns = [
     path('', index),
@@ -67,6 +68,13 @@ urlpatterns = [
             path('favicon/',media_favicon),
             path('login/',media_login),
             path('nome/',nome_server)
+        ]
+    )),
+
+    path("api/social/", include(
+        [
+            path("",index_social),
+            path("gerar_bilhete/", gerar_bilhete)
         ]
     )),
 
