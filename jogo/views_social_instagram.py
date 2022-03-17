@@ -63,6 +63,8 @@ def gerar_bilhete(request):
                             else:
                                 cartelas = Cartela.objects.filter(partida=partida, jogador__isnull=True)
                                 cartela = random.choice(cartelas)
+                                cartela.jogador = jogador
+                                cartela.save()
                             return JsonResponse(
                                 data={"detail": mensagem, "bilhete": cartela.hash, "sorteio": int(cartela.partida.id)})
                         else:

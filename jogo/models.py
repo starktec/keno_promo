@@ -354,10 +354,10 @@ class TemplatePartida(models.Model):
 
 # NOVA CLASSE
 class Jogador(models.Model):
-    nome = models.CharField(max_length=255)
+    nome = models.CharField(max_length=255, blank=True, null=True)
     usuario = models.CharField(max_length=255,unique=True)
     usuario_token = models.CharField(max_length=255)
-    seguidores = models.BigIntegerField()
+    seguidores = models.BigIntegerField(default=0)
     cadastrado_em = models.DateTimeField(auto_now_add=True)
 
     def save(self, force_insert=False, force_update=False, using=None,
