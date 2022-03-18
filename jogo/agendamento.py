@@ -372,17 +372,16 @@ class Agenda():
             self.log(str(traceback.extract_stack()))
             self.log(str(e))
 
-    def sortear_template(self,template,agenda_t, restart=True):
+    def sortear_template(self,template:TemplatePartida,agenda_t, restart=True):
         self.log(f"Sorteando template: {template.id} horario + {template.data_partida}")
         template = TemplatePartida.objects.get(id = template.id)
-        automato = Automato.objects.get(id=template.id_automato)
         try:
             with transaction.atomic():
                 if template.data_partida.replace(tzinfo=RECIFE) >= datetime.datetime.now(tz=RECIFE) + datetime.timedelta(minutes=5) and not template.play and not template.cancelado:
                     self.log(f"Rodando o template agendado: {template.id} horario + {template.data_partida}")
                     tempo = Automato.objects.get(id=template.id_automato).tempo
-                    template.data_partida = testa_horario(template.data_partida,template.franquias.all(),False,tempo)
-                    p = Partida.objects.create(
+                    template.data_partida = testa_horario(template.data_partida,False,tempo)
+                    p:Partida = Partida.objects.create(
                         valor_keno = template.valor_keno,
                         valor_kina = template.valor_kina,
                         valor_kuadra = template.valor_kuadra,
@@ -390,14 +389,15 @@ class Agenda():
                         id_automato = template.id_automato,
                         partida_automatizada=True,
                         usuario=template.usuario,
-                        tipo_rodada = template.tipo_rodada
+                        tipo_rodada = template.tipo_rodada,
+                        regra = template.regra
                     )
-                    p.franquias.set(template.franquias.all())
-                    p.save()
                     self.agendar(p)
                     template.play =True
                     template.save()
-                    comprar_cartelas(p,automato.cartelas_minimas)
+                    # comprando cartelas
+                    configuracao = Configuracao.objects.last()
+                    comprar_cartelas(p,configuracao.quantidade_cartelas_compradas)
         except Exception as e:
             self.log(str(traceback.extract_stack()))
             self.log(str(e))

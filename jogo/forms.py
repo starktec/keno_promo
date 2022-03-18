@@ -24,18 +24,14 @@ class NovaPartidaAutomatizada(forms.Form):
         attrs={'class': "form-control form-control-lg form-control-outlined", 'autocomplete': "off", 'type': "number"}))
     tempo_partidas = forms.IntegerField(initial=10,widget=forms.NumberInput(
         attrs={'class': "form-control form-control-lg form-control-outlined", 'autocomplete': "off"}))
-    tipo_crescimento = forms.ChoiceField(
+    limite_partidas = forms.IntegerField(initial = 100,widget=forms.NumberInput(
+        attrs={'class': "form-control form-control-lg form-control-outlined", 'autocomplete': "off"})) 
+    tipo_rodada = forms.ChoiceField(
         widget=forms.Select(attrs={'class': "form-control form-control-lg form-control-outlined", 'autocomplete': "off"}),
-        choices=[(1,'Estático'),(2,'Dinâmico')], required=False)    
-    
+        choices=PARTIDA_TIPOS_CHOICES, required=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if Configuracao.objects.last().quantidade_cartelas_compradas:
-            self.fields['cartelas_iniciais'].initial = Configuracao.objects.last().quantidade_cartelas_compradas
-        else:
-            self.fields['cartelas_iniciais'].initial = 0
-    
 
     def clean_dia_partida(self):
         valor = self.cleaned_data['dia_partida']
@@ -261,11 +257,11 @@ class NovaPartidaForm(forms.ModelForm):
                     if diferenca == diferenca_depois:
                         msg += mais_proxima_posterior.strftime("%d/%m/%Y %H:%M:%S")
                         msg += ". O próximo horário disponível é as "
-                        msg += testa_horario(mais_proxima_posterior,partida_anterior.franquias.all()).strftime("%d/%m/%Y %H:%M:%S")
+                        msg += testa_horario(mais_proxima_posterior).strftime("%d/%m/%Y %H:%M:%S")
                     elif diferenca == diferenca_antes:
                         msg += mais_proxima_anterior.strftime("%d/%m/%Y %H:%M:%S")
                         msg += ". O próximo horário disponível é as "
-                        msg += testa_horario(mais_proxima_anterior,partida_anterior.franquias.all()).strftime("%d/%m/%Y %H:%M:%S")
+                        msg += testa_horario(mais_proxima_anterior).strftime("%d/%m/%Y %H:%M:%S")
 
                     raise ValidationError(msg)
 
@@ -581,12 +577,12 @@ class PartidaEditForm(forms.ModelForm):
                 if diferenca == diferenca_depois:
                     msg += mais_proxima_posterior.strftime("%d/%m/%Y %H:%M:%S")
                     msg += ". O próximo horário disponível é as "
-                    msg += testa_horario(mais_proxima_posterior, partida_anterior.franquias.all()).strftime(
+                    msg += testa_horario(mais_proxima_posterior).strftime(
                         "%d/%m/%Y %H:%M:%S")
                 elif diferenca == diferenca_antes:
                     msg += mais_proxima_anterior.strftime("%d/%m/%Y %H:%M:%S")
                     msg += ". O próximo horário disponível é as "
-                    msg += testa_horario(mais_proxima_anterior, partida_anterior.franquias.all()).strftime(
+                    msg += testa_horario(mais_proxima_anterior).strftime(
                         "%d/%m/%Y %H:%M:%S")
 
                 raise ValidationError(msg)

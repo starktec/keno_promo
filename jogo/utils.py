@@ -2,7 +2,7 @@ import random
 
 from asgiref.sync import sync_to_async
 
-from jogo.models import Automato, Usuario, Partida, Configuracao, TemplatePartida, Cartela
+from jogo.models import Automato, Regra, Usuario, Partida, Configuracao, TemplatePartida, Cartela
 from datetime import date, datetime, timedelta
 
 import datetime
@@ -60,7 +60,7 @@ def totalCartelas_sql(data_inicio,data_fim):
 
 
 
-def testa_horario(horario,franquias,find=False,tempo_entre_sorteios = None):
+def testa_horario(horario,find=False,tempo_entre_sorteios = None):
     if find:
         return horario
     t = Configuracao.objects.last().tempo_min_entre_sorteios
@@ -99,113 +99,36 @@ def testa_horario(horario,franquias,find=False,tempo_entre_sorteios = None):
             find = True
             return horario
     if novo_horario:
-        return testa_horario(max(novo_horario),franquias,False,tes)
+        return testa_horario(max(novo_horario),False,tes)
    
 
 def arredondamento(x, base=5):   #
     return base * round(x/base)
 
 # TODO: Estudar adaptação do automato
-def partida_automatizada(partida,agenda):
+def partida_automatizada(partida:Partida,agenda):
     configuracao = Configuracao.objects.last()
-    if configuracao.automato:
-        with transaction.atomic():
-            resultado = float(partida.resultado())
-            if partida.id_automato:
-                automato = Automato.objects.filter(id=partida.id_automato).first()
-                automato.partidas.add(partida)
-                data_prox = testa_horario(partida.data_partida + datetime.timedelta(minutes=automato.tempo),partida.franquias.all(),False,automato.tempo)
-                prox = False
-                if automato.tipo_crescimento == 2:
-                    if resultado > 0:
-                        automato.lucro_total = float(float(automato.lucro_total)+resultado/2)
-                        automato.quantidade_negativos = automato.quantidade_inicial_negativo
-                        soma_premio = float((100-automato.porcentagem)/100) * resultado
-                        soma_keno = float(automato.percentual_keno/100) * soma_premio
-                        soma_kina = float(automato.percentual_kina/100) * soma_premio
-                        soma_kuadra = float(automato.percentual_kuadra/100) * soma_premio
-                        if (float(partida.valor_keno) + float(soma_keno)) <= float(automato.valor_maximo_keno):    
-                            keno = arredondamento(float(partida.valor_keno)+float(soma_keno))
-                            #keno = round(float(float(partida.valor_keno) + float(soma_keno)))
-                        else:
-                            resto = float(float(partida.valor_keno) + float(soma_keno)) - float(automato.valor_maximo_keno)
-                            keno = automato.valor_maximo_keno
-                            automato.lucro_total = float(automato.lucro_total)+float(resto) 
-                        if (float(partida.valor_kina) + float(soma_kina)) <= float(automato.valor_maximo_kina):
-                            kina = arredondamento(float(partida.valor_kina)+float(soma_kina))
-                            #kina = round(float(float(partida.valor_kina) + float(soma_kina)))
-                        else:
-                            resto = float(float(partida.valor_kina) + float(soma_kina)) - float(automato.valor_maximo_kina)
-                            kina = automato.valor_maximo_kina
-                            automato.lucro_total = float(automato.lucro_total)+float(resto) 
-                        if (float(partida.valor_kuadra) + float(soma_kuadra)) <= float(automato.valor_maximo_kuadra):
-                            kuadra = arredondamento(float(partida.valor_kuadra)+float(soma_kuadra))
-                            #kuadra = round(float(float(partida.valor_kuadra) + float(soma_kuadra)))
-                        else:
-                            resto = float(float(partida.valor_kuadra) + float(soma_kuadra)) - float(automato.valor_maximo_kuadra)
-                            kuadra = automato.valor_maximo_kuadra
-                            automato.lucro_total = float(automato.lucro_total)+float(resto)     
-                        prox=True
-                    else:
-                        automato.lucro_total = float(float(automato.lucro_total)+resultado)
-                        if resultado <= automato.valor_minimo: 
-                            if resultado <= automato.valor_minimo_maximo:
-                                prox=False
-                                automato.quantidade_negativos=0
-                                automato.quantidade_sorteios=0
-                            else:
-                                automato.quantidade_negativos = automato.quantidade_negativos - 1
-                        if automato.quantidade_negativos > 0 and automato.quantidade_sorteios > 0:
-                            partida = automato.partidas.last()
-                            keno = partida.valor_keno
-                            kina = partida.valor_kina
-                            kuadra = partida.valor_kuadra
-                            prox = True
-                        else:
-                            prox = False
-                    
-                    if prox:
-                        template = TemplatePartida.objects.create(
-                            valor_keno = keno,
-                            valor_kina= kina,
-                            valor_kuadra=kuadra,
-                            usuario = automato.usuario,
-                            valor_cartela = partida.valor_cartela,
-                            valor_antecipado = partida.valor_antecipado,
-                            data_partida = data_prox,
-                            data_introducao = datetime.datetime.now(),
-                            id_automato = automato.id,
-                            tipo_rodada = partida.tipo_rodada,
-                            hora_virada = partida.hora_virada
-                        )
-                        template.franquias.set(partida.franquias.all())
-                        template.save() 
-                        agenda.agendar_template(template)
-                        automato.save()
-                else:
-                    if resultado <= 0 :
-                        automato.quantidade_negativos = automato.quantidade_negativos - 1
-                    else:
-                        automato.lucro_total = float(automato.lucro_total) + float(resultado)
-                    if automato.quantidade_negativos > 0  and automato.quantidade_sorteios > 0 and resultado > automato.valor_minimo_maximo:
-                        automato.quantidade_sorteios = automato.quantidade_sorteios - 1
-                        template = TemplatePartida.objects.create(
-                            valor_keno = partida.valor_keno,
-                            valor_kina= partida.valor_kina,
-                            valor_kuadra=partida.valor_kuadra,
-                            usuario = automato.usuario,
-                            valor_cartela = partida.valor_cartela,
-                            valor_antecipado = partida.valor_antecipado,
-                            data_partida = data_prox,
-                            data_introducao = datetime.datetime.now(),
-                            id_automato = automato.id,
-                            tipo_rodada = partida.tipo_rodada,
-                            hora_virada = partida.hora_virada
-                        )
-                        template.franquias.set(partida.franquias.all())
-                        template.save() 
-                        agenda.agendar_template(template)
-                        automato.save()
+    with transaction.atomic():
+        if partida.id_automato:
+            automato:Automato = Automato.objects.filter(id=partida.id_automato).first()
+            automato.partidas.add(partida)
+            data_prox = testa_horario(partida.data_partida + datetime.timedelta(minutes=automato.tempo),False,automato.tempo)
+            if automato.quantidade_sorteios > 0:
+                template:TemplatePartida = TemplatePartida.objects.create(
+                    regra = Regra.objects.get_or_create(nome="PROMO")[0],
+                    valor_keno = partida.valor_keno,
+                    valor_kina= partida.valor_kina,
+                    valor_kuadra=partida.valor_kuadra,
+                    usuario = automato.usuario,
+                    data_partida = data_prox,
+                    data_introducao = datetime.datetime.now(),
+                    id_automato = automato.id,
+                    tipo_rodada = partida.tipo_rodada,
+                )
+                template.save() 
+                automato.quantidade_sorteios = automato.quantidade_sorteios - 1
+                automato.save()
+                agenda.agendar_template(template)
 
 @sync_to_async
 def update_configuracao(dado):

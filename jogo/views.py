@@ -133,26 +133,19 @@ def partida_automatica(request):
             valor_keno_inicial = form.cleaned_data['valor_keno_inicial']
             tempo_partidas = form.cleaned_data['tempo_partidas']
             limite_partidas = form.cleaned_data['limite_partidas']
-            cartelas_iniciais = form.cleaned_data['cartelas_iniciais']
-
-            tipo_crescimento = form.cleaned_data['tipo_crescimento']
 
             tipo_rodada = form.cleaned_data['tipo_rodada']
 
             if form.errors:
                 return render(request, "partida_automatizada.html", {'form': form})
             with transaction.atomic():
-                if int(tipo_crescimento) == 1:
-                    automato = Automato.objects.create(
-                        usuario=usuario,
-                        tempo=tempo_partidas,
-                        quantidade_sorteios=limite_partidas,
-                        cartelas_minimas=cartelas_iniciais,
-                        tipo_crescimento=int(tipo_crescimento),
-                    )
-
+                automato = Automato.objects.create(
+                    usuario=usuario,
+                    tempo=tempo_partidas,
+                    quantidade_sorteios=limite_partidas)
 
                 partida_inicial = Partida.objects.create(
+                    regra = Regra.objects.get_or_create(nome="PROMO")[0],
                     valor_kuadra=valor_kuadra_inicial,
                     valor_kina=valor_kina_inicial,
                     valor_keno=valor_keno_inicial,
@@ -163,10 +156,11 @@ def partida_automatica(request):
                     tipo_rodada=tipo_rodada,
                 )
                 partida_inicial.save()
+                # comprando cartelas
+                configuracao = Configuracao.objects.last()
+                comprar_cartelas(partida_inicial,configuracao.quantidade_cartelas_compradas)
+
                 agenda.agendar(partida_inicial)
-                for numero in range(cartelas_iniciais):
-                    Cartela.objects.create(partida=partida_inicial)
-            #event_tela_partidas(franquias)
             return redirect('/partidas/')
     return render(request, "partida_automatizada.html", {'form': form})
 
@@ -674,7 +668,7 @@ def parar_automato(request, partida_id):
 
 @login_required(login_url="/login/")
 def sortear_template(request, template_id):
-    template = TemplatePartida.objects.get(id=template_id)
+    template:TemplatePartida = TemplatePartida.objects.get(id=template_id)
     configuracao = Configuracao.objects.first()
     if template.data_partida > datetime.datetime.now() + datetime.timedelta(minutes=(
             round(configuracao.tempo_min_entre_sorteios) * (0.4))) and not template.play and not template.cancelado:
@@ -682,6 +676,7 @@ def sortear_template(request, template_id):
                                               Automato.objects.get(id=template.id_automato).tempo)
         usuario = Usuario.objects.filter(usuario=request.user).first()
         p = Partida.objects.create(
+            regra = template.regra,
             valor_keno=template.valor_keno,
             valor_kina=template.valor_kina,
             valor_kuadra=template.valor_kuadra,
@@ -689,10 +684,12 @@ def sortear_template(request, template_id):
             id_automato=template.id_automato,
             tipo_rodada=template.tipo_rodada,
             partida_automatizada=True,
-            hora_virada=template.hora_virada,
             usuario=usuario
         )
         p.save()
+        # comprando cartelas
+        configuracao = Configuracao.objects.last()
+        comprar_cartelas(p,configuracao.quantidade_cartelas_compradas)
         agenda.agendar(p)
         template.play = True
         template.save()

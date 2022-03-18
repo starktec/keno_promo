@@ -54,8 +54,60 @@ CRIAR PARTIDA
                             <div class="col-lg-4 col-sm-6 container-input-create">
                                 <div class="form-group">
                                     <div class="form-control-wrap">
+                                        {{ form.valor_kuadra_inicial }}
+                                        <label class="form-label-outlined" for="{{ form.valor_kuadra_inicial.id_for_label }}">Valor Kuadra</label>
+                                    </div>
+                                    {% if form.valor_kuadra_inicial.errors %}
+                                        <div class="error-campo">
+                                            {{ form.valor_kuadra_inicial.errors }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-sm-6 container-input-create">
+                                <div class="form-group">
+                                    <div class="form-control-wrap">
+                                        {{ form.valor_kina_inicial }}
+                                        <label class="form-label-outlined" for="{{ form.valor_kuadra_inicial.id_for_label }}">Valor Kina</label>
+                                    </div>
+                                    {% if form.valor_kina_inicial.errors %}
+                                        <div class="error-campo">
+                                            {{ form.valor_kina_inicial.errors }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-sm-6 container-input-create">
+                                <div class="form-group">
+                                    <div class="form-control-wrap">
+                                        {{ form.valor_keno_inicial }}
+                                        <label class="form-label-outlined" for="{{ form.valor_keno_inicial.id_for_label }}">Valor Keno</label>
+                                    </div>
+                                    {% if form.valor_keno_inicial.errors %}
+                                        <div class="error-campo">
+                                            {{ form.valor_keno_inicial.errors }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-sm-6 container-input-create">
+                                <div class="form-group">
+                                    <div class="form-control-wrap">
+                                        {{ form.limite_partidas }}
+                                        <label class="form-label-outlined" for="{{ form.limite_partidas.id_for_label }}">Quantidade de Partidas</label>
+                                    </div>
+                                    {% if form.limite_partidas.errors %}
+                                        <div class="error-campo">
+                                            {{ form.limite_partidas.errors }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-sm-6 container-input-create">
+                                <div class="form-group">
+                                    <div class="form-control-wrap">
                                         {{ form.tipo_rodada }}
-                                        <label class="form-label-outlined" for="{{ form.tipo_rodada.id_for_label }}">Tipo Partidas</label>
+                                        <label class="form-label-outlined" for="{{ form.tipo_rodada.id_for_label }}">Tipo Sorteio</label>
                                     </div>
                                     {% if form.tipo_rodada.errors %}
                                         <div class="error-campo">
@@ -63,59 +115,7 @@ CRIAR PARTIDA
                                         </div>
                                     {% endif %}
                                 </div>
-                            </div>
-                            <div class="col-lg-4 col-sm-6 container-input-create">
-                                <div class="form-group">
-                                    <div class="form-control-wrap">
-                                        {{ form.valor_cartela }}
-                                        <label class="form-label-outlined" for="{{ form.valor_cartela.id_for_label }}">Valor da Cartela</label>
-                                    </div>
-                                    {% if form.valor_cartela.errors %}
-                                        <div class="error-campo">
-                                            {{ form.valor_cartela.errors }}
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-sm-6 container-input-create">
-                                <div class="form-group">
-                                    <div class="form-control-wrap">
-                                        {{ form.valor_antecipada }}
-                                        <label class="form-label-outlined" for="{{ form.valor_antecipada.id_for_label }}">Valor da Cartela Antecipada</label>
-                                    </div>
-                                    {% if form.valor_antecipada.errors %}
-                                        <div class="error-campo">
-                                            {{ form.valor_antecipada.errors }}
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-sm-6 container-input-create">
-                                <div class="form-group">
-                                    <div class="form-control-wrap">
-                                        {{ form.virada_antecipado }}
-                                        <label class="form-label-outlined" for="{{ form.virada_antecipado.id_for_label }}">Hora Antes Da Partida</label>
-                                    </div>
-                                    {% if form.virada_antecipado.errors %}
-                                        <div class="error-campo">
-                                            {{ form.virada_antecipado.errors }}
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-sm-6 container-input-create">
-                                <div class="form-group">
-                                    <div class="form-control-wrap">
-                                        {{ form.hora_virada }}
-                                        <label class="form-label-outlined" for="{{ form.hora_virada.id_for_label }}">Hora antes</label>
-                                    </div>
-                                    {% if form.virada_antecipado.errors %}
-                                        <div class="error-campo">
-                                            {{ form.hora_virada.errors }}
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
+                            </div>  
                             <div class="col-lg-4 col-sm-6 container-input-create">
                                 <div class="form-group">
                                     <div class="form-control-wrap">
@@ -130,284 +130,6 @@ CRIAR PARTIDA
                                 </div>
                             </div>
                         </div>
-                            <div class="col-lg-4 col-sm-6 container-input-create">
-                                <div class="form-group">
-                                    <div class="form-control-wrap">
-                                        {{ form.tipo_crescimento }}
-                                        <label class="form-label-outlined" for="{{ form.tipo_crescimento.id_for_label }}">Tipo de Crescimento</label>
-                                    </div>
-                                    {% if form.tipo_crescimento.errors %}
-                                        <div class="error-campo">
-                                            {{ form.tipo_crescimento.errors }}
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        <div class='input-group mb-3'>
-                            <div class="col-lg-4 col-sm-6 container-input-create">
-                                <div class="form-group">
-                                    <div class="form-control-wrap">
-                                        {{ form.valor_kuadra_inicial }}
-                                        <label class="form-label-outlined" for="{{ form.valor_kuadra.id_for_label }}">Valor Kuadra Inicial</label>
-                                    </div>
-                                    {% if form.valor_kuadra_inicial.errors %}
-                                        <div class="error-campo">
-                                            {{ form.valor_kuadra_inicial.errors }}
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-sm-6 container-input-create">
-                                <div class="form-group">
-                                    <div class="form-control-wrap">
-                                        {{ form.valor_kina_inicial }}
-                                        <label class="form-label-outlined" for="{{ form.valor_kina_inicial.id_for_label }}">Valor Kina Inicial</label>
-                                    </div>
-                                    {% if form.valor_kina_inicial.errors %}
-                                        <div class="error-campo">
-                                            {{ form.valor_kina_inicial.errors }}
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-
-                            <div class="col-lg-4 col-sm-6 container-input-create">
-                                <div class="form-group">
-                                    <div class="form-control-wrap">
-                                        {{ form.valor_keno_inicial }}
-                                        <label class="form-label-outlined" for="{{ form.valor_keno_inicial.id_for_label }}">Valor Keno Inicial</label>
-                                    </div>
-                                    {% if form.valor_keno.errors %}
-                                        <div class="error-campo">
-                                            {{ form.valor_keno_inicial.errors }}
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <!--
-                            <div class="col-lg-4 col-sm-6 container-inputvalor_cartela
-                                        {{ form.valor_kuadra_intermediario }}
-                                        <label class="form-label-outlined" for="{{ form.valor_kuadra_intermediario.id_for_label }}">Valor Kuadra Intermediario</label>
-                                    </div>
-                                    {% if form.valor_kuadra_intermediario.errors %}
-                                        <div class="error-campo">
-                                            {{ form.valor_kuadra_intermediario.errors }}
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-sm-6 container-input-create">
-                                <div class="form-group">
-                                    <div class="form-control-wrap">
-                                        {{ form.valor_kina_intermediario }}
-                                        <label class="form-label-outlined" for="{{ form.valor_kina_intermediario.id_for_label }}">Valor Kuadra Intermediario</label>
-                                    </div>
-                                    {% if form.valor_kina_intermediario.errors %}
-                                        <div class="error-campo">
-                                            {{ form.valor_kina_intermediario.errors }}
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-sm-6 container-input-create">
-                                <div class="form-group">
-                                    <div class="form-control-wrap">
-                                        {{ form.valor_keno_intermediario }}
-                                        <label class="form-label-outlined" for="{{ form.valor_keno_intermediario.id_for_label }}">Valor Kuadra Intermediario</label>
-                                    </div>
-                                    {% if form.valor_keno_intermediario.errors %}
-                                        <div class="error-campo">
-                                            {{ form.valor_keno_intermediario.errors }}
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            -->
-                            <div class="col-lg-4 col-sm-6 container-input-create">
-                                <div class="form-group">
-                                    <div class="form-control-wrap">
-                                        {{ form.porcentagem_kuadra }}
-                                        <label class="form-label-outlined" for="{{ form.porcentagem_kuadra.id_for_label }}">Porcentagem Kuadra(%)</label>
-                                    </div>
-                                    {% if form.porcentagem_kuadra.errors %}
-                                        <div class="error-campo">
-                                            {{ form.porcentagem_kuadra.errors }}
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-sm-6 container-input-create">
-                                <div class="form-group">
-                                    <div class="form-control-wrap">
-                                        {{ form.porcentagem_kina }}
-                                        <label class="form-label-outlined" for="{{ form.porcentagem_kina.id_for_label }}">Porcentagem Kina(%)</label>
-                                    </div>
-                                    {% if form.valor_keno.errors %}
-                                        <div class="error-campo">
-                                            {{ form.porcentagem_kina.errors }}
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-sm-6 container-input-create">
-                                <div class="form-group">
-                                    <div class="form-control-wrap">
-                                        {{ form.porcentagem_keno }}
-                                        <label class="form-label-outlined" for="{{ form.porcentagem_keno.id_for_label }}">Porcentagem Keno(%)</label>
-                                    </div>
-                                    {% if form.valor_keno.errors %}
-                                        <div class="error-campo">
-                                            {{ form.porcentagem_keno.errors }}
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-sm-6 container-input-create">
-                                <div class="form-group">
-                                    <div class="form-control-wrap">
-                                        {{ form.valor_kuadra_maximo }}
-                                        <label class="form-label-outlined" for="{{ form.valor_kuadra_maximo.id_for_label }}">Valor máximo Kuadra</label>
-                                    </div>
-                                    {% if form.valor_kuadra_maximo.errors %}
-                                        <div class="error-campo">
-                                            {{ form.valor_kuadra_maximo.errors }}
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-sm-6 container-input-create">
-                                <div class="form-group">
-                                    <div class="form-control-wrap">
-                                        {{ form.valor_kina_maximo }}
-                                        <label class="form-label-outlined" for="{{ form.valor_kina_maximo.id_for_label }}">Valor máximo Kina</label>
-                                    </div>
-                                    {% if form.valor_kina_maximo.errors %}
-                                        <div class="error-campo">
-                                            {{ form.valor_kina_maximo.errors }}
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-sm-6 container-input-create">
-                                <div class="form-group">
-                                    <div class="form-control-wrap">
-                                        {{ form.valor_keno_maximo }}
-                                        <label class="form-label-outlined" for="{{ form.valor_keno_maximo.id_for_label }}">Valor máximo Keno</label>
-                                    </div>
-                                    {% if form.valor_kuadra_maximo.errors %}
-                                        <div class="error-campo">
-                                            {{ form.valor_keno_maximo.errors }}
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-sm-6 container-input-create">
-                                <div class="form-group">
-                                    <div class="form-control-wrap">
-                                        {{ form.porcentagem_resultado }}
-                                        <label class="form-label-outlined" for="{{ form.porcentagem_resultado.id_for_label }}">Porcentagem Retenção(%)</label>
-                                    </div>
-                                    {% if form.porcentagem_resultado.errors %}
-                                        <div class="error-campo">
-                                            {{ form.porcentagem_resultado.errors }}
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-sm-6 container-input-create">
-                                <div class="form-group">
-                                    <div class="form-control-wrap">
-                                        {{ form.cartelas_iniciais }}
-                                        <label class="form-label-outlined" for="{{ form.cartelas_iniciais.id_for_label }}">Cartelas iniciais</label>
-                                    </div>
-                                    {% if form.cartelas_iniciais.errors %}
-                                        <div class="error-campo">
-                                            {{ form.cartelas_iniciais.errors }}
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-                        <div class='input-group mb-3'>
-                            <div class="col-lg-4 col-sm-6 container-input-create">
-                                <div class="form-group">
-                                    <div class="form-control-wrap">
-                                        {{ form.resultado_negativo_max }}
-                                        <label class="form-label-outlined" for="{{ form.resultado_negativo_max.id_for_label }}">Negativo máximo</label>
-                                    </div>
-                                    {% if form.resultado_negativo_max.errors %}
-                                        <div class="error-campo">
-                                            {{ form.resultado_negativo_max.errors }}
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-sm-6 container-input-create">
-                                <div class="form-group">
-                                    <div class="form-control-wrap">
-                                        {{ form.resultado_negativo_parada }}
-                                        <label class="form-label-outlined" for="{{ form.resultado_negativo_parada.id_for_label }}">Resultado negativo máximo de parada</label>
-                                    </div>
-                                    {% if form.resultado_negativo_parada.errors %}
-                                        <div class="error-campo">
-                                            {{ form.resultado_negativo_parada.errors }}s
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-sm-6 container-input-create">
-                            <div class="form-group">
-                                <div class="form-control-wrap">
-                                    {{ form.limite_negativo }}
-                                    <label class="form-label-outlined" for="{{ form.limite_negativo.id_for_label }}">Quantidade Negativos</label>
-                                </div>
-                                {% if form.limite_negativo.errors %}
-                                    <div class="error-campo">
-                                        {{ form.limite_negativo.errors }}
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-sm-6 container-input-create">
-                            <div class="form-group">
-                                <div class="form-control-wrap">
-                                    {{ form.limite_partidas }}
-                                    <label class="form-label-outlined" for="{{ form.limite_partidas.id_for_label }}">Quantidade Máxima de Partidas</label>
-                                </div>
-                                {% if form.limite_partidas.errors %}
-                                    <div class="error-campo">
-                                        {{ form.limite_partidas.errors }}
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                        <div class="col-lg-12 col-sm-12 container-input-create">
-                            <div class="col-12 row justify-content-center padding-zero">
-                                <p class="title-check col-8 padding-zero">Franquia</p>
-                                <div class="row justify-content-end col-4 padding-zero">
-                                    <a class="btn btn-success btn-create-secondary btn-checkbox checkbox-all" id="checks-all">
-                                        <em class="icon ni ni-check-round"></em>
-                                        <p class="checkbox-text">Selecionar todos</p>
-                                    </a>
-                                    <a class="btn btn-danger btn-create-secondary btn-checkbox checkbox-none" id="checks-none">
-                                        <em class="icon ni ni-square"></em>
-                                        <p class="checkbox-text-none">Desmarcar todos</p>
-                                    </a>
-                                </div>
-                            </div>
-                            
-                            {% if form.franquias.errors %}
-                                <div class="error-campo">
-                                {{ form.franquias.errors }}
-                                </div>
-                                
-                            {% endif %}
-                            <div class="form-check-inline">
-                                {{ form.franquias }}
-                            </div>
-                        </div>
-
                         <div class="col-12 row container-btn-createPartida">
                                 <div class="form-group button-partida">
                                 <div class="form-control-wrap">

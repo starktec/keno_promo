@@ -336,7 +336,9 @@ class TemplatePartida(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.PROTECT)
     status = models.PositiveSmallIntegerField(choices=TEMPLATE_STATUS_CHOICES, blank=True, null=True)
     tipo_rodada = models.PositiveSmallIntegerField(default=1, choices=PARTIDA_TIPOS_CHOICES)
-    hora_virada = models.TimeField(null=True)
+    
+     # NOVO CAMPO
+    regra = models.ForeignKey(Regra, on_delete=models.PROTECT)
 
     def __str__(self):
         data = self.data_partida
@@ -488,7 +490,7 @@ class Agendamento(models.Model):
 # FILHO DE JUAN PABLO
 class Automato(models.Model):
     tempo = models.PositiveSmallIntegerField()
-    quantidade_sorteios = models.PositiveSmallIntegerField()
+    quantidade_sorteios = models.PositiveSmallIntegerField(default=100)
     partidas = models.ManyToManyField(Partida, blank=True)
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     tipo_rodada = models.PositiveSmallIntegerField(default=1, choices=PARTIDA_TIPOS_CHOICES)
