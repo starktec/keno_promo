@@ -88,6 +88,9 @@ class Configuracao(models.Model):
     # Versao da branch
     versao = models.CharField(max_length=100, blank=True, null=True)
 
+    # Conexao com o instagram
+    instagram_connection = models.BinaryField(blank=True,null=True)
+
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
         if not self.id:
@@ -520,3 +523,4 @@ class GrupoCanal(models.Model):
 
     def __str__(self):
         return self.nome
+

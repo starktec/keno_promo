@@ -1,7 +1,9 @@
 import datetime
 import json
 import random
+import pickle
 
+from django.db import transaction
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from instagrapi import Client
@@ -10,10 +12,28 @@ from rest_framework.decorators import api_view, authentication_classes, permissi
 
 from jogo import local_settings
 from jogo.choices import AcaoTipoChoices
-from jogo.models import Jogador, Partida, Cartela, Regra
+from jogo.models import Jogador, Partida, Cartela, Regra, Configuracao
 
-CLIENT = Client()
-CLIENT.login(local_settings.INSTAGRAM_USER,local_settings.INSTAGRAM_PASSWORD)
+CLIENT = None
+def setSocialConnection():
+    with transaction.atomic():
+        global CLIENT
+        configuracao = Configuracao.objects.select_for_update().last()
+        if configuracao:
+            if not configuracao.instagram_connection:
+                CLIENT = Client()
+                CLIENT.login(local_settings.INSTAGRAM_USER, local_settings.INSTAGRAM_PASSWORD)
+                configuracao.instagram_connection = pickle.dumps(CLIENT)
+                configuracao.save()
+            else:
+                CLIENT = pickle.loads(configuracao.instagram_connection)
+                if not CLIENT.get_settings():
+                    CLIENT = Client()
+                    CLIENT.login(local_settings.INSTAGRAM_USER, local_settings.INSTAGRAM_PASSWORD)
+                    configuracao.instagram_connection = pickle.dumps(CLIENT)
+                    configuracao.save()
+
+setSocialConnection()
 
 def index_social(request):
     seguir_url = ""
