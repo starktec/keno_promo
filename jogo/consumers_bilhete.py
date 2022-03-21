@@ -29,6 +29,10 @@ class ConexaoBilheteConsumer(AsyncJsonWebsocketConsumer):
         except Exception as e:
             logger.exception(e)
             raise e
+
+    @sync_to_async
+    def cartela_jogador_exists(self,token,sorteio):
+        return Cartela.objects.filter(jogador__usuario_token=token,partida_id=sorteio).exists()
     
 
     async def connect(self):
@@ -37,7 +41,8 @@ class ConexaoBilheteConsumer(AsyncJsonWebsocketConsumer):
         sorteio = self.scope['url_route']['kwargs']['sorteio']
         hash = self.scope['url_route']['kwargs']['bilhete']
 
-        if Cartela.objects.filter(jogador__usuario_token=token,partida_id=sorteio).exists():
+        if await self.cartela_jogador_exists(token,sorteio):
+            logger.info(f"Encontrou cartela {hash}")
             partida_id = sorteio
             await self.accept()
             if partida_id:
