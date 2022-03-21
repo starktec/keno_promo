@@ -29,9 +29,13 @@ def dados_bilhete(request,hash):
                 "linha3_lista":cartela.linha3_lista(),
             }
             cartelas.append(dado)
+            sorteio_data = {
+                "codigo":cartela.partida.id,
+                "data":cartela.partida.data_partida
+            }
             dados = {
                 "hash":cartela.hash,
-                "sorteio":cartela.partida.id,
+                "sorteio":sorteio_data,
                 "data_hora_sorteio":datetime.date.strftime(cartela.partida.data_partida,'%Y-%m-%dT%H:%M:%S'),
                 "comprado_em":cartela.comprado_em,
                 "cartelas":cartelas,
