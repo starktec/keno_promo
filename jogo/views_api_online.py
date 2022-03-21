@@ -29,13 +29,10 @@ def dados_bilhete(request,hash):
                 "linha3_lista":cartela.linha3_lista(),
             }
             cartelas.append(dado)
-            sorteio_data = {
-                "codigo":cartela.partida.id,
-                "data":cartela.partida.data_partida
-            }
+            cartela:Cartela = cartela
             dados = {
                 "hash":cartela.hash,
-                "sorteio":sorteio_data,
+                "sorteio":PartidaProximaSerializer(cartela.partida).data,
                 "data_hora_sorteio":datetime.date.strftime(cartela.partida.data_partida,'%Y-%m-%dT%H:%M:%S'),
                 "comprado_em":cartela.comprado_em,
                 "cartelas":cartelas,
