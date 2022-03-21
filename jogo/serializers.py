@@ -53,7 +53,6 @@ class PartidaSerializer(serializers.ModelSerializer):
 
 class PartidaProximaSerializer(serializers.ModelSerializer):
     codigo = serializers.IntegerField(source='id')
-    numero_bolas_acumulado = serializers.JSONField()
     sorteio_nome = serializers.CharField(source='nome_sorteio')
     status = serializers.SerializerMethodField()
 
@@ -74,18 +73,17 @@ class PartidaProximaSerializer(serializers.ModelSerializer):
         model = Partida
         fields = ['codigo', 'data_partida','tipo_rodada',
                   'valor_kuadra','valor_kina','valor_keno',
-                  'numero_bolas_acumulado', 'sorteio_nome','status']
+                   'sorteio_nome','status']
 
 
 
 class PartidaProximaEspecialSerializer(PartidaProximaSerializer):
     codigo = serializers.IntegerField(source='id')
-    numero_bolas_acumulado = serializers.JSONField()
     sorteio_nome = serializers.CharField(source='nome_sorteio')
     class Meta:
         model = Partida
         fields = ['codigo', 'data_partida','tipo_rodada',
-                  'valor_kuadra','valor_kina','valor_keno','numero_bolas_acumulado',
+                  'valor_kuadra','valor_kina','valor_keno',
                   'sorteio_nome']
 
 class PartidaHistoricoSerializer(serializers.ModelSerializer):
