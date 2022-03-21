@@ -5,6 +5,7 @@ import pickle
 
 from django.db import transaction
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from instagrapi import Client
 from rest_framework.authentication import TokenAuthentication
@@ -15,6 +16,7 @@ from jogo.choices import AcaoTipoChoices
 from jogo.models import Jogador, Partida, Cartela, Regra, Configuracao
 
 CLIENT = None
+
 def setSocialConnection():
     with transaction.atomic():
         global CLIENT
@@ -35,6 +37,8 @@ def setSocialConnection():
 
 setSocialConnection()
 
+@csrf_exempt
+@require_http_methods(["GET"])
 def index_social(request):
     seguir_url = ""
     seguir = "@"
