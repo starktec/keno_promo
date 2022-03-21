@@ -16,7 +16,7 @@ from jogo.serializers import PartidaProximaSerializer,  UltimosGanhadoresSeriali
 def dados_bilhete(request,hash):
     if 'Authorization' in request.headers and "Token" in request.headers['Authorization']:
         token = request.headers['Authorization'].split("Token ")[1]
-        jogador = Jogador.objects.filter(usuario=token).first()
+        jogador = Jogador.objects.filter(usuario_token=token).first()
         if jogador and Cartela.objects.filter(jogador=jogador,hash=hash, cancelado=False):
             logger.info(f" - Jogador {jogador}")
             cartela = Cartela.objects.filter(jogador=jogador,hash=hash, cancelado=False).first()
