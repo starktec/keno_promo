@@ -4,7 +4,7 @@ from django.db.models import Q
 from django.views.decorators.http import require_http_methods
 from rest_framework.decorators import api_view
 from django.views.decorators.csrf import csrf_exempt
-from jogo.models import Cartela, Configuracao, Partida, Jogador
+from jogo.models import Cartela, CartelaVencedora, Configuracao, Partida, Jogador
 import datetime
 from django.http import HttpResponse, JsonResponse
 
@@ -35,6 +35,7 @@ def dados_bilhete(request,hash):
                 "sorteio":PartidaProximaSerializer(cartela.partida).data,
                 "data_hora_sorteio":datetime.date.strftime(cartela.partida.data_partida,'%Y-%m-%dT%H:%M:%S'),
                 "comprado_em":cartela.comprado_em,
+                "ganhou":CartelaVencedora.objects.filter(cartela=cartela).exists(),
                 "cartelas":cartelas,
             }
             return JsonResponse(data=dados, status=200, safe=False)
