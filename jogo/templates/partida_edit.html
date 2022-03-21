@@ -78,48 +78,6 @@ EDITAR PARTIDA
                         <div class="col-lg-4 col-sm-6 container-input-create">
                             <div class="form-group">
                                 <div class="form-control-wrap">
-                                    {{ form.hora_virada }}
-                                    <label class="form-label-outlined" for="{{ id_hora_virada }}">Tempo antecipado</label>
-                                </div>
-                                {% if form.hora_virada.errors %}
-                                    <div class="error-campo">
-                                        {{ form.hora_virada.errors }}
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-sm-6 container-input-create">
-                            <div class="form-group">
-                                <div class="form-control-wrap">
-                                    {{ form.valor_antecipado }}
-                                    <label class="form-label-outlined" for="{{ form.valor_antecipado.id_for_label }}">Valor antecipado</label>
-                                </div>
-                                {% if form.valor_antecipado.errors %}
-                                    <div class="error-campo">
-                                        {{ form.valor_antecipado.errors }}
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </div>
-
-
-                        <div class="col-lg-4 col-sm-6 container-input-create">
-                            <div class="form-group">
-                                <div class="form-control-wrap">
-                                    {{ form.valor_cartela }}
-                                    <label class="form-label-outlined" for="{{ form.valor_cartela.id_for_label }}">Valor do dia</label>
-                                </div>
-                                {% if form.valor_cartela.errors %}
-                                    <div class="error-campo">
-                                        {{ form.valor_cartela.errors }}
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <div class="col-lg-4 col-sm-6 container-input-create">
-                            <div class="form-group">
-                                <div class="form-control-wrap">
                                     {{ form.valor_kuadra }}
                                     <label class="form-label-outlined" for="{{ form.valor_kuadra.id_for_label }}">Kuadra</label>
                                 </div>
@@ -130,7 +88,6 @@ EDITAR PARTIDA
                                 {% endif %}
                             </div>
                         </div>
-
                         <div class="col-lg-4 col-sm-6 container-input-create">
                             <div class="form-group">
                                 <div class="form-control-wrap">
@@ -158,61 +115,6 @@ EDITAR PARTIDA
                                 {% endif %}
                             </div>
                         </div>
-
-                        <div class="col-lg-12 col-sm-12 container-input-create">
-                            <div class="col-12 row justify-content-center padding-zero">
-                                <p class="title-check col-6 padding-zero">Franquia</p>
-                                <div class="row justify-content-end col-6 padding-zero">
-                                    <a class="btn btn-success btn-create-secondary btn-checkbox checkbox-all" id="checks-all">
-                                        <em class="icon ni ni-check-round"></em>
-                                        <p class="checkbox-text">Selecionar todos</p>
-                                    </a>
-                                    <a class="btn btn-danger btn-create-secondary btn-checkbox checkbox-none checkbox-none-margin" id="checks-none">
-                                        <em class="icon ni ni-square"></em>
-                                        <p class="checkbox-text-none">Desmarcar todos</p>
-                                    </a>
-
-                                    <a class="btn btn-danger btn-create-secondary btn-checkbox btn-informacoes" data-toggle="modal" data-target="#modal-informacao">
-                                        <p>Dados das franquias</p>
-                                    </a>
-
-                                    <div class="modal fade" tabindex="-1" id="modal-informacao" style="display: none;" aria-hidden="true">
-                                        <div class="modal-dialog modal-lg" role="document">
-                                            <div class="modal-content">
-                                                <div class="row modal-body">
-                                                    {% for franquia,vendeu,pdvs,tv_online,tv in dados %}
-                                                    <div class="col-sm-6 container-information-franquias">
-                                                        <div class="col-12 card-infomation-franquias">
-                                                            <div class="row justify-content-between itens-infomation-franquias">
-                                                                <h2 class="col-12">{{ franquia.referencia }}</h2>
-                                                            </div>
-                                                            <div class="row justify-content-between itens-infomation-franquias">
-                                                                <h6>Efetividade</h6>
-                                                                <p>{{ vendeu }}/{{ pdvs }}</p>
-                                                            </div>
-                                                            <div class="row justify-content-between itens-infomation-franquias">
-                                                                <h6>Tvs online</h6>
-                                                                <p>{{tv_online}}/{{tv}}</p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    {% endfor %}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            {% if form.franquias.errors %}
-                                <div class="error-campo">
-                                {{ form.franquias.errors }}
-                                </div>
-                            {% endif %}
-                            <div class="form-check-inline">
-                                {{ form.franquias }}
-                            </div>
-                        </div>
-
                         <div class="col-12 row container-btn-createPartida">
                                 <div class="form-group button-partida">
                                 <div class="form-control-wrap">
@@ -225,7 +127,7 @@ EDITAR PARTIDA
 
                             <div class="form-group button-partida">
                                 <div class="form-control-wrap">
-                                    <button type="button" id="verificar" onclick="pegando()" class="btn btn-success btn-create-secondary" data-toggle="modal" data-target="#modalDefault">
+                                    <button type="submit" id="verificar" class="btn btn-success btn-create-secondary">
                                         <p>Salvar</p>
                                         <em class="icon ni ni-save-fill icon-left"></em>
                                     </button>
@@ -261,8 +163,6 @@ EDITAR PARTIDA
                                 </div>
                             </div>
                         </div>
-    
-                        
                     </form>
                 </div>
             </div>
@@ -275,44 +175,22 @@ EDITAR PARTIDA
                         <thead class="thead-dark text-center thead-content">
                           <tr>
                             <th scope="col">Sorteio</th>
-                            <th scope="col">Rotas</th>
                             <th scope="col">Data/Hora</th>
-                            <th scope="col">Ant.</th>
-                            <th scope="col">Dia</th>
                             <th scope="col">Kuadra</th>
                             <th scope="col">Kina</th>
                             <th scope="col">Keno</th>
-                            <th scope="col">Doações</th>
-                            <th scope="col">Resultado</th>
-                            <th scope="col">RTP</th>
                             <th scope="col">Rodada</th>
                             <th scope="col"></th>
                           </tr>
                         </thead>
                         <tbody class="text-center tbody-content">
-                        <!--{% if not partidas %}
-                            <tr>
-                                <td colspan="12">Nenhum Resultado encontrado</td>
-                            </tr>
-                        {% endif %}
-                        -->
                         {% for p in partidas %}
                           <tr class="">
                             <th scope="row">{{ p.id }}</th>
-                            <td>{{ p.franquias.all|join:"," }}</td>
                             <td class="font-table-2">{{ p.data_partida|date:"SHORT_DATETIME_FORMAT" }}</td>
-                            <td>{{ p.valor_antecipado }}</td>
-                            <td>{{ p.valor_cartela }}</td>
                             <td>{{ p.valor_kuadra }}</td>
                             <td>{{ p.valor_kina }}</td>
                             <td>{{ p.valor_keno }}</td>
-                            <td>{{ p.doacoesP|floatformat:2 }}</td>
-                            {% if p.resultado < 0 %}
-                                <td class="negativo font-table-2">{{ p.resultado|floatformat:2 }}</td>
-                            {% else %}
-                                <td class="positivo font-table-2">{{ p.resultado|floatformat:2 }}</td>
-                            {% endif %}
-                            <td class="result">{{ p.rtp|floatformat:2 }}%</td>
                             <td>{{ p.get_tipo_rodada_display }}</td>
                             <td><em class="icon ni ni-square-fill icon-identificacao 
                                 {% if p.data_partida > agora %}
@@ -336,332 +214,5 @@ EDITAR PARTIDA
 <!------------------------------------------------------------------------------------------------------------>
 
 <script src="/static/print.js"></script>
-
-<script>
-
-$(()=>{
-    let checkboxAll = $('#checks-all');
-    let checkboxRemove = $('#checks-none');
-    let checks = $('.checks');
-
-    $(checkboxAll).click(()=>{
-        checks.attr("checked", true);
-    })
-
-    $(checkboxRemove).click(()=>{
-        checks.attr("checked", false);
-    })
-})
-
-$(function () {
-    
-    {% if not form.instance.doacoesP %}
-
-        const editDataAntecipar = "{{ configuracao.edit_data_antecipar_s }}";
-        const editDataAdiar = "{{ configuracao.edit_data_adiar_s }}";
-        const editHoraAntecipar = "{{ configuracao.edit_horario_antecipar_s }}";
-        const editHoraAdiar = "{{ configuracao.edit_horario_adiar_s }}";
-        const editTipo = "{{ configuracao.edit_tipo_s }}";
-        const editNome = "{{ configuracao.edit_nome_s }}";
-        const editPromocional = "{{ configuracao.edit_promocional_s }}";
-        const editAntecipado = "{{ configuracao.edit_cartela_antecipada_s }}";
-        const editCartela = "{{ configuracao.edit_cartela_s }}";
-        const editKuadra = "{{ configuracao.edit_kuadra_s }}";
-        const editKina = "{{ configuracao.edit_kina_s }}";
-        const editKeno = "{{ configuracao.edit_keno_s }}";
-        const editFranquia = "{{ configuracao.edit_franquia_s }}"
-
-    {% else %}
-
-        const editDataAntecipar = "{{ configuracao.edit_data_antecipar_c }}";
-        const editDataAdiar = "{{ configuracao.edit_data_adiar_c }}";
-        const editHoraAntecipar = "{{ configuracao.edit_horario_antecipar_c }}";
-        const editHoraAdiar = "{{ configuracao.edit_horario_adiar_c }}";
-        const editTipo = "{{ configuracao.edit_tipo_c }}";
-        const editNome = "{{ configuracao.edit_nome_c }}";
-        const editPromocional = "{{ configuracao.edit_promocional_c }}";
-        const editAntecipado = "{{ configuracao.edit_cartela_antecipada_c }}";
-        const editCartela = "{{ configuracao.edit_cartela_c }}";
-        const editKuadra = "{{ configuracao.edit_kuadra_c }}";
-        const editKina = "{{ configuracao.edit_kina_c }}";
-        const editKeno = "{{ configuracao.edit_keno_c }}";
-        const editFranquia = "{{ configuracao.edit_franquia_c }}"
-
-    {% endif %}
-
-    const inputHora = $('#id_hora_partida');
-    const inputHoraInicial = $('#id_hora_partida').val();
-
-    if (editHoraAntecipar == "False" && editHoraAdiar == "False") {
-        let input = $('#id_hora_partida');
-        input.prop("readonly", true);
-    }
-
-    if (editHoraAntecipar === "True" && editHoraAdiar === "False") {
-        const inputHora = $('#id_hora_partida');
-        const btn = $("#verificar");
-        const hora = $('#id_hora_partida');
-        $(inputHora).blur(()=>{
-            const inputHoraFim = $('#id_hora_partida').val();
-            if (inputHoraFim > inputHoraInicial) {
-                const msgErro = $('#error-campo-hora');
-
-                hora.addClass('is-invalid');
-                msgErro.html(`O horario não pode ser maior que ${inputHoraInicial} hrs.`);
-                btn.prop("disabled", true);
-            }else{
-                hora.removeClass('is-invalid');
-                btn.prop("disabled", false);
-            }
-        })
-    }
-    if (editHoraAntecipar === "False" && editHoraAdiar === "True") {
-        const inputHora = $('#id_hora_partida');
-        const btn = $("#verificar");
-        const btn2 = $("#verificar2");
-        const hora = $('#id_hora_partida');
-        $(inputHora).blur(()=>{
-            const inputHoraFim = $('#id_hora_partida').val();
-            if (inputHoraFim < inputHoraInicial) {
-                const msgErro = $('#error-campo-hora');
-
-                hora.addClass('is-invalid');
-                msgErro.html(`O horario não pode ser menor que ${inputHoraInicial} hrs.`);
-                btn.prop("disabled", true);
-            }else{
-                hora.removeClass('is-invalid');
-                btn.prop("disabled", false);
-            }
-        })
-    }
-    
-
-
-    if (editDataAdiar === "False" && editDataAntecipar === "False") {
-        const input = $('#id_dia_partida')
-        input.prop("readonly", true);
-        $(input).change(()=>{
-            btn.prop("disabled", true);
-        })
-        $('#id_dia_partida').datepicker({
-                startDate: '0d',
-                endDate: '-1d'
-        });
-    }else{
-        const input = $('#id_dia_partida').val();
-        if (editDataAdiar === "True" && editDataAntecipar === 'False') {
-            $('#id_dia_partida').datepicker({
-                startDate: new Date(),
-                endDate: input,
-                defaultViewDate: input
-            });
-        }
-        if (editDataAdiar === "False" && editDataAntecipar === 'True') {
-            $('#id_dia_partida').datepicker({
-                startDate: input,
-                defaultViewDate: input
-            });
-        }
-        if (editDataAdiar === "True" && editDataAntecipar === 'True') {
-            $('#id_dia_partida').datepicker({
-                startDate: new Date(),
-                defaultViewDate: input
-            });
-        }
-    }
-
-    
-
-    if (editTipo === "False") {
-        let input = $('#id_tipo_rodada');
-        input.prop("disabled", true);
-    }
-
-    if (editNome === "False") {
-        let input = $('#id_nome_sorteio');
-        input.prop("readonly", true);
-    }
-
-    if (editAntecipado === "False") {
-        let input = $('#id_valor_antecipado');
-        input.prop("readonly", true);
-    }
-
-    if (editCartela === "False") {
-        let input = $('#id_valor_cartela');
-        input.prop("readonly", true);
-    }
-
-    if (editKuadra === "False") {
-        let input = $('#id_valor_kuadra');
-        input.prop("readonly", true);
-    }
-
-    if (editKina === "False") {
-        let input = $('#id_valor_kina');
-        input.prop("readonly", true);
-    }
-
-    if (editKeno === "False") {
-        let input = $('#id_valor_keno');
-        input.prop("readonly", true);
-    }
-    console.log(editFranquia)
-    if (editFranquia === "False") {
-        const input = $(".form-check-input");
-        input.prop('disabled', true);
-    }
-})
-
-$(function() {
-    let btnSubmit = $('#btn-submit');
-    //btnSubmit.prop('disabled',true);
-})
-
-
-var valid_data = {% if form.dia_partida.errors %}false{% else %}true{% endif %};
-var valid_hora = {% if form.hora_partida.errors %}false{% else %}true{% endif %};
-var valid_rodada = {% if form.tipo_rodada.errors %}false{% else %}true{% endif %};
-var valid_cartela = {% if form.valor_cartela.errors %}false{% else %}true{% endif %};
-var valid_antecipado = {% if form.valor_antecipado.errors %}false{% else %}true{% endif %};
-var valid_kuadra = {% if form.valor_kuadra.errors %}false{% else %}true{% endif %};
-var valid_kina = {% if form.valor_kina.errors %}false{% else %}true{% endif %};
-var valid_keno = {% if form.valor_keno.errors %}false{% else %}true{% endif %};
-var valid_franquias = {% if form.franquias.errors %}false{% else %}true{% endif %};
-
-
-
-$(function() {
-    if (valid_data == false) {
-        console.log(valid_data)
-        var data = $('#id_dia_partida');
-        data.addClass('is-invalid');
-    }
-})
-
-$(function() {
-    if (valid_hora == false) {
-        var hora = $('#id_hora_partida');
-        hora.addClass('is-invalid');
-    }
-})
-
-$(function() {
-    if (valid_rodada == false) {
-        var rodada = $('#id_tipo_rodada');
-        rodada.addClass('is-invalid');
-    }
-})
-
-$(function() {
-    if (valid_cartela == false) {
-        var cartela = $('#id_valor_cartela');
-        cartela.addClass('is-invalid');
-    }
-})
-
-$(function() {
-    if (valid_antecipado == false) {
-        var antecipado = $('#id_valor_antecipado');
-        antecipado.addClass('is-invalid');
-    }
-})
-
-$(function() {
-    if (valid_kuadra == false) {
-        var valor_kuadra = $('#id_valor_kuadra');
-        valor_kuadra.addClass('is-invalid');
-    }
-})
-
-$(function() {
-    if (valid_kina == false) {
-        var valor_kina = $('#id_valor_kina');
-        valor_kina.addClass('is-invalid');
-    }
-})
-
-$(function() {
-    if (valid_keno == false) {
-        var valor_keno = $('#id_valor_keno');
-        valor_keno.addClass('is-invalid');
-    }
-})
-
-$(function() {
-    if (valid_franquias == false) {
-        var franquia = $('#id_franquia');
-        franquia.addClass('is-invalid');
-    }
-})
-
-function pegando() {
-  const containerModal = $('#display-modal');
-  containerModal.css('display','none');
-
-  const cartelaPadrao = {{ configuracao.valor_dia_aviso|unlocalize }};
-  const kuadraPadrao = {{ configuracao.valor_kuadra_aviso|unlocalize }};
-  const kinaPadrao = {{ configuracao.valor_kina_aviso|unlocalize }};
-  const kenoPadrao = {{ configuracao.valor_keno_aviso|unlocalize }};
-
-  const dataHora = $('#dataPartida')
-  const containerPadrao = $('#container-padrao');
-  const conatinerSemPadrao = $('#container-sem-padrao');
-  const form = $('#form_partida');
-
-  let hora = $('#id_hora_partida').val();
-  let data = $('#id_dia_partida').val();
-  let antecipado = $('#id_valor_antecipado').val();
-  let cartela = $('#id_valor_cartela').val();
-  let kuadra = $('#id_valor_kuadra').val();
-  let kina = $('#id_valor_kina').val();
-  let keno = $('#id_valor_keno').val();
-
-  dataHora.text(`Data da partida: ` + data + ` || ` + hora);
-  
-  /*********************************************************/
-
-  if(cartela > cartelaPadrao || kuadra > kuadraPadrao || kina > kinaPadrao || keno > kenoPadrao){
-    containerModal.css('display','flex');
-    let msgPadrao = "";
-    let msg = "";
-
-    if (cartela > cartelaPadrao) {
-        msg += `<p class="col-sm-6 col-md-4 col-lg-3 text-center margin-zero text-bold">Cartela: <span class="text-red">`+ cartela +`</span></p>`;
-    }else{
-        msg += `<p class="col-sm-6 col-md-4 col-lg-3 text-center margin-zero text-bold">Cartela: <span class="text-green">`+ cartela +`</span></p>`;
-    }
-    if (kuadra > kuadraPadrao) {
-        msg += `<p class="col-sm-6 col-md-4 col-lg-3 text-center margin-zero text-bold">Kuadra: <span class="text-red">`+ kuadra +`</span></p>`;
-        
-    }else{
-        msg += `<p class="col-sm-6 col-md-4 col-lg-3 text-center margin-zero text-bold">kuadra: <span class="text-green">`+ kuadra +`</span></p>`;
-    }
-    if (kina > kinaPadrao) {
-        msg += `<p class="col-sm-6 col-md-4 col-lg-3 text-center margin-zero text-bold">kina: <span class="text-red">`+ kina +`</span></p>`;
-        
-    }else{
-        msg += `<p class="col-sm-6 col-md-4 col-lg-3 text-center margin-zero text-bold">kina: <span class="text-green">`+ kina +`</span></p>`;
-    }
-    if (keno > kenoPadrao) {
-        msg += `<p class="col-sm-6 col-md-4 col-lg-3 text-center margin-zero text-bold">keno: <span class="text-red">`+ keno +`</span></p>`;
-    }else{
-        msg += `<p class="col-sm-6 col-md-4 col-lg-3 text-center margin-zero text-bold">keno: <span class="text-green">`+ keno +`</span></p>`;
-    }
-
-    msgPadrao += `<p class="col-sm-6 col-md-4 col-lg-3 text-center margin-zero text-valor text-black">Cartela: <span>`+ cartelaPadrao +`</span></p>`;
-    msgPadrao += `<p class="col-sm-6 col-md-4 col-lg-3 text-center margin-zero text-valor text-black">Kuadra: <span>`+ kuadraPadrao +`</span></p>`;
-    msgPadrao += `<p class="col-sm-6 col-md-4 col-lg-3 text-center margin-zero text-valor text-black">Kina: <span>`+ kinaPadrao +`</span></p>`;
-    msgPadrao += `<p class="col-sm-6 col-md-4 col-lg-3 text-center margin-zero text-valor text-black">Keno: <span>`+ kenoPadrao +`</span></p>`;
-
-    conatinerSemPadrao.html(msgPadrao);
-    containerPadrao.html(msg);
-
-  }else {
-    form.submit()
-  }
-}
-
-</script>
 
 {% endblock %}

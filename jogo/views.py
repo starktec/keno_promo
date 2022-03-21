@@ -412,8 +412,8 @@ def cartela(request, cartela_id):
 
 @login_required(login_url="/login/")
 def partida_edit(request, partida_id):
-    partida = Partida.objects.filter(id=partida_id).first()
-    configuracao = Configuracao.objects.last()
+    partida:Partida = Partida.objects.filter(id=partida_id).first()
+    configuracao:Configuracao = Configuracao.objects.last()
     if partida:
         agora = datetime.datetime.now()
         if partida.data_partida > agora:
@@ -433,8 +433,7 @@ def partida_edit(request, partida_id):
                     novadata = datetime.datetime.strptime(data_partida, "%d/%m/%Y %H:%M")
                     antigadata = partida.data_partida
                     partida.data_partida = novadata
-                    if form.instance.doacoes and configuracao.edit_tipo:
-                        partida.tipo_rodada = form.cleaned_data['tipo_rodada']
+                    partida.tipo_rodada = form.cleaned_data['tipo_rodada']
                     partida.nome_sorteio = form.cleaned_data['nome_sorteio']
                     partida.valor_kuadra = form.cleaned_data['valor_kuadra']
                     partida.valor_kina = form.cleaned_data['valor_kina']
