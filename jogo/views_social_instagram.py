@@ -93,14 +93,18 @@ def gerar_bilhete(request):
                                 mensagem = f"Você já está participando do sorteio {partida.id}"
                             else:
                                 cartelas = Cartela.objects.filter(partida=partida, jogador__isnull=True)
-                                cartela = random.choice(cartelas)
-                                cartela.jogador = jogador
-                                cartela.nome = nome
-                                cartela.save()
+                                if cartelas:
+                                    cartela = random.choice(cartelas)
+                                    cartela.jogador = jogador
+                                    cartela.nome = nome
+                                    cartela.save()
+                                else:
+                                    mensagem = "Cartelas esgotadas"
+                                    return JsonResponse(data={"detail": mensagem}, status=404)
                             return JsonResponse(
                                 data={"detail": mensagem, "bilhete": cartela.hash, "sorteio": int(cartela.partida.id)})
                         else:
-                            mensagem = "Você ainda não segue o perfil ou o perfil é privado"
+                            mensagem = "Você ainda não segue o perfil?"
                             return JsonResponse(data={"detail": mensagem}, status=404)
                     else:
                         mensagem = "Não foi encontrado uma regra do tipo 'Seguir um perfil'"
