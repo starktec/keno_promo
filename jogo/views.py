@@ -240,9 +240,7 @@ def ganhadores(request):
     hoje = datetime.date.today()
     data_inicio = datetime.datetime.combine(hoje, datetime.time.min)
     data_fim = datetime.datetime.combine(hoje, datetime.time.max)
-    usuario = request.user.usuario
     itens_pagina = 10
-    configuracao = Configuracao.objects.last()
     data_liberacao = datetime.datetime.now()
     vencedores = CartelaVencedora.objects.filter(partida__data_partida__lte=data_liberacao).order_by('-id')
     vencedores = vencedores.filter(partida__data_partida__gte=data_inicio, partida__data_partida__lte=data_fim)
@@ -281,11 +279,6 @@ def ganhadores(request):
             if 'partida' in form.cleaned_data and form.cleaned_data['partida']:
                 vencedores = CartelaVencedora.objects.filter(
                     partida__id=form.cleaned_data['partida'], partida__data_partida__lte=data_liberacao)
-            if 'pdv' in form.cleaned_data and form.cleaned_data['pdv']:
-                pdv = form.cleaned_data['pdv']
-                vencedores = CartelaVencedora.objects.filter(partida__data_partida__lte=data_liberacao,
-                                                             cartela__pdv=pdv)
-
 
     partidas_vencedores = {}
 
