@@ -400,47 +400,13 @@ class ConfiguracaoForm(forms.ModelForm):
     iniciar_sorteio_em = forms.IntegerField(min_value=0, max_value=60, widget=forms.NumberInput(
         attrs={'class': 'form-control form-control-lg form-control-outlined','autocomplete': "off"}
     ))
-    tempo_tela_mudar_offline = forms.IntegerField(max_value=60, min_value=1, widget=forms.NumberInput(
-        attrs={'class': 'form-control form-control-lg form-control-outlined','autocomplete': "off"}
-    ))
-    tempo_max_espera_sorteio = forms.ChoiceField(choices=TEMPO_CHOICES,
-                                                 widget=forms.Select(
-                                                     attrs={
-                                                         'class': "form-select-lg form-control form-control-outlined"}
-                                                 )
-                                                 )
     liberar_resultado_sorteio_em = forms.ChoiceField(choices=TEMPO_LIBERAR_CHOICES,
                                                      widget=forms.Select(
                                                          attrs={
                                                              'class': "form-select-lg form-control form-control-outlined"}
                                                      )
                                                      )
-    tempo_minimo_antecipado = forms.ChoiceField(choices=TEMPO_MINIMO_ANTECIPADO,
-                                                widget=forms.Select(
-                                                    attrs={'class':"form-select-lg form-control form-control-outlined"}))
-
-
     
-    #COM VENDAS DE CARTELAS
-    edit_data_antecipar = forms.BooleanField(required=False, widget=forms.CheckboxInput(
-        attrs={'class':'custom-control-input custom-control-sm'}))
-    edit_data_adiar = forms.BooleanField(required=False, widget=forms.CheckboxInput(
-        attrs={'class':'custom-control-input'}))
-    edit_horario_antecipar = forms.BooleanField(required=False, widget=forms.CheckboxInput(
-        attrs={'class':'custom-control-input'}))
-    edit_horario_adiar = forms.BooleanField(required=False, widget=forms.CheckboxInput(
-        attrs={'class': 'custom-control-input'}))
-    edit_tipo = forms.BooleanField(required=False, widget=forms.CheckboxInput(
-        attrs={'class':'custom-control-input'}))
-    edit_nome = forms.BooleanField(required=False, widget=forms.CheckboxInput(
-        attrs={'class':'custom-control-input'}))
-    edit_kuadra = forms.BooleanField(required=False, widget=forms.CheckboxInput(
-        attrs={'class':'custom-control-input'}))
-    edit_kina = forms.BooleanField(required=False, widget=forms.CheckboxInput(
-        attrs={'class':'custom-control-input'}))
-    edit_keno = forms.BooleanField(required=False, widget=forms.CheckboxInput(
-        attrs={'class':'custom-control-input'}))
-
     logo_login = forms.ImageField(required=False, widget=forms.FileInput(
         attrs={'class': "custom-file-input", 'onChange':"document.getElementById('logo_login').src = window.URL.createObjectURL(this.files[0])"}))
     logo_dash = forms.ImageField(required=False, widget=forms.FileInput(
@@ -454,16 +420,9 @@ class ConfiguracaoForm(forms.ModelForm):
 
     class Meta:
         model = Configuracao
-        fields = ['tempo_max_espera_sorteio','tempo_min_entre_sorteios',
+        fields = ['tempo_min_entre_sorteios',
                   'iniciar_sorteio_em',
-                  'logo_dash','logo_login','favicon','nome_server',
-
-                  # SEM VENDAS DE CARTELAS
-                  'edit_data_antecipar','edit_data_adiar', 'edit_horario_antecipar',
-                  'edit_horario_adiar', 'edit_tipo', 'edit_nome', 'edit_kuadra',
-                  'edit_kina','edit_keno',
-
-                  ]
+                  'logo_dash','logo_login','favicon','nome_server']
 
 
 class PartidaEditForm(forms.ModelForm):
