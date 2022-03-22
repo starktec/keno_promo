@@ -38,20 +38,17 @@ def resultado_sorteio(request, local_id, sorteio_id):
 
             if request.method == 'GET':
                 agora = datetime.datetime.now()
+                configuracao:Configuracao = Configuracao.objects.last()
+                #data_liberacao = agora - datetime.timedelta(
+                 #   minutes=configuracao.liberar_resultado_sorteio_em)
                 configuracao = Configuracao.objects.last()
-                data_liberacao = agora - datetime.timedelta(
-                    minutes=configuracao.liberar_resultado_sorteio_em)
-                configuracao = Configuracao.objects.last()
-                tempo_pegar_sorteio_anterior = configuracao.tempo_max_espera_sorteio
-                partida = Partida.objects.filter(id=sorteio_id,
-                                                 data_partida__lte=agora - tempo_pegar_sorteio_anterior
-                                                 ).first()
+                #tempo_pegar_sorteio_anterior = configuracao.tempo_max_espera_sorteio
+                partida:Partida = Partida.objects.filter(id=sorteio_id).first()
                 if partida:
                     cartela = Cartela.objects.filter(partida=partida, jogador=jogador).first()
-                    if not cartela in partida.pontos_receberam_sorteio.all():
+                    if not cartela:
                         partida.cartelas_receberam_sorteio.add(cartela)
                         partida.save()
-
                     serializer = PartidaSerializer(instance=Partida.objects.filter(id=sorteio_id).first())
                     logger.info(f" - {jogador} Enviando sorteio {partida.id}")
                     return JsonResponse(serializer.data, safe=False)
@@ -75,7 +72,7 @@ def proximos(request):
         if jogador and Cartela.objects.filter(jogador=jogador):
             logger.info(f" - Jogador {jogador}")
             if request.method == 'GET':
-                conf = Configuracao.objects.last()
+                conf:Configuracao = Configuracao.objects.last()
                 agora = datetime.datetime.now()
                 proximos = Partida.objects.filter(
                     Q(data_partida__gt=agora,
