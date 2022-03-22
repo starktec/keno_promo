@@ -23,7 +23,7 @@ def dados_bilhete(request,hash):
             cartelas = []
             dado = {
                 "codigo":cartela.codigo,
-                "estabelecimento":cartela.jogador.nome,
+                "jogador":cartela.jogador.nome,
                 "linha1_lista":cartela.linha1_lista(),
                 "linha2_lista":cartela.linha2_lista(),
                 "linha3_lista":cartela.linha3_lista(),
