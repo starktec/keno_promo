@@ -206,6 +206,11 @@ class Partida(models.Model):
         # notificar?
         #event_doacoes()
 
+
+    def cartelas_compradas(self):
+        numero = int(Cartela.objects.filter(partida=self, cancelado=False).count())
+        return numero
+
     def __str__(self):
         data = self.data_partida
         datahora = data.strftime("%d/%m/%Y %H:%M:%S")

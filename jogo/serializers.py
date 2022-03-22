@@ -33,7 +33,7 @@ class PartidaSerializer(serializers.ModelSerializer):
     linhas_vencedoras_keno = serializers.JSONField(source="linhas_vencedoras_keno_json")
     status = serializers.SerializerMethodField()
 
-    def get_status(self,partida):
+    def get_status(self,partida:Partida):
         agora = datetime.now()
         if agora < partida.data_partida:
             return 'aguardando'
