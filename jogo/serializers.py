@@ -125,11 +125,8 @@ class UltimosGanhadoresSerializer(serializers.ModelSerializer):
 
 
 class CartelasVencedorasSerializer(serializers.ModelSerializer):
-    estabelecimento = serializers.SerializerMethodField()
     numero_cartela = serializers.SerializerMethodField()
     premio = serializers.SerializerMethodField()
-    def get_estabelecimento(self,vencedora) -> str:
-        return vencedora.cartelajogador.nome
     def get_numero_cartela(self,vencedora)->str:
         return vencedora.cartela.codigo
     def get_premio(self,vencedora)->str:
