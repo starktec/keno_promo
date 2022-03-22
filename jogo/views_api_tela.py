@@ -31,7 +31,7 @@ def resultado_sorteio(request, local_id, sorteio_id):
     logger.info(f"{request.META.get('PATH_INFO')} - {request.META.get('HTTP_X_FORWARDED_FOR')}")
     if 'Authorization' in request.headers and "Token" in request.headers['Authorization']:
         token = request.headers['Authorization'].split("Token ")[1]
-        jogador = Jogador.objects.filter(usuario=token).first()
+        jogador = Jogador.objects.filter(usuario_token=token).first()
         if jogador and Cartela.objects.filter(
                 partida=Partida.objects.filter(id=sorteio_id).first(),jogador=jogador):
             logger.info(f" - Jogador {jogador}")
