@@ -292,13 +292,12 @@ def ganhadores(request):
     kuadra, kina, keno, acumulado = (0, 0, 0, 0)
     partidas = []
     for v in vencedores:
+        v:CartelaVencedora
         if v.partida not in partidas:
             partidas.append(v.partida)
             kuadra += v.partida.valor_kuadra
             kina += v.partida.valor_kina
             keno += v.partida.valor_keno
-        if v.ganhou_acumulado:
-            acumulado += v.partida.valor_acumulado
         if v.partida in partidas_vencedores:
             partidas_vencedores[v.partida].append(v)
         else:
