@@ -133,7 +133,6 @@ GANHADORES
                         <th scope="col">Kuadra</th>
                         <th scope="col">Kina</th>
                         <th scope="col">Keno</th>
-                        <th scope="col">ACM</th>
                         <th scope="col"></th>
                         </tr>
                     </thead>
@@ -152,11 +151,11 @@ GANHADORES
                                     {% if v.premio == 1 %}
                                     <li>
                                         <p>
-                                            {{ v.cartela }} ({{ v.cartela.jogador.nome }})
-                                            {% if v.premio_recebido %}
-                                                <span class="fundo-success-pago">PG</span>
+                                            {{ v.cartela }} ({{ v.cartela.nome }})
+                                            {% if v.cartela.jogador %}
+                                                <span class="fundo-success-pago">JG</span>
                                             {% else %}
-                                                <span class="fundo-alert-pago">APG</span>
+                                                <span class="fundo-alert-pago">NJG</span>
                                             {% endif %}
                                         </p>
                                     </li>
@@ -170,16 +169,13 @@ GANHADORES
                                     {% if v.premio == 2 %}
                                     <li>
                                         <p>
-                                            {{ v.cartela }} ({{ v.cartela.pdv }})
-                                            {% if v.premio_recebido %}
-                                                {% if v.premio_recebido.tipo == "P" %}
-                                                    <span class="fundo-success-pago">PG</span>
-                                                {% else %}
-                                                    <span class="fundo-alert-pago">NPG</span>
-                                                {% endif %}
+                                            {{ v.cartela }} ({{ v.cartela.nome }})
+                                            {% if v.cartela.jogador %}
+                                                <span class="fundo-success-pago">JG</span>
                                             {% else %}
-                                            <span class="fundo-alert-pago">APG</span>
+                                                <span class="fundo-alert-pago">NJG</span>
                                             {% endif %}
+
                                         </p>
                                     </li>
                                     {% endif %}
@@ -192,39 +188,18 @@ GANHADORES
                                     {% if v.premio == 3 %}
                                     <li>
                                         <p>
-                                            {{ v.cartela }} ({{ v.cartela.pdv }})
-                                            {% if v.premio_recebido %}
-                                                {% if v.premio_recebido.tipo == "P" %}
-                                                    <span class="fundo-success-pago">PG</span>
-                                                {% else %}
-                                                    <span class="fundo-alert-pago">NPG</span>
-                                                {% endif %}
+                                            {{ v.cartela }} ({{ v.cartela.nome }})
+                                            {% if v.cartela.jogador %}
+                                                <span class="fundo-success-pago">JG</span>
                                             {% else %}
-                                            <span class="fundo-alert-pago">APG</span>
+                                                <span class="fundo-alert-pago">NJG</span>
                                             {% endif %}
+
                                         </p>             
                                     </li>
                                     {% endif %}
                                 {% endfor %}
                                     </ul>
-                            </td>
-                            <td>
-                                <ul>
-                                {% for v in vencedores %}
-                                    {% if v.premio == 3 %}
-                                    <li>
-                                        <p>
-                                        {% if v.ganhou_acumulado %}
-                                        <p class="ball-acumulada">
-                                            <span class="text-acumulado">ac</span>
-                                        </p>
-                                        {% else %}
-                                        <p> </p>
-                                        {% endif %}
-                                    </li>
-                                    {% endif %}
-                                {% endfor %}
-                                </ul>
                             </td>
                             <td class="celula-media">
                                 <a class="btn btn-danger btn-create-secondary btn-checkbox btn-informacoes" data-toggle="modal" data-target="#modal-informacao-{{ p.id }}">
