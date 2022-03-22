@@ -71,7 +71,7 @@ def proximos(request):
     logger.info(f"{request.META.get('PATH_INFO')} - {request.META.get('HTTP_X_FORWARDED_FOR')}")
     if 'Authorization' in request.headers and "Token" in request.headers['Authorization']:
         token = request.headers['Authorization'].split("Token ")[1]
-        jogador = Jogador.objects.filter(usuario=token).first()
+        jogador = Jogador.objects.filter(usuario_token=token).first()
         if jogador and Cartela.objects.filter(jogador=jogador):
             logger.info(f" - Jogador {jogador}")
             if request.method == 'GET':
