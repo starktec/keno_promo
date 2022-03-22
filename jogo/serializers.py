@@ -133,4 +133,4 @@ class CartelasVencedorasSerializer(serializers.ModelSerializer):
         return vencedora.valor_premio
     class Meta:
         model = CartelaVencedora
-        fields = ['estabelecimento','numero_cartela','premio']
+        fields = ['numero_cartela','premio']
