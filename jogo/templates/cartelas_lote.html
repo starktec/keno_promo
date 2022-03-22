@@ -89,7 +89,7 @@ CARTELAS
                     {% for c in cartelas %}
                         <tr>
                             <td scope="row">{{ c.partida.resumo }}</td>
-                            <td scope="row">{{ c.jogador.nome }}</td>
+                            <td scope="row">{% if c.jogado.nome %}@{{ c.jogador.nome }}{% else %}{{ c.nome }}{% endif %}</td>
                             <td scope="row">{{ c.hash }}</td>
                             {% if hoje > c.partida.data_partida %}
                             <td scope="row">
