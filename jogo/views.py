@@ -331,7 +331,7 @@ def criarpartida(request):
     form = NovaPartidaForm(initial={'dia_partida': hoje})
     ontem = datetime.datetime.now() - datetime.timedelta(days=1)
     partidas = Partida.objects.filter(data_partida__gte=ontem)
-
+    configuracao = Configuracao.objects.last()
     if request.method == "POST":
         form = NovaPartidaForm(request.POST)
 
@@ -375,7 +375,7 @@ def criarpartida(request):
                 partida.save()
 
                 # comprando cartelas
-                configuracao = Configuracao.objects.last()
+
                 comprar_cartelas(partida,configuracao.quantidade_cartelas_compradas)
 
                 # Agendando sorteio
@@ -387,9 +387,9 @@ def criarpartida(request):
 
     valores_disponiveis = VALORES_VOZES
     acoes_tipo = AcaoTipoChoices.choices
-
+    perfil_default = configuracao.perfil_default
     return render(request, 'criarpartida.html',
-                  {'form': form, 'partidas': partidas,
+                  {'form': form, 'partidas': partidas,"perfil_default":perfil_default,
                     'valores_disponiveis':valores_disponiveis,
                    'configuracao': Configuracao.objects.last(),"acoes_tipo":acoes_tipo,
                    })

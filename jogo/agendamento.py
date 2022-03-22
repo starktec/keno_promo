@@ -117,7 +117,6 @@ class Agenda():
 
                         cartelas_numeros_restantes = {}
                         codigo_cartela_nome = {}
-
                         for c in cartelas:
                             numeros1 = [int(numero) for numero in c['linha1'].split(",")]
                             numeros2 = [int(numero) for numero in c['linha2'].split(",")]
@@ -126,12 +125,10 @@ class Agenda():
                                 numeros1, numeros2, numeros3
                             ]
                             nome = c.get("nome")
-                            if not nome:
-                                nome = NOME_PESSOAS[random.randint(0,len(NOME_PESSOAS)-1)]
                             codigo_cartela_nome[c['codigo']] = (nome,
-                                #"".join([n for n in c['nome'] if n.isalnum() or n == " "]).strip(),
                                 c['id']
                             )
+
 
                         sorteio_todas_bolas = random.sample(range(1, 91), k=90)  # Bolas sorteadas
                         for bola in sorteio_todas_bolas:

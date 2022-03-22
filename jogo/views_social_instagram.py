@@ -81,6 +81,13 @@ def gerar_bilhete(request):
                         jogador_seguindo = CLIENT.search_followers(user_id=perfil_id, query=perfil)
                         if jogador_seguindo:
                             jogador, jogador_criado = Jogador.objects.get_or_create(usuario=perfil, usuario_token=token)
+
+                            # atualizar o nome do jogador
+                            if jogador.nome == jogador.usuario:
+                                nome = CLIENT.user_info_by_username(perfil).full_name
+                                if nome:
+                                    jogador.nome = nome
+
                             cartela = Cartela.objects.filter(jogador=jogador, partida=partida).first()
                             if cartela:
                                 mensagem = f"Você já está participando do sorteio {partida.id}"
@@ -88,6 +95,7 @@ def gerar_bilhete(request):
                                 cartelas = Cartela.objects.filter(partida=partida, jogador__isnull=True)
                                 cartela = random.choice(cartelas)
                                 cartela.jogador = jogador
+                                cartela.nome = nome
                                 cartela.save()
                             return JsonResponse(
                                 data={"detail": mensagem, "bilhete": cartela.hash, "sorteio": int(cartela.partida.id)})
