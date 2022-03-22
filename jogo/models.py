@@ -248,7 +248,6 @@ class Partida(models.Model):
             for c in cartelas:
                 d = {
                     'codigo': int(c.codigo),
-                    'jogador':c.jogador.nome,
                     'linha1_lista': [int(x) for x in c.linha1.split(",")],
                     'linha2_lista': [int(x) for x in c.linha2.split(",")],
                     'linha3_lista': [int(x) for x in c.linha3.split(",")]
