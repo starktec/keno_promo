@@ -12,7 +12,7 @@ GANHADORES
                     <form class="col-xs-12 col-sm-12 col-md-12 col-xl-12 row justify-content-start"  action="/ganhadores/" id="form1" method="post">
                     {% csrf_token %}
 
-                            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 container-input-create-secundary">
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 container-input-create-secundary">
                             <div class="form-group">
                                 <div class="form-control-wrap">
                                     <div class="form-icon form-icon-right">
@@ -44,17 +44,7 @@ GANHADORES
                                 </div>
                             </div>
                         </div> 
-
-                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 container-input-create-secundary">
-                            <div class="form-group">
-                                <div class="form-control-wrap">
-                                {{ form.pdv }}
-                                <label class="form-label-outlined label-search" for="id_pdv">POS</label>
-                                </div>
-                            </div>
-                        </div>
-
-                            <div class="col-12 col-sm-12 col-md-12 col-lg-8 col-xl-8 container-input-search text-right form-group">
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-8 col-xl-8 container-input-search text-right form-group">
                             <button onclick=test(1) class="col-3 col-sm-3 col-md-2 col-lg-2 col-xl-2 justify-content-center btn btn-success btn-search form-control-lg">
                                 <em class="icon ni ni-search"></em>
                             </button>
@@ -162,7 +152,7 @@ GANHADORES
                                     {% if v.premio == 1 %}
                                     <li>
                                         <p>
-                                            {{ v.cartela }} ({{ v.cartela.pdv }})
+                                            {{ v.cartela }} ({{ v.cartela.jogador.nome }})
                                             {% if v.premio_recebido %}
                                                 <span class="fundo-success-pago">PG</span>
                                             {% else %}

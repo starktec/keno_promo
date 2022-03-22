@@ -12,44 +12,13 @@ CARTELAS
                 <div class="row justify-content-center align-items-center form-group">
                     <form class="col-xs-12 col-sm-12 col-md-12 col-xl-12 row justify-content-start"
                     method="post" id = "form1" action="/cartelas/" >{% csrf_token %}
-                        <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 container-input-create-secundary">
-                            <div class="form-group">
-                                <div class="form-control-wrap">
-                                    <div class="form-icon icon-calendar form-icon-right">
-                                        <em class="icon ni ni-calendar-alt"></em>
-                                    </div>
-                                    {{ form.data_inicio }}
-                                    <label class="form-label-outlined label-search" for="id_data_inicio">Data Inicio</label>
-                                </div>
-                            </div>
-                        </div>
 
-                        <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 container-input-create-secundary">
-                            <div class="form-group">
-                                <div class="form-control-wrap">
-                                    <div class="form-icon icon-calendar form-icon-right">
-                                        <em class="icon ni ni-calendar-alt"></em>
-                                    </div>
-                                        {{ form.data_fim }}
-                                    <label class="form-label-outlined label-search" for="id_data_fim">Data Fim</label>
-                                </div>
-                            </div>
-                        </div>
 
                         <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 container-input-create-secundary">
                             <div class="form-group">
                                 <div class="form-control-wrap">
                                         {{ form.partida }}
                                     <label class="form-label-outlined label-search" for="id_partida">Partida</label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 container-input-create-secundary">
-                            <div class="form-group">
-                                <div class="form-control-wrap">
-                                        {{ form.pdv }}
-                                    <label class="form-label-outlined label-search" for="id_pdv">PDV</label>
                                 </div>
                             </div>
                         </div>
@@ -93,141 +62,44 @@ CARTELAS
             <div class="col-md-4">
                 <div class="card cards-status">
                     <div class="row text-center">
-                        <em class="icon ni ni-sign-mxn icon-card color-card-pos"></em>
-                        <h6 class="title-card color-card-pos">Doações</h6>
-                    </div>
-                    <div class="row">
-                        <h6 class="col-12 text-right subtitle-card color-card-pos">{{ doacoes }}</h6>
-                    </div>
-                </div>
-            </div>
-
-            <!--<div class="col-md-4">
-                <div class="card cards-status">
-                    <div class="row text-center">
-                        <em class="icon ni ni-sign-mxn icon-card color-card-pos"></em>
-                        <h6 class="title-card color-card-pos">Doações por Sorteio</h6>
-                    </div>
-                    <div class="row">
-                        <h6 class="col-12 text-right subtitle-card color-card-pos">{{ doacoes_sorteio|floatformat:2 }}</h6>
-                    </div>
-                </div>
-            </div>-->
-
-            <div class="col-md-4">
-                <div class="card cards-status">
-                    <div class="row text-center">
                         <em class="icon ni ni-trend-up icon-card color-card-pos"></em>
-                        <h6 class="title-card color-card-pos">Cartelas</h6>
+                        <h6 class="title-card color-card-pos">Cartelas Resgatadas</h6>
                     </div>
                     <div class="row">
                         <h6 class="col-12 text-right subtitle-card color-card-pos">{{ cartelas_num }}</h6>
                     </div>
                 </div>
             </div>
-
-            <div class="col-md-4">
-                <div class="card cards-status">
-                    <div class="row text-center">
-                        <em class="icon ni ni-trend-up icon-card color-card-pos"></em>
-                        <h6 class="title-card color-card-pos">Cartelas Canceladas</h6>
-                    </div>
-                    <div class="row">
-                        <h6 class="col-12 text-right subtitle-card color-card-pos">{{ canceladas }}</h6>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="card cards-status">
-                    <div class="row text-center">
-                        <em class="icon ni ni-trend-up icon-card color-card-pos"></em>
-                        <h6 class="title-card color-card-pos">Ticket Medio</h6>
-                    </div>
-                    <div class="row">
-                        <h6 class="col-12 text-right subtitle-card color-card-pos">{{ doacoes_sorteio }}</h6>
-                    </div>
-                </div>
-            </div>
-
         </div>
 
     <!-------------------------------tabela de generica de bilhetes-------------------------------->
     <div class="row my-row">
         <div class="col-12">
             <div class="card table-responsive-xl overflow-auto">
-                <table class="table position-relative table-content">
-                    <thead class="thead-dark text-center thead-content">
-                        <th scope="col" colspan="3" class="text-left">Data Inicial: {{ data_inicio|date:"d/m/Y H:i" }}</th>
-                        <th scope="col" colspan="3" class="text-right">Data Fim: {{ data_fim|date:"d/m/Y H:i" }}</th>
-                    </thead>
-                </table>
                 <table id="tabelaCartelas" class="table position-relative table-content">
                     <thead class="thead-dark text-center thead-content">
                         <tr>
                             <th scope="col">Sorteio</th>
-                            <th scope="col">PDV</th>
-                            <th scope="col">Doacao</th>
-                            <th scope="col">Data Venda</th>
-                            <th scope="col">Cartelas</th>
-                            <th scope="col">Valor Cartela</th>
-                            <th scope="col">Bilhete</th>
-                            <th scope="col">Pule</th>
+                            <th scope="col">Jogador</th>
+                            <th scope="col">Hash</th>
                             <th scope="col">Status</th>
-                            {% if request.session.perfil_max < 3 and c.cancelavel and not c.cancelado %}
-                            <th scope="col"></th>
-                            {% else %}
-                            <th scope="col"></th>
-                            {% endif %}
                         </tr>
                     </thead>
                     <tbody class="text-center tbody-content">
-                    <!--{% if not cartelas %}
-                        <tr>
-                            <td colspan="8">Nenhum Resultado encontrado</td>
-                        </tr>
-                    {% endif %}
-                    -->
                     {% for c in cartelas %}
-                        <tr class="{% if c.cancelado %} cancelado {% endif %}">
-                            <th scope="row">{{ c.partida.resumo }}</th>
-                            <td>{{ c.pdv }}</td>
-                            <td>{{ c.valor_da_compra }}</td>
-                            <td>{{ c.comprado_em|date:"SHORT_DATETIME_FORMAT" }}</td>
-                            <td>{{ c.quantidade }}</td>
-                            <td>{{ c.valor_unitario }}</td>
-                            <td>{{ c.hash }}</td>
-                            <td>{% if c.precompra %} {{ c.precompra.lote.codigo }} {% else %} {% endif %}</td>
-                            {% if c.cancelado %}
-                            <td>
-                                <p class="negativo">Cancelado</p>
-                            </td>
-                            {% elif hoje > c.partida.data_partida %}
-                            <td>
+                        <tr>
+                            <td scope="row">{{ c.partida.resumo }}</td>
+                            <td scope="row">{{ c.jogador.nome }}</td>
+                            <td scope="row">{{ c.hash }}</td>
+                            {% if hoje > c.partida.data_partida %}
+                            <td scope="row">
                                 <p class="positivo">sorteada</p>
                             </td>
                             {% else %}
-                            <td>
+                            <td scope="row">
                                 <p class="">À sortear</p>
                             </td>
                             {% endif %}
-                            {% if request.session.perfil_max < 3 and c.cancelavel and not c.cancelado and request.session.cancelar_bilhete %}
-                            <td>
-
-                                <a href="/cancelar_bilhete/{{ c.hash }}/" onclick="return confirm('Bilhete {{ c.hash }} será excluido. Prosseguir?');" class="btn btn-danger btn-create-secondary">
-                                    <em class="icon ni ni-trash"></em>
-                                </a>
-
-                            </td>
-                            {% endif %}
-                            <!--
-                            <td class="text-center">
-                                <a href="#" class="btn btn-danger">
-                                    <em class="icon ni ni-trash"></em>
-                                    <p>Cancelar Doação</p>
-                                </a>
-                            </td>
-                            -->
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -313,9 +185,6 @@ CARTELAS
                 },
                 "dom": '',
                 paging: false,
-                columnDefs: [
-                    { orderable: false, targets: [8] }
-                ],     
             });
         } );
         let clickado = false
