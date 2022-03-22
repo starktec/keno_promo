@@ -527,7 +527,6 @@ def configuracao(request):
     if request.method == "POST":
         form = ConfiguracaoForm(request.POST, request.FILES, instance=c)
         if form.is_valid():
-            request.session['aviso'] = c.notificacao_server
             form.save()
     else:
         form = ConfiguracaoForm(instance=c)
