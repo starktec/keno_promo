@@ -121,7 +121,7 @@ def dados_bilhete_v2(request,hash):
 def ultimos_ganhadores_kol(request,sorteio_id = None):
     if 'Authorization' in request.headers and "Token" in request.headers['Authorization']:
         token = request.headers['Authorization'].split("Token ")[1]
-        jogador = Jogador.objects.filter(usuario=token).first()
+        jogador = Jogador.objects.filter(usuario_token=token).first()
         if jogador and Cartela.objects.filter(jogador=jogador, cancelado=False):
             logger.info(f" - Jogador {jogador}")
             if sorteio_id:
