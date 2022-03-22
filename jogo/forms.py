@@ -668,3 +668,9 @@ class TemplateEditForm(forms.ModelForm):
             raise ValidationError(
                 "O valor do Kina deve ser maior que o valor da Kuadra!"
             )
+
+class CartelasFilterForm(forms.Form):
+    partida = forms.IntegerField(required=False,widget=forms.NumberInput(
+        attrs={'class': "form-control form-control-lg form-control-outlined", 'autocomplete': "off"}))
+    hash = forms.CharField(required=False,widget=forms.TextInput(
+        attrs={'class': "form-control form-control-lg form-control-outlined", 'autocomplete': "off"}))

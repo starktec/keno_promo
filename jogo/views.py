@@ -12,7 +12,7 @@ from jogo.utils import testa_horario, comprar_cartelas
 from jogo.constantes import VALORES_VOZES
 
 from jogo.agendamento import Agenda
-from jogo.forms import NovaPartidaAutomatizada, PartidaEditForm, GanhadoresForm, NovaPartidaForm, UsuarioAddForm, \
+from jogo.forms import CartelasFilterForm, NovaPartidaAutomatizada, PartidaEditForm, GanhadoresForm, NovaPartidaForm, UsuarioAddForm, \
     ConfiguracaoForm, TemplateEditForm
 from jogo.models import Partida, Automato, Cartela, Usuario, Configuracao, CartelaVencedora, TemplatePartida, Regra, \
     Acao, PerfilSocial
@@ -460,52 +460,20 @@ def cartelas(request):
     ultima_pagina = 0
     page_number = 0
     ordenacao = False
-    cartelas_total = False
-    perfil = request.session['perfil_max']
-    usuario = request.user.usuario
-
-    cartelas = Cartela.objects.all().order_by('-id')
-
+    cartelas = Cartela.objects.filter(jogador__isnull=True).order_by('-id')
     if request.method == "POST":
-        data_form = request.POST.dict()
-        data_form['user'] = request.user
-        #form = CartelasForm(data_form)
-        form = None
+        form = CartelasFilterForm(request.POST)
         if form.is_valid():
-            if 'data_inicio' in form.cleaned_data and form.cleaned_data['data_inicio']:
-                inicio = datetime.datetime.combine(
-                    datetime.datetime.strptime(form.cleaned_data['data_inicio'], "%d/%m/%Y"), datetime.time.min)
-                cartelas = cartelas.filter(comprado_em__gte=inicio)
-
-            if 'data_fim' in form.cleaned_data and form.cleaned_data['data_fim']:
-                fim = datetime.datetime.combine(datetime.datetime.strptime(form.cleaned_data['data_fim'], "%d/%m/%Y"),
-                                                datetime.time.max)
-                cartelas = cartelas.filter(comprado_em__lte=fim)
-
             if 'partida' in form.cleaned_data and form.cleaned_data['partida']:
                 cartelas = cartelas.filter(
                     partida=form.cleaned_data['partida'])
-            if 'pdv' in form.cleaned_data and form.cleaned_data['pdv']:
-                pdv = form.cleaned_data['pdv']
-                cartelas = cartelas.filter(pdv=pdv)
             if 'hash' in form.cleaned_data and form.cleaned_data['hash']:
                 hash = form.cleaned_data['hash']
                 cartelas = cartelas.filter(hash=hash)
-        cartelas_total = cartelas
     else:
         hoje = datetime.date.today()
-        hora_inicio_padrao = datetime.datetime.strptime("00:00:01", '%H:%M:%S').time()
-        data_inicio = datetime.datetime.combine(hoje, hora_inicio_padrao)
-        hora_fim_padrao = datetime.datetime.strptime("23:59:59", '%H:%M:%S').time()
-        data_fim = datetime.datetime.combine(hoje, hora_fim_padrao)
         ordenacao = True
-        # cartelas = CartelasLote.objects.filter(comprado_em__gte = data_inicio , comprado_em__lte=data_fim)
-        cartelas_total = Cartela.objects.filter(comprado_em__gte=data_inicio, comprado_em__lte=data_fim)
-        """
-        form = CartelasLoteForm(
-            data={'user': request.user, 'perfil': request.session['perfil_max']})
-        """
-        form = None
+        form = CartelasFilterForm()
         page_number = request.GET.get('pagina')
         if not page_number:
             page_number = 1
@@ -531,36 +499,17 @@ def cartelas(request):
         else:
             cartelas = cartelas.all().order_by('-id')[0:30]
 
-    doacoes = 0
-    cartelas_num = 0
-    sorteios_obj = 0
-    doacoes_sorteio = 0
-    cartelas_sorteio = 0
+    sorteios_count = Partida.objects.filter(cartelas__in = cartelas).order_by('-id').distinct('id').count()
     hoje = datetime.datetime.now()
-    if cartelas_total:
-        doacoes = cartelas_total.filter(cancelado=False).aggregate(Sum('valor_da_compra'))[
-                      'valor_da_compra__sum'] or 0.00
-        cartelas_num = cartelas_total.filter(cancelado=False).aggregate(Sum('quantidade'))['quantidade__sum'] or 0.00
-        sorteios_obj = Partida.objects.filter(partidas_lote__in=cartelas_total).distinct().count()
-    if doacoes:
-        doacoes_sorteio = doacoes / sorteios_obj
-    if cartelas_num:
-        cartelas_sorteio = cartelas_num / sorteios_obj
-
-    canceladas = cartelas_total.filter(cancelado=True).count()
     if ultima_pagina == 0:
         ultima_pagina = 1
     return render(request, 'cartelas_lote.html', {'cartelas': cartelas, 'form': form, "flag": flag,
-                                                  'sorteios': sorteios_obj, 'doacoes': doacoes,
-                                                  'doacoes_sorteio': round(doacoes_sorteio, 2),
-                                                  'canceladas': canceladas,
-                                                  'cartelas_num': cartelas_num,
-                                                  'cartelas_sorteio': round(cartelas_sorteio, 2),
+                                                  'sorteios': sorteios_count,
+                                                  'cartelas_num': total_dados,
                                                   "pagina_atual": int(page_number),
                                                   "proxima_pagina": int(page_number) + 1,
                                                   "pagina_anterior": int(page_number) - 1,
                                                   "ultima_pagina": ultima_pagina, "ordenacao": ordenacao, "hoje": hoje,
-                                                  # "data_inicio": data_inicio,"data_fim": data_fim,
                                                   })
 
 
