@@ -37,12 +37,6 @@ def resultado_sorteio(request, local_id, sorteio_id):
             logger.info(f" - Jogador {jogador}")
 
             if request.method == 'GET':
-                agora = datetime.datetime.now()
-                configuracao:Configuracao = Configuracao.objects.last()
-                #data_liberacao = agora - datetime.timedelta(
-                 #   minutes=configuracao.liberar_resultado_sorteio_em)
-                configuracao = Configuracao.objects.last()
-                #tempo_pegar_sorteio_anterior = configuracao.tempo_max_espera_sorteio
                 partida:Partida = Partida.objects.filter(id=sorteio_id).first()
                 if partida:
                     cartela = Cartela.objects.filter(partida=partida, jogador=jogador).first()
