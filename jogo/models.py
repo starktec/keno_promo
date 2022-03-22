@@ -19,6 +19,7 @@ from django.contrib.auth.models import User
 # Create your models here.
 from jogo import local_settings
 from jogo.choices import AcaoTipoChoices
+from jogo.constantes import NOME_PESSOAS
 
 
 def configuracao_images_path(instance, filename):
@@ -90,6 +91,7 @@ class Configuracao(models.Model):
 
     # Conexao com o instagram
     instagram_connection = models.BinaryField(blank=True,null=True)
+    perfil_default = models.URLField(blank=True,null=True)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
@@ -248,6 +250,7 @@ class Partida(models.Model):
             for c in cartelas:
                 d = {
                     'codigo': int(c.codigo),
+                    "nome": c.nome,
                     'linha1_lista': [int(x) for x in c.linha1.split(",")],
                     'linha2_lista': [int(x) for x in c.linha2.split(",")],
                     'linha3_lista': [int(x) for x in c.linha3.split(",")]
@@ -276,15 +279,15 @@ class Partida(models.Model):
             result = []
             lista = []
             for k1 in kuadra:
-                lista.append({"codigo": k1.id, "estabelecimento": str(k1.pdv.estabelecimento)})
+                lista.append({"codigo": k1.id, "nome": str(k1.nome)})
             result.append(lista)
             lista = []
             for k2 in kina:
-                lista.append({"codigo": k2.id, "estabelecimento": str(k2.pdv.estabelecimento)})
+                lista.append({"codigo": k2.id, "nome": str(k2.nome)})
             result.append(lista)
             lista = []
             for k3 in keno:
-                lista.append({"codigo": k3.id, "estabelecimento": str(k3.pdv.estabelecimento)})
+                lista.append({"codigo": k3.id, "nome": str(k3.nome)})
             result.append(lista)
 
             return result
@@ -380,6 +383,7 @@ class Jogador(models.Model):
 class Cartela(models.Model):
     # NOVO CAMPO
     jogador = models.ForeignKey(Jogador, on_delete=models.PROTECT, blank=True,null=True)
+    nome = models.CharField(max_length=50, blank=True,null=True)
 
     codigo = models.CharField(max_length=10)
     partida = models.ForeignKey(Partida, on_delete=models.CASCADE, related_name='cartelas')
@@ -447,6 +451,7 @@ class Cartela(models.Model):
         numeros = []
         if not self.id:
             self.hash = secrets.token_hex(15)
+            self.nome = random.choice(NOME_PESSOAS)
             numeros = []
             grupo_de = int(settings.NUMERO_BOLAS / settings.NUMERO_COLUNAS_CARTELA)
             for colunas in range(settings.NUMERO_COLUNAS_CARTELA):
