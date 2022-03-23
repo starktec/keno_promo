@@ -151,7 +151,15 @@ GANHADORES
                                     {% if v.premio == 1 %}
                                     <li>
                                         <p>
-                                            {{ v.cartela }} ({{ v.cartela.nome }})
+                                            {{ v.cartela }} (
+                                                {% if v.cartela.jogador %}
+                                                    <a href="https://www.instagram.com/{{ v.cartela.jogador.usuario }}/" target="_blank">
+                                                        @{{ v.cartela.jogador.usuario }}
+                                                    </a>
+                                                {% else %}
+                                                    {{ v.cartela.nome }}
+                                                {% endif %}
+                                            )
                                             {% if v.cartela.jogador %}
                                                 <span class="fundo-success-pago">JG</span>
                                             {% else %}
@@ -169,7 +177,15 @@ GANHADORES
                                     {% if v.premio == 2 %}
                                     <li>
                                         <p>
-                                            {{ v.cartela }} ({{ v.cartela.nome }})
+                                            {{ v.cartela }} (
+                                                {% if v.cartela.jogador %}
+                                                    <a href="https://www.instagram.com/{{ v.cartela.jogador.usuario }}/" target="_blank">
+                                                        @{{ v.cartela.jogador.usuario }}
+                                                    </a>
+                                                {% else %}
+                                                    {{ v.cartela.nome }}
+                                                {% endif %}
+                                            )
                                             {% if v.cartela.jogador %}
                                                 <span class="fundo-success-pago">JG</span>
                                             {% else %}
@@ -188,7 +204,15 @@ GANHADORES
                                     {% if v.premio == 3 %}
                                     <li>
                                         <p>
-                                            {{ v.cartela }} ({{ v.cartela.nome }})
+                                            {{ v.cartela }} (
+                                                {% if v.cartela.jogador %}
+                                                    <a href="https://www.instagram.com/{{ v.cartela.jogador.usuario }}/" target="_blank">
+                                                        @{{ v.cartela.jogador.usuario }}
+                                                    </a>
+                                                {% else %}
+                                                    {{ v.cartela.nome }}
+                                                {% endif %}
+                                            )
                                             {% if v.cartela.jogador %}
                                                 <span class="fundo-success-pago">JG</span>
                                             {% else %}
