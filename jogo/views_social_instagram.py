@@ -90,6 +90,8 @@ def gerar_bilhete(request):
                                 if nome:
                                     jogador.nome = nome
                                     jogador.save()
+                                else:
+                                    nome = jogador.nome
 
                             cartela = Cartela.objects.filter(jogador=jogador, partida=partida).first()
                             if cartela:
