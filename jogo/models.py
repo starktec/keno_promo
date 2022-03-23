@@ -202,8 +202,9 @@ class Partida(models.Model):
     id_automato = models.BigIntegerField(blank=True, null=True)
     premios_set = models.DecimalField(decimal_places=2, max_digits=10, default=0.00)
 
-    # NOVO CAMPO
+    # NOVOS CAMPOS
     chance_vitoria = models.DecimalField(default=100.0, decimal_places=2,max_digits=5)
+    numero_cartelas_iniciais = models.PositiveSmallIntegerField(default=500)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):

@@ -120,6 +120,42 @@ CRIAR PARTIDA
                             </div>
                         </div>
 
+                        <!-- REGRAS DA PARTIDA -->
+                        <div class="col-lg-4 col-sm-6 container-input-create">
+                            <div class="form-group">
+                                <div class="form-control-wrap focused">
+                                    {{ form.chance_vitoria }}
+                                    <label class="form-label-outlined" for="{{ form.chance_vitoria.id_for_label }}">Percentual</label>
+                                </div>
+                                <div>
+                                    {% if form.chance_vitoria.errors %}
+                                    <div class="error-campo">
+                                        {{ form.chance_vitoria.errors }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-sm-6 container-input-create">
+                            <div class="form-group">
+                                <div class="form-control-wrap focused">
+                                    {{ form.numero_cartelas_iniciais }}
+                                    <label class="form-label-outlined" for="{{ form.numero_cartelas_iniciais.id_for_label }}">
+                                        Número de Cartelas Iniciais
+                                    </label>
+                                </div>
+                                <div>
+                                    {% if form.numero_cartelas_iniciais.errors %}
+                                    <div>
+                                        {{ form.numero_cartelas_iniciais.errors }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+
                         <!-- CRIAR AS REGRAS PARA GANHAR UMA CARTELA -->
                         <div class="row col-12" id="acoes_div">
                             <div class="row col-12">

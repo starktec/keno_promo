@@ -150,13 +150,23 @@ class NovaPartidaForm(forms.ModelForm):
         attrs={'class': "form-control form-control-lg form-control-outlined", 'autocomplete': "off", 'type': "number"}))
     valor_keno = forms.DecimalField(widget=forms.NumberInput(
         attrs={'class': "form-control form-control-lg form-control-outlined", 'autocomplete': "off", 'type': "number"}))
+    numero_cartelas_iniciais = forms.IntegerField(
+        min_value=1,max_value=30000,
+        widget=forms.NumberInput(
+            attrs={'class': "form-control form-control-lg form-control-outlined", 'autocomplete': "off", 'type': "number"}
+        ), initial=500
+    )
+    chance_vitoria = forms.DecimalField(widget=forms.NumberInput(
+        attrs={'class': "form-control form-control-lg form-control-outlined", 'autocomplete': "off", 'type': "number"}),
+        initial=100.0
+    )
 
 
     class Meta:
         model = Partida
         fields = ['valor_kuadra', 'valor_kina', 'valor_keno',
-                  'dia_partida', 'hora_partida', 'tipo_rodada',
-                  'nome_sorteio','hora_virada']
+                  'dia_partida', 'hora_partida', 'tipo_rodada',"chance_vitoria",
+                  'nome_sorteio','hora_virada','numero_cartelas_iniciais']
 
     def clean_dia_partida(self):
         valor = self.cleaned_data['dia_partida']

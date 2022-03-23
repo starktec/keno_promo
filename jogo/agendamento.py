@@ -106,7 +106,7 @@ class Agenda():
 
                     if numero_cartelas_jogadores:
                         # Calculo de quantas cartelas devem participar do sorteio
-                        numero_cartelas_definido = round(numero_cartelas_jogadores / (chance_vitoria/100.0))
+                        numero_cartelas_definido = round(numero_cartelas_jogadores / (float(chance_vitoria)/100.0))
 
                         """                        
                         if numero_cartelas_definido < 15:
@@ -116,8 +116,11 @@ class Agenda():
 
                         # Montando a lista de Cartelas
 
-                        cartelas_sorteio = cartelas.filter(jogador__isnull=False)
-                        cartelas_sorteio |= cartelas.filter(jogador__isnull=True)[:numero_cartelas_preencher]
+                        cartelas_sorteio = list(cartelas.filter(jogador__isnull=False))
+                        if numero_cartelas_preencher > len(cartelas) - numero_cartelas_jogadores:
+                            cartelas_sorteio += list(cartelas.filter(jogador__isnull=True))
+                        else:
+                            cartelas_sorteio += list(cartelas.filter(jogador__isnull=True)[:numero_cartelas_preencher])
 
                         cartelas = cartelas_sorteio
 

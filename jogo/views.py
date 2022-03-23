@@ -367,6 +367,7 @@ def criarpartida(request):
 
                 dia_partida = form.cleaned_data['dia_partida']
                 hora_partida = form.cleaned_data['hora_partida']
+                numero_cartelas_iniciais = form.cleaned_data['numero_cartelas_iniciais']
                 partida = form.save(commit=False)
                 partida.regra = regra
                 partida.data_partida = datetime.datetime.strptime(
@@ -376,7 +377,7 @@ def criarpartida(request):
 
                 # comprando cartelas
 
-                comprar_cartelas(partida,configuracao.quantidade_cartelas_compradas)
+                comprar_cartelas(partida,numero_cartelas_iniciais)
 
                 # Agendando sorteio
                 agenda.agendar(partida)
