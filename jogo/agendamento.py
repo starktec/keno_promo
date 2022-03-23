@@ -90,7 +90,10 @@ class Agenda():
                         if a:
                             a.delete()
                         partida = None
-                cartelas = Cartela.objects.filter(partida=partida, cancelado=False)
+                cartelas = Cartela.objects.filter(
+                    partida=partida, cancelado=False
+                ).values("id","codigo","jogador","linha1","linha2","linha3","nome",
+                         "vencedor_kuadra","vencedor_kina","vencedor_keno")
                 if partida and cartelas and not partida.em_sorteio and not partida.bolas_sorteadas:
 
                     partida.data_inicio = datetime.datetime.now(tz=RECIFE)
