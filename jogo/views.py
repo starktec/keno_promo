@@ -328,7 +328,38 @@ def ganhadores(request):
 def jogadores(request):
     form = JogadoresForm()
     jogadores = Jogador.objects.all()
+    if request.method == "POST":
+        form = JogadoresForm(request.POST)
+        if form.is_valid():
+            if 'data_inicio' in form.cleaned_data and form.cleaned_data['data_inicio']:
+                data_inicio = datetime.datetime.combine(
+                    datetime.datetime.strptime(form.cleaned_data['data_inicio'], "%d/%m/%Y"),
+                    datetime.time.min
+                )
+                jogadores = jogadores.filter(cadastrado_em__gte=data_inicio)
+                if 'data_fim' not in form.cleaned_data or not form.cleaned_data['data_fim']:
+                    data_fim = datetime.datetime.combine(
+                        data_inicio, datetime.time.max
+                    )
+                    jogadores = jogadores.filter(cadastrado_em__lte=data_fim)
 
+            if 'data_fim' in form.cleaned_data and form.cleaned_data['data_fim']:
+                data_fim = datetime.datetime.combine(
+                    datetime.datetime.strptime(form.cleaned_data['data_fim'], "%d/%m/%Y"),
+                    datetime.time.max
+                )
+                jogadores = jogadores.filter(cadastrado_em__lte=data_fim)
+                if 'data_inicio' not in form.cleaned_data or not form.cleaned_data['data_inicio']:
+                    data_inicio = datetime.datetime.combine(
+                        data_fim, datetime.time.min
+                    )
+                    jogadores.filter(cadastrado_em_gte=data_inicio)
+            if 'partida' in form.cleaned_data and form.cleaned_data['partida']:
+                cartelas = Cartela.objects.filter(partida__id=form.cleaned_data['partida'])
+                jogadores = jogadores.filter(cartela__in=cartelas).order_by('id').distinct('id')
+            
+    else:
+        print(form.errors)       
     return render(request,'jogadores.html',{'jogadores':jogadores,'form':form})
 
 @login_required(login_url="/login/")
