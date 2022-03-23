@@ -81,12 +81,13 @@ def gerar_bilhete(request):
                         jogador_seguindo = CLIENT.search_followers(user_id=perfil_id, query=perfil)
                         if jogador_seguindo:
                             jogador, jogador_criado = Jogador.objects.get_or_create(usuario=perfil, usuario_token=token)
-
+                            nome = ""
                             # atualizar o nome do jogador
                             if jogador.nome == jogador.usuario:
                                 nome = CLIENT.user_info_by_username(perfil).full_name
                                 if nome:
                                     jogador.nome = nome
+                                    jogador.save()
 
                             cartela = Cartela.objects.filter(jogador=jogador, partida=partida).first()
                             if cartela:
@@ -96,7 +97,8 @@ def gerar_bilhete(request):
                                 if cartelas:
                                     cartela = random.choice(cartelas)
                                     cartela.jogador = jogador
-                                    cartela.nome = nome
+                                    if nome:
+                                        cartela.nome = nome
                                     cartela.save()
                                 else:
                                     mensagem = "Cartelas esgotadas"
