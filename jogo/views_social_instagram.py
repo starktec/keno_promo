@@ -77,14 +77,15 @@ def gerar_bilhete(request):
                             perfil_id = acao.perfil_social.perfil_id
                             break
                     if perfil_id:
-                        jogador_instagram_id = CLIENT.user_id_from_username(perfil)
-                        jogador_seguindo = CLIENT.search_followers(user_id=perfil_id, query=perfil)
+                        #jogador_instagram_id = CLIENT.user_id_from_username(perfil)
+                        #jogador_seguindo = CLIENT.search_followers(user_id=perfil_id, query=perfil)
+                        jogador_seguindo = True
                         if jogador_seguindo:
                             jogador, jogador_criado = Jogador.objects.get_or_create(usuario=perfil, usuario_token=token)
                             nome = ""
                             # atualizar o nome do jogador
                             if jogador.nome == jogador.usuario:
-                                nome = CLIENT.user_info_by_username(perfil).full_name
+                                #nome = CLIENT.user_info_by_username(perfil).full_name
                                 if nome:
                                     jogador.nome = nome
                                     jogador.save()
