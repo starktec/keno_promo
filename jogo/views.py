@@ -12,9 +12,9 @@ from jogo.utils import testa_horario, comprar_cartelas
 from jogo.constantes import VALORES_VOZES
 
 from jogo.agendamento import Agenda
-from jogo.forms import CartelasFilterForm, NovaPartidaAutomatizada, PartidaEditForm, GanhadoresForm, NovaPartidaForm, UsuarioAddForm, \
+from jogo.forms import CartelasFilterForm, JogadoresForm, NovaPartidaAutomatizada, PartidaEditForm, GanhadoresForm, NovaPartidaForm, UsuarioAddForm, \
     ConfiguracaoForm, TemplateEditForm
-from jogo.models import Partida, Automato, Cartela, Usuario, Configuracao, CartelaVencedora, TemplatePartida, Regra, \
+from jogo.models import Jogador, Partida, Automato, Cartela, Usuario, Configuracao, CartelaVencedora, TemplatePartida, Regra, \
     Acao, PerfilSocial
 from jogo.views_social_instagram import CLIENT
 from jogo.websocket_triggers_bilhete import event_bilhete_partida
@@ -323,6 +323,13 @@ def ganhadores(request):
                    'keno': keno, 'acumulado': acumulado, 'total': total,
                    })
 
+
+@login_required(login_url="/login/")
+def jogadores(request):
+    form = JogadoresForm()
+    jogadores = Jogador.objects.all()
+
+    return render(request,'jogadores.html',{'jogadores':jogadores,'form':form})
 
 @login_required(login_url="/login/")
 def criarpartida(request):
