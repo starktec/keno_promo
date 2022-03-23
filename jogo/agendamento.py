@@ -90,12 +90,34 @@ class Agenda():
                         if a:
                             a.delete()
                         partida = None
-                cartelas = cartelas_sql_teste(partida.id)
+                cartelas = Cartela.objects.filter(partida=partida, cancelado=False)
                 if partida and cartelas and not partida.em_sorteio and not partida.bolas_sorteadas:
 
                     partida.data_inicio = datetime.datetime.now(tz=RECIFE)
                     partida.em_sorteio = True
                     partida.save()
+
+                    chance_vitoria = partida.chance_vitoria
+                    numero_cartelas_jogadores = cartelas.filter(jogador__isnull=False).count()
+                    numero_cartelas_sortear = len(cartelas)
+
+                    if numero_cartelas_jogadores:
+                        # Calculo de quantas cartelas devem participar do sorteio
+                        numero_cartelas_definido = round(numero_cartelas_jogadores / (chance_vitoria/100.0))
+
+                        """                        
+                        if numero_cartelas_definido < 15:
+                            numero_cartelas_definido = 15
+                        """
+                        numero_cartelas_preencher = numero_cartelas_definido - numero_cartelas_jogadores
+
+                        # Montando a lista de Cartelas
+
+                        cartelas_sorteio = cartelas.filter(jogador__isnull=False)
+                        cartelas_sorteio |= cartelas.filter(jogador__isnull=True)[:numero_cartelas_preencher]
+
+                        cartelas = cartelas_sorteio
+
 
                     cartelas_ordenadas = []
                     bolas_sorteadas = []

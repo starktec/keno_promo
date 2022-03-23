@@ -15,7 +15,7 @@ def dictfetchall(cursor):
 def cartelas_sql_teste(partida_id):
     with connection.cursor() as cursor: 
         cursor.execute(f"""
-            select id,codigo,linha1,linha2,linha3,vencedor_kuadra,vencedor_kina,vencedor_keno,nome  
+            select id,codigo,linha1,linha2,linha3,vencedor_kuadra,vencedor_kina,vencedor_keno,nome,jogador_id 
             FROM jogo_cartela  
             where partida_id = {partida_id} and cancelado = false
             """
