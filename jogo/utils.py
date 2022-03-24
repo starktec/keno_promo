@@ -1,7 +1,10 @@
+import os
 import random
 
 from asgiref.sync import sync_to_async
+from selenium.webdriver.common.by import By
 
+from jogo import local_settings
 from jogo.models import Automato, Regra, Usuario, Partida, Configuracao, TemplatePartida, Cartela
 from datetime import date, datetime, timedelta
 
@@ -151,3 +154,32 @@ def comprar_cartelas(partida,quantidade):
     numeros = random.sample(range(1000,10000),k=quantidade)
     for i in range(quantidade):
         Cartela.objects.create(partida=partida, codigo=numeros[i])
+
+"""
+from selenium import webdriver
+username = local_settings.INSTAGRAM_USER
+password = local_settings.INSTAGRAM_PASSWORD
+browser = None
+if os.path.exists(path="/home/david/projects/keno_promo/static/driver/chromedriver"):
+    browser = webdriver.Chrome("/home/david/projects/keno_promo/static/driver/chromedriver")
+    browser.implicitly_wait(1)
+    browser.get('https://www.instagram.com/')
+
+    username_input = browser.find_element(By.CSS_SELECTOR,"input[name='username']")
+    password_input = browser.find_element(By.CSS_SELECTOR,"input[name='password']")
+
+    username_input.send_keys(username)
+    password_input.send_keys(password)
+
+    login_button = browser.find_element(by=By.XPATH, value="//button[@type='submit']")
+    login_button.click()
+
+
+def perfil_seguindo(perfil):
+    global browser
+    if browser:
+        browser.get(f"https://instagram.com/{perfil}/")
+        elementos = browser.find_elements(By.XPATH, "//button")
+        return "seguir de volta" in elementos[0].get_attribute("innerHTML").lower()
+    return False
+"""
