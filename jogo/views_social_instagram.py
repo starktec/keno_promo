@@ -116,19 +116,20 @@ def gerar_bilhete(request):
                                 headers=headers,params=payload,verify=False,
                             )
                             """
+
+                            jogador_seguindo = True
                             time.sleep(1)
                             r = request.get(f"https://instagram.com/{perfil}/?__a=1")
                             if r.status_code == 200:
-                                jogador_instagram_json = r.json()
-                                if jogador_instagram_json:
-                                    nome = jogador_instagram_json["graphql"]["user"]["full_name"]
-                                else:
-                                    raise Exception
+                                if not r.text.startswith("<!DOCTYPE html>"):
+                                    jogador_instagram_json = r.json()
+                                    if jogador_instagram_json:
+                                        nome = jogador_instagram_json["graphql"]["user"]["full_name"]
+                                    else:
+                                        raise Exception
 
+                                    jogador_seguindo = CLIENT.search_followers_v1(user_id=perfil_id, query=perfil)
 
-                            jogador_seguindo = CLIENT.search_followers_v1(user_id=perfil_id, query=perfil)
-
-                            #jogador_seguindo = True
                             if jogador_seguindo:
                                 jogador = Jogador.objects.create(usuario=perfil)
                             else:
