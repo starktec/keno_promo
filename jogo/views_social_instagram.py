@@ -2,6 +2,7 @@ import datetime
 import json
 import random
 import pickle
+import time
 
 import requests
 from django.db import transaction
@@ -115,6 +116,7 @@ def gerar_bilhete(request):
                                 headers=headers,params=payload,verify=False,
                             )
                             """
+                            time.sleep(1)
                             r = request.get(f"https://instagram.com/{perfil}/?__a=1")
                             if r.status_code == 200:
                                 jogador_instagram_json = r.json()
