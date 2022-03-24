@@ -456,6 +456,12 @@ class Cartela(models.Model):
         if not self.id:
             self.hash = secrets.token_hex(15)
             self.nome = random.choice(NOME_PESSOAS)
+
+            # Não utilizando a validação pelo instagram segue a regra abaixo
+            self.nome = self.nome.lower()
+            if " " in self.nome:
+                self.nome = self.nome.replace(" ","_")
+
             numeros = []
             grupo_de = int(settings.NUMERO_BOLAS / settings.NUMERO_COLUNAS_CARTELA)
             for colunas in range(settings.NUMERO_COLUNAS_CARTELA):
