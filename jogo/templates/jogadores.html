@@ -11,7 +11,17 @@ JOGADORES
                 <div class="row justify-content-center align-items-center form-group">
                     <form class="col-xs-12 col-sm-12 col-md-12 col-xl-12 row justify-content-start"  action="/jogadores/" id="form1" method="post">
                     {% csrf_token %}
-
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 container-input-create-secundary">
+                            <div class="form-group">
+                                <div class="form-control-wrap">
+                                    <div class="form-icon form-icon-right">
+                                        <em class="icon ni ni-calendar-alt"></em>
+                                    </div>
+                                    {{ form.nome_jogador }}
+                                    <label class="form-label-outlined label-search" for="id_nome_jogador">Nome Do Jogador</label>
+                                </div>
+                            </div>
+                        </div>
                         <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 container-input-create-secundary">
                             <div class="form-group">
                                 <div class="form-control-wrap">
@@ -158,10 +168,10 @@ JOGADORES
                 <ul class="pagination">
                     {% if pagina_anterior > 0 %}
                     <li class="pageitem button-paginação">
-                        <a class="page-link button-paginação" aria-hidden="true" href="/ganhadores/?pagina=1">&laquo;</a>
+                        <a class="page-link button-paginação" aria-hidden="true" href="/jogadores/?pagina=1">&laquo;</a>
                     </li> 
                     <li class="page-item button-paginação">
-                        <a class="page-link button-paginação" class="sr-only" aria-hidden="true"  href="/ganhadores/?pagina={{ pagina_anterior }}">&lt;</a>
+                        <a class="page-link button-paginação" class="sr-only" aria-hidden="true"  href="/jogadores/?pagina={{ pagina_anterior }}">&lt;</a>
                     </li>
                     {%endif%}
                     <li class="page-item button-paginação">
@@ -169,10 +179,10 @@ JOGADORES
                     </li>
                     {% if ultima_pagina != pagina_atual %}
                     <li class="page-item button-paginação">
-                        <a class="page-link button-paginação" class="sr-only" href="/ganhadores/?pagina={{ proxima_pagina }}">&gt;</a>
+                        <a class="page-link button-paginação" class="sr-only" href="/jogadores/?pagina={{ proxima_pagina }}">&gt;</a>
                     </li>  
                     <li class="page-item button-paginação">
-                        <a class="page-link button-paginação" aria-hidden="true" href="/ganhadores/?pagina={{ ultima_pagina }}">&raquo;</a>
+                        <a class="page-link button-paginação" aria-hidden="true" href="/jogadores/?pagina={{ ultima_pagina }}">&raquo;</a>
                     </li>
                     {%endif%}
                 </ul>

@@ -305,9 +305,13 @@ class JogadoresForm(forms.Form):
     data_fim = forms.CharField(required=False, widget=forms.TextInput(attrs={'data-date-format': "dd/mm/yyyy",
                                                                              'class': "form-control date-picker form-control-lg form-control-outlined input-search-financeiro",
                                                                              'autocomplete': "off"}))
+    nome_jogador = forms.CharField(required=False, widget=forms.TextInput(attrs={
+        'class': "form-control form-control-lg form-control-outlined", 'autocomplete': "off"
+    }))
     partida = forms.IntegerField(required=False,
                                  widget=forms.NumberInput(
                                      attrs={'class': "form-control form-control-lg form-control-outlined", 'autocomplete': "off"}))
+
 
 class UsuarioForm(forms.Form):
     id = forms.HiddenInput()

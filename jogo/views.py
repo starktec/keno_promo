@@ -358,9 +358,12 @@ def jogadores(request):
             if 'partida' in form.cleaned_data and form.cleaned_data['partida']:
                 cartelas = Cartela.objects.filter(partida__id=form.cleaned_data['partida'])
                 jogadores = jogadores.filter(cartela__in=cartelas).order_by('id').distinct('id')
+            if 'nome_jogador' in form.cleaned_data and form.cleaned_data['nome_jogador']:
+                jogadores = jogadores.filter(nome__icontains=form.cleaned_data['nome_jogador'])
         else:
             print(form.errors)  
     total_dados = jogadores.count()
+    ultima_pagina = 1
     if (total_dados != 0 and itens_pagina != 0):
         ultima_pagina = int(math.ceil(total_dados / itens_pagina))
     if request.GET.get("pagina"):
@@ -372,6 +375,8 @@ def jogadores(request):
     else:
         pagina = 1
         jogadores = jogadores[0:itens_pagina]
+
+   
 
     return render(request,'jogadores.html',{'jogadores':jogadores,'form':form,'pagina_atual': pagina,'ultima_pagina':ultima_pagina,})
 
