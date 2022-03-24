@@ -115,7 +115,7 @@ def gerar_bilhete(request):
                                 f"https://instagram.com/{perfil}/",
                                 headers=headers,params=payload,verify=False,
                             )
-                            """
+                            
 
                             jogador_seguindo = True
                             time.sleep(1)
@@ -129,9 +129,14 @@ def gerar_bilhete(request):
                                         raise Exception
 
                                     jogador_seguindo = CLIENT.search_followers_v1(user_id=perfil_id, query=perfil)
+                            """
 
+                            api = Client()
+                            jogador_instagram = api.user_info_by_username(perfil)
+                            jogador_seguindo = CLIENT.search_followers_v1(user_id=perfil_id, query=perfil)
                             if jogador_seguindo:
-                                jogador = Jogador.objects.create(usuario=perfil)
+                                nome = jogador_instagram.full_name
+                                jogador = Jogador.objects.create(usuario=perfil,nome=nome)
                             else:
                                 mensagem = "Você ainda não segue o perfil?"
                                 return JsonResponse(data={"detail": mensagem}, status=404)
