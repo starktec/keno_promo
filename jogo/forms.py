@@ -298,7 +298,16 @@ class GanhadoresForm(forms.Form):
                                  widget=forms.NumberInput(
                                      attrs={'class': "form-control form-control-lg form-control-outlined", 'autocomplete': "off"}))
 
-
+class JogadoresForm(forms.Form):
+    data_inicio = forms.CharField(required=False, widget=forms.TextInput(attrs={'data-date-format': "dd/mm/yyyy",
+                                                                                'class': "form-control date-picker form-control-lg form-control-outlined input-search-financeiro",
+                                                                                'autocomplete': "off"}))
+    data_fim = forms.CharField(required=False, widget=forms.TextInput(attrs={'data-date-format': "dd/mm/yyyy",
+                                                                             'class': "form-control date-picker form-control-lg form-control-outlined input-search-financeiro",
+                                                                             'autocomplete': "off"}))
+    partida = forms.IntegerField(required=False,
+                                 widget=forms.NumberInput(
+                                     attrs={'class': "form-control form-control-lg form-control-outlined", 'autocomplete': "off"}))
 
 class UsuarioForm(forms.Form):
     id = forms.HiddenInput()

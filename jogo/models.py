@@ -384,6 +384,13 @@ class Jogador(models.Model):
             self.usuario_token = base64.b64encode(self.usuario.encode("ascii")).decode("ascii")
         super().save(force_insert,force_update,using,update_fields)
 
+    def sorteios_participou(self):
+        from jogo.models import Cartela,Partida
+        cartelas = Cartela.objects.filter(jogador=self)
+        partidas = Partida.objects.filter(cartelas__in = cartelas).order_by('id').distinct('id')
+        return partidas
+         
+
 class Cartela(models.Model):
     # NOVO CAMPO
     jogador = models.ForeignKey(Jogador, on_delete=models.PROTECT, blank=True,null=True)

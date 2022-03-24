@@ -7,7 +7,7 @@ from jogo.views import cancelar_template, index, \
     cartelas, configuracao, cancelar_partida, cancelar_bilhete, partida_edit, \
     partida_automatica, automatos, parar_automato, sortear_template, editar_template
 
-from .views import realtime_data
+from .views import jogadores, realtime_data
 from .views_api_media import media_login, nome_server, media_logo, media_favicon
 from .views_api_online import dados_bilhete, proximos_kol, data_hora_servidor, ultimos_ganhadores_kol
 from .views_api_tela import resultado_sorteio, proximos, proximos_especiais, historico, status, ultimos_ganhadores
@@ -21,7 +21,7 @@ urlpatterns = [
     path('criar_partida/', criarpartida),
 
     path('ganhadores/', ganhadores),
-
+    path('jogadores/', jogadores),
     path('cartelas/', cartelas),
     path('configuracao/', configuracao),
 

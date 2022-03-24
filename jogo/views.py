@@ -12,9 +12,9 @@ from jogo.utils import testa_horario, comprar_cartelas
 from jogo.constantes import VALORES_VOZES
 
 from jogo.agendamento import Agenda
-from jogo.forms import CartelasFilterForm, NovaPartidaAutomatizada, PartidaEditForm, GanhadoresForm, NovaPartidaForm, UsuarioAddForm, \
+from jogo.forms import CartelasFilterForm, JogadoresForm, NovaPartidaAutomatizada, PartidaEditForm, GanhadoresForm, NovaPartidaForm, UsuarioAddForm, \
     ConfiguracaoForm, TemplateEditForm
-from jogo.models import Partida, Automato, Cartela, Usuario, Configuracao, CartelaVencedora, TemplatePartida, Regra, \
+from jogo.models import Jogador, Partida, Automato, Cartela, Usuario, Configuracao, CartelaVencedora, TemplatePartida, Regra, \
     Acao, PerfilSocial
 from jogo.views_social_instagram import CLIENT
 from jogo.websocket_triggers_bilhete import event_bilhete_partida
@@ -323,6 +323,44 @@ def ganhadores(request):
                    'keno': keno, 'acumulado': acumulado, 'total': total,
                    })
 
+
+@login_required(login_url="/login/")
+def jogadores(request):
+    form = JogadoresForm()
+    jogadores = Jogador.objects.all()
+    if request.method == "POST":
+        form = JogadoresForm(request.POST)
+        if form.is_valid():
+            if 'data_inicio' in form.cleaned_data and form.cleaned_data['data_inicio']:
+                data_inicio = datetime.datetime.combine(
+                    datetime.datetime.strptime(form.cleaned_data['data_inicio'], "%d/%m/%Y"),
+                    datetime.time.min
+                )
+                jogadores = jogadores.filter(cadastrado_em__gte=data_inicio)
+                if 'data_fim' not in form.cleaned_data or not form.cleaned_data['data_fim']:
+                    data_fim = datetime.datetime.combine(
+                        data_inicio, datetime.time.max
+                    )
+                    jogadores = jogadores.filter(cadastrado_em__lte=data_fim)
+
+            if 'data_fim' in form.cleaned_data and form.cleaned_data['data_fim']:
+                data_fim = datetime.datetime.combine(
+                    datetime.datetime.strptime(form.cleaned_data['data_fim'], "%d/%m/%Y"),
+                    datetime.time.max
+                )
+                jogadores = jogadores.filter(cadastrado_em__lte=data_fim)
+                if 'data_inicio' not in form.cleaned_data or not form.cleaned_data['data_inicio']:
+                    data_inicio = datetime.datetime.combine(
+                        data_fim, datetime.time.min
+                    )
+                    jogadores.filter(cadastrado_em_gte=data_inicio)
+            if 'partida' in form.cleaned_data and form.cleaned_data['partida']:
+                cartelas = Cartela.objects.filter(partida__id=form.cleaned_data['partida'])
+                jogadores = jogadores.filter(cartela__in=cartelas).order_by('id').distinct('id')
+            
+    else:
+        print(form.errors)       
+    return render(request,'jogadores.html',{'jogadores':jogadores,'form':form})
 
 @login_required(login_url="/login/")
 def criarpartida(request):
