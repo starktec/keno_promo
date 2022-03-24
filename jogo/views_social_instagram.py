@@ -131,11 +131,12 @@ def gerar_bilhete(request):
                                     jogador_seguindo = CLIENT.search_followers_v1(user_id=perfil_id, query=perfil)
                             """
 
-                            api = Client()
-                            jogador_instagram = api.user_info_by_username(perfil)
+                            #api = Client()
+                            #jogador_instagram = api.user_info_by_username(perfil)
+                            jogador_instagram = None
                             jogador_seguindo = CLIENT.search_followers_v1(user_id=perfil_id, query=perfil)
                             if jogador_seguindo:
-                                nome = jogador_instagram.full_name
+                                nome = jogador_instagram.full_name if jogador_instagram else perfil
                                 jogador = Jogador.objects.create(usuario=perfil,nome=nome)
                             else:
                                 mensagem = "Você ainda não segue o perfil?"
