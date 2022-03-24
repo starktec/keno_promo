@@ -131,16 +131,13 @@ class CartelasVencedorasSerializer(serializers.ModelSerializer):
     numero_cartela = serializers.SerializerMethodField()
     premio = serializers.SerializerMethodField()
     nome = serializers.SerializerMethodField()
-    tipo = serializers.SerializerMethodField()
     def get_numero_cartela(self,vencedora)->str:
         return vencedora.cartela.codigo
     def get_premio(self,vencedora)->str:
         return vencedora.valor_premio
     def get_nome(self, vencedora):
         return vencedora.cartela.nome
-    def get_tipo(self,vencedora):
-        return vencedora.premio
 
     class Meta:
         model = CartelaVencedora
-        fields = ['numero_cartela','premio',"nome","tipo"]
+        fields = ['numero_cartela','premio',"nome"]
