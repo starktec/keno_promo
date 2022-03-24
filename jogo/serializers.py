@@ -105,6 +105,7 @@ class CartelaDetalhesSerializer(serializers.ModelSerializer):
 
 class UltimosGanhadoresSerializer(serializers.ModelSerializer):
     sorteio = serializers.IntegerField(source='id')
+    tipo_sorteio = serializers.SerializerMethodField()
     bilhetes_kuadra = serializers.SerializerMethodField()
     bilhetes_kina = serializers.SerializerMethodField()
     bilhetes_keno = serializers.SerializerMethodField()
@@ -118,19 +119,28 @@ class UltimosGanhadoresSerializer(serializers.ModelSerializer):
     def get_bilhetes_keno(self,partida):
         cartelas = CartelaVencedora.objects.filter(partida=partida,premio=3)
         return CartelasVencedorasSerializer(cartelas,many=True).data
+    def get_tipo_sorteio(self,partida):
+        return partida.get_tipo_rodada_display()
 
     class Meta:
         model = Partida
-        fields = ['sorteio','bilhetes_kuadra','bilhetes_kina','bilhetes_keno']
+        fields = ['sorteio','bilhetes_kuadra','bilhetes_kina','bilhetes_keno', "tipo_sorteio"]
 
 
 class CartelasVencedorasSerializer(serializers.ModelSerializer):
     numero_cartela = serializers.SerializerMethodField()
     premio = serializers.SerializerMethodField()
+    nome = serializers.SerializerMethodField()
+    tipo = serializers.SerializerMethodField()
     def get_numero_cartela(self,vencedora)->str:
         return vencedora.cartela.codigo
     def get_premio(self,vencedora)->str:
         return vencedora.valor_premio
+    def get_nome(self, vencedora):
+        return vencedora.cartela.nome
+    def get_tipo(self,vencedora):
+        return vencedora.premio
+
     class Meta:
         model = CartelaVencedora
-        fields = ['numero_cartela','premio']
+        fields = ['numero_cartela','premio',"nome","tipo"]
