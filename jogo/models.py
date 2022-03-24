@@ -202,6 +202,7 @@ class Partida(models.Model):
     id_automato = models.BigIntegerField(blank=True, null=True)
     premios_set = models.DecimalField(decimal_places=2, max_digits=10, default=0.00)
 
+    novos_participantes = models.PositiveIntegerField(default=0)
     # NOVOS CAMPOS
     chance_vitoria = models.DecimalField(default=100.0, decimal_places=2,max_digits=5)
     numero_cartelas_iniciais = models.PositiveSmallIntegerField(default=500)
@@ -389,6 +390,9 @@ class Jogador(models.Model):
         cartelas = Cartela.objects.filter(jogador=self)
         partidas = Partida.objects.filter(cartelas__in = cartelas).order_by('id').distinct('id')
         return partidas
+
+    def sorteios_participou_count(self):
+        return self.sorteios_participou().count()
          
 
 class Cartela(models.Model):

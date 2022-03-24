@@ -328,6 +328,7 @@ def ganhadores(request):
 def jogadores(request):
     form = JogadoresForm()
     jogadores = Jogador.objects.all()
+    itens_pagina = 10
     if request.method == "POST":
         form = JogadoresForm(request.POST)
         if form.is_valid():
@@ -357,10 +358,22 @@ def jogadores(request):
             if 'partida' in form.cleaned_data and form.cleaned_data['partida']:
                 cartelas = Cartela.objects.filter(partida__id=form.cleaned_data['partida'])
                 jogadores = jogadores.filter(cartela__in=cartelas).order_by('id').distinct('id')
-            
+        else:
+            print(form.errors)  
+    total_dados = jogadores.count()
+    if (total_dados != 0 and itens_pagina != 0):
+        ultima_pagina = int(math.ceil(total_dados / itens_pagina))
+    if request.GET.get("pagina"):
+        pagina = int(request.GET["pagina"])
+        numeroF = int(int(pagina) * itens_pagina)
+        numeroI = numeroF - itens_pagina
+        jogadores = jogadores[numeroI:numeroF]
+
     else:
-        print(form.errors)       
-    return render(request,'jogadores.html',{'jogadores':jogadores,'form':form})
+        pagina = 1
+        jogadores = jogadores[0:itens_pagina]
+
+    return render(request,'jogadores.html',{'jogadores':jogadores,'form':form,'pagina_atual': pagina,'ultima_pagina':ultima_pagina,})
 
 @login_required(login_url="/login/")
 def criarpartida(request):

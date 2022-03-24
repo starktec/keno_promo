@@ -63,24 +63,21 @@ JOGADORES
     <div class="row my-row">
         <div class="col-12">
             <div class="card card-table table-responsive-xl overflow-auto">
-                <table id="tabelaGanhadores" class="table position-relative table-content">
+                <table id="tabelaJogadores" class="table position-relative table-content">
                     <thead class="thead-dark text-center thead-content">
                         <tr>
-                        <th scope="col"></th>
-                        <th scope="col">Nome</th>
-                        <th scope="col">Sorteios que participou</th>
-                        <th scope="col"></th>
+                            <th scope="col"></th>
+                            <th scope="col">Nome</th>
+                            <th scope="col">Quantidade de sorteios</th>
+                            <th scope="col">Sorteios que participou</th>
                         </tr>
                     </thead>
                     <tbody class="text-center tbody-content">
-                    <!--{% if not total %}
-                    <tr><td colspan="6">Nenhum resultado encontrado</td> </tr>
-                    {% endif %}
-                    -->
                     {% for jogador in jogadores %}
                         <tr>
-                            <th scope="row">{{ jogador.id }}</th>
+                            <td scope="row">{{ jogador.id }}</td>
                             <td scope="row">{{ jogador.nome }}</td>
+                            <td scope="row">{{ jogador.sorteios_participou_count}}
                             <td scope="row" class="celula-media">
                                 <a class="btn btn-danger btn-create-secondary btn-checkbox btn-informacoes" data-toggle="modal" data-target="#modal-informacao-{{ jogador.id }}">
                                     <p>Sorteios Participados</p>
@@ -194,7 +191,7 @@ JOGADORES
 
     <script>
         $(document).ready( function () {
-            $('#tabelaGanhadores').DataTable({
+            $('#tabelaJogadores').DataTable({
                 "language": {
                     "url":"https://cdn.datatables.net/plug-ins/1.10.24/i18n/Portuguese-Brasil.json",
                 },

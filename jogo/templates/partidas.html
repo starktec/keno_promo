@@ -119,8 +119,9 @@ INFORMAÇÕES DAS PARTIDAS
                                 <th scope="col">Kuadra</th>
                                 <th scope="col">Kina</th>
                                 <th scope="col">Keno</th>
-                                  <th scope="col">Tipo</th>
-                                  <th scope="col">Participantes</th>
+                                <th scope="col">Tipo</th>
+                                <th scope="col">Participantes</th>
+                                <th scope="col">Novos Participantes</th>
                                 <th scope="col"></th>
                                 <th scope="col"></th>
                                 <th scope="col"></th>
@@ -155,8 +156,8 @@ INFORMAÇÕES DAS PARTIDAS
                                 <td class="{% if p.get_tipo_rodada_display == 'ESPECIAL'%} color-yellow
                                 {% elif p.get_tipo_rodada_display == 'SUPER ESPECIAL'%} color-green {% endif %}">{{ p.get_tipo_rodada_display }}</td>
 
-                                  <td>{{ p.num_participantes }}</td>
-
+                                <td>{{ p.num_participantes }}</td>
+                                <td>{{ p.novos_participantes }}</td>
                                 {% if p.num_participantes == 0 %}
                                 <td>
                                     <a href="/cancelar_partida/{{ p.id }}/" class="btn btn-danger btn-create-secondary">
