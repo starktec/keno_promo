@@ -357,7 +357,7 @@ def jogadores(request):
                     jogadores.filter(cadastrado_em_gte=data_inicio)
             if 'partida' in form.cleaned_data and form.cleaned_data['partida']:
                 cartelas = Cartela.objects.filter(partida__id=form.cleaned_data['partida'])
-                jogadores = jogadores.filter(cartela__in=cartelas).order_by('id').distinct('id')
+                jogadores = jogadores.filter(cartela__in=cartelas)
             if 'nome_jogador' in form.cleaned_data and form.cleaned_data['nome_jogador']:
                 jogadores = jogadores.filter(nome__icontains=form.cleaned_data['nome_jogador'])
         else:
