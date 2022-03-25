@@ -381,7 +381,7 @@ def jogadores(request):
     pagina_anterior = pagina - 1
 
     return render(request,'jogadores.html',{'jogadores':jogadores,'form':form,'pagina_atual': pagina,'ultima_pagina':ultima_pagina,'proxima_pagina': proxima_pagina,
-                                            'pagina_anterior': pagina_anterior})
+                                            'pagina_anterior': pagina_anterior,'pagina_anterior':pagina_anterior,'total_dados':total_dados})
 
 @login_required(login_url="/login/")
 def criarpartida(request):
