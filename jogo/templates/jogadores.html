@@ -174,35 +174,33 @@ JOGADORES
             </nav>
         </div>
     </div>
-    {%else%}
     <div class="row my-row pagination-container">
         <div class="col-12 row justify-content-center">
             <nav aria-label="Navegação de página exemplo">
                 <ul class="pagination">
-                    {% if pagina_anterior > 0 %}
-                    <li class="pageitem button-paginação">
-                        <a class="page-link button-paginação" aria-hidden="true" href="/jogadores/?pagina=1">&laquo;</a>
-                    </li> 
-                    <li class="page-item button-paginação">
-                        <a class="page-link button-paginação" class="sr-only" aria-hidden="true"  href="/jogadores/?pagina={{ pagina_anterior }}">&lt;</a>
-                    </li>
-                    {%endif%}
-                    <li class="page-item button-paginação">
-                        <a class="page-link button-paginação">{{ pagina_atual }}</a>
-                    </li>
-                    {% if ultima_pagina != pagina_atual %}
-                    <li class="page-item button-paginação">
-                        <a class="page-link button-paginação" class="sr-only" href="/jogadores/?pagina={{ proxima_pagina }}">&gt;</a>
-                    </li>  
-                    <li class="page-item button-paginação">
-                        <a class="page-link button-paginação" aria-hidden="true" href="/jogadores/?pagina={{ ultima_pagina }}">&raquo;</a>
-                    </li>
-                    {%endif%}
+                        {% if pagina_anterior > 0 %}
+                        <li class="pageitem button-paginação">
+                            <button class="page-link button-paginação" aria-hidden="true" onclick=test(1)>&laquo;</button>
+                        </li> 
+                        <li class="page-item button-paginação">
+                            <button class="page-link button-paginação" class="sr-only" onclick=test({{pagina_anterior}})>&lt;</button>
+                        </li>
+                        {%endif%}  
+                        <li class="page-item button-paginação">
+                            <a class="page-link button-paginação">{{ pagina_atual }}</a>
+                        </li>
+                        {% if ultima_pagina != pagina_atual %}
+                        <li class="page-item button-paginação">
+                            <button class="page-link button-paginação" class="sr-only" onclick=test({{proxima_pagina}})>&gt;</button>
+                        </li>  
+                        <li class="page-item button-paginação">
+                            <button class="page-link button-paginação" aria-hidden="true" onclick=test({{ultima_pagina}})>&raquo;</button>
+                        </li>
+                        {%endif%}
                 </ul>
             </nav>
         </div>
-    </div>   
-    {%endif%}
+    </div>
 
     <!-- <form action="/cartelas/" method="GET">
         <a href="/cartelas/">Anterior</a>

@@ -36,7 +36,7 @@ class ConexaoBilheteConsumer(AsyncJsonWebsocketConsumer):
     
 
     async def connect(self):
-        logger.info(f"WS Connect {self.channel_name} - TOKEN {self.scope['url_route']['kwargs']['token']}")
+        logger.info(f"WS Connect  - TOKEN {self.scope['url_route']['kwargs']['token']}")
         token = self.scope['url_route']['kwargs']['token']
         sorteio = self.scope['url_route']['kwargs']['sorteio']
         hash = self.scope['url_route']['kwargs']['bilhete']
