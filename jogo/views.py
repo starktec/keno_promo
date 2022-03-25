@@ -364,7 +364,7 @@ def jogadores(request):
             print(form.errors)  
     total_dados = jogadores.count()
     ultima_pagina = 1
-    jogadores = jogadores.annotate(num_cartelas = Count('cartela')).order_by('num_cartelas')
+    jogadores = jogadores.annotate(num_cartelas = Count('cartela')).order_by('-num_cartelas')
     if (total_dados != 0 and itens_pagina != 0):
         ultima_pagina = int(math.ceil(total_dados / itens_pagina))
     if request.GET.get("pagina"):
@@ -376,10 +376,12 @@ def jogadores(request):
     else:
         pagina = 1
         jogadores = jogadores[0:itens_pagina]
+    
+    proxima_pagina = pagina + 1
+    pagina_anterior = pagina - 1
 
-   
-
-    return render(request,'jogadores.html',{'jogadores':jogadores,'form':form,'pagina_atual': pagina,'ultima_pagina':ultima_pagina,})
+    return render(request,'jogadores.html',{'jogadores':jogadores,'form':form,'pagina_atual': pagina,'ultima_pagina':ultima_pagina,'proxima_pagina': proxima_pagina,
+                                            'pagina_anterior': pagina_anterior})
 
 @login_required(login_url="/login/")
 def criarpartida(request):
