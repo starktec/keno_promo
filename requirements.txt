@@ -13,3 +13,4 @@ uvicorn[standard]
 backports.zoneinfo
 instagrapi
 django-easy-audit
+selenium
