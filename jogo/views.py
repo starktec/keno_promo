@@ -364,6 +364,7 @@ def jogadores(request):
             print(form.errors)  
     total_dados = jogadores.count()
     ultima_pagina = 1
+    jogadores = jogadores.annotate(num_cartelas = Count('cartela')).order_by('num_cartelas')
     if (total_dados != 0 and itens_pagina != 0):
         ultima_pagina = int(math.ceil(total_dados / itens_pagina))
     if request.GET.get("pagina"):
