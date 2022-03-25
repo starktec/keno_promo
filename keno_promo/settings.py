@@ -26,7 +26,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'fva*4rk!2t)zfp)c(wnh)inn0ak@lt5k98%9%tj38mdki4ue%_'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -43,12 +43,13 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
+    #'django.contrib.staticfiles',
     'django_extensions',
     'rest_framework',
     'rest_framework.authtoken',
     'channels',
     'corsheaders',
+    'easyaudit',
     'jogo',
 ]
 
@@ -116,6 +117,16 @@ DATABASES = {
     }
 }
 
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
@@ -148,13 +159,13 @@ INSTAGRAM_USER = local_settings.INSTAGRAM_USER
 INSTAGRAM_PASSWORD = local_settings.INSTAGRAM_PASSWORD
 ESPORTES_DA_SORTE_ID = local_settings.ESPORTES_DA_SORTE_ID
 
-"""
+
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
 
 CSRF_COOKIE_SECURE = True
-"""
+
 
 # LOGGING
 LOGGING = {
