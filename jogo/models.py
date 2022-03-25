@@ -215,8 +215,7 @@ class Partida(models.Model):
 
 
     def cartelas_compradas(self):
-        numero = int(Cartela.objects.filter(partida=self, cancelado=False).count())
-        return numero
+        return self.num_cartelas
 
     def __str__(self):
         data = self.data_partida

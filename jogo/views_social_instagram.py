@@ -10,10 +10,12 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from instagrapi import Client
+from instagrapi.exceptions import ClientLoginRequired, UserNotFound, LoginRequired, PleaseWaitFewMinutes
+from instagrapi.types import User
 from requests.adapters import HTTPAdapter
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
-from urllib3 import Retry
+#from urllib3 import Retry
 
 from jogo import local_settings
 from jogo.choices import AcaoTipoChoices
@@ -29,18 +31,21 @@ def setSocialConnection():
         global CLIENT
         configuracao = Configuracao.objects.select_for_update().last()
         if configuracao:
-            if not configuracao.instagram_connection:
-                CLIENT = Client()
-                CLIENT.login(local_settings.INSTAGRAM_USER, local_settings.INSTAGRAM_PASSWORD)
-                configuracao.instagram_connection = pickle.dumps(CLIENT)
-                configuracao.save()
-            else:
-                CLIENT = pickle.loads(configuracao.instagram_connection)
-                if not CLIENT.get_settings():
+            try:
+                if not configuracao.instagram_connection:
                     CLIENT = Client()
                     CLIENT.login(local_settings.INSTAGRAM_USER, local_settings.INSTAGRAM_PASSWORD)
                     configuracao.instagram_connection = pickle.dumps(CLIENT)
                     configuracao.save()
+                else:
+                    CLIENT = pickle.loads(configuracao.instagram_connection)
+                    if not CLIENT.get_settings():
+                        CLIENT = Client()
+                        CLIENT.login(local_settings.INSTAGRAM_USER, local_settings.INSTAGRAM_PASSWORD)
+                        configuracao.instagram_connection = pickle.dumps(CLIENT)
+                        configuracao.save()
+            except:
+                pass
 
 setSocialConnection()
 
@@ -59,6 +64,12 @@ def index_social(request):
                 seguir += seguir_url.split("/www.instagram.com/")[1]
                 if seguir.endswith("/"):
                     seguir = seguir[:-1]
+    else:
+        configuracao = Configuracao.objects.last()
+        seguir_url = configuracao.perfil_default
+        seguir += seguir_url.split("/www.instagram.com/")[1]
+        if seguir.endswith("/"):
+            seguir = seguir[:-1]
     return JsonResponse(data={"seguir_url":seguir_url,"seguir":seguir}, status=200)
 
 
@@ -85,56 +96,36 @@ def gerar_bilhete(request):
                         perfil_id = acao.perfil_social.perfil_id
                         break
                 if perfil_id:
-                    jogador = Jogador.objects.filter(usuario=perfil, usuario_token=token).first()
+                    jogador = Jogador.objects.filter(usuario=perfil).first()
                     nome = ""
                     if not jogador:
                         try:
-                            """
-                            headers_list = [
-                                'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.74',
-                                "aplication/json",
-                                "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36",
-                                "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0",
-                                "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36 OPR/38.0.2220.41",
-                                "Mozilla/5.0 (iPhone; CPU iPhone OS 13_5_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1",
-                                "Mozilla/5.0 (compatible; MSIE 9.0; Windows Phone OS 7.5; Trident/5.0; IEMobile/9.0)",
-                                "Googlebot/2.1 (+http://www.google.com/bot.html)"
-                            ]
-                            headers = {
-                                'user-agent': random.choice(headers_list)}
-                            payload = {'__a': '1'}
+                            global CLIENT
 
-                            session = requests.Session()
-                            retry = Retry(connect=3, backoff_factor=0.5)
-                            adapter = HTTPAdapter(max_retries=retry)
-                            session.mount('http://', adapter)
-                            session.mount('https://', adapter)
-
-                            
-                            r = session.get(
-                                f"https://instagram.com/{perfil}/",
-                                headers=headers,params=payload,verify=False,
-                            )
-                            
-
-                            jogador_seguindo = True
-                            time.sleep(1)
-                            r = request.get(f"https://instagram.com/{perfil}/?__a=1")
-                            if r.status_code == 200:
-                                if not r.text.startswith("<!DOCTYPE html>"):
-                                    jogador_instagram_json = r.json()
-                                    if jogador_instagram_json:
-                                        nome = jogador_instagram_json["graphql"]["user"]["full_name"]
-                                    else:
-                                        raise Exception
-
-                                    jogador_seguindo = CLIENT.search_followers_v1(user_id=perfil_id, query=perfil)
-                            """
-
-                            #api = Client()
-                            #jogador_instagram = api.user_info_by_username(perfil)
                             jogador_instagram = None
-                            jogador_seguindo = CLIENT.search_followers_v1(user_id=perfil_id, query=perfil)
+                            try:
+                                api = Client()
+                                jogador_instagram = api.user_info_by_username(perfil)
+                                if jogador_instagram and not isinstance(jogador_instagram,User):
+                                    raise LoginRequired
+                            except (LoginRequired, PleaseWaitFewMinutes):
+                                try:
+                                    if CLIENT:
+                                        jogador_instagram = CLIENT.user_info_by_username_v1(perfil)
+                                        time.sleep(3)
+                                except UserNotFound:
+                                    raise UserNotFound
+                                except Exception:
+                                    pass
+                            jogador_seguindo = True
+                            jogador_seguindo = CLIENT.search_followers_v1(user_id=perfil_id, query=perfil) if CLIENT else True
+                        except UserNotFound as e:
+                            LOGGER.exception(msg=e)
+                            mensagem = "Perfil não encontrado, tente novamente mais tarde"
+                            return JsonResponse(data={"detail": mensagem}, status=403)
+                        except PleaseWaitFewMinutes:
+                            pass
+                        finally:
                             if jogador_seguindo:
                                 nome = jogador_instagram.full_name if jogador_instagram else perfil
                                 partida.novos_participantes += 1
@@ -144,10 +135,7 @@ def gerar_bilhete(request):
                                 mensagem = "Você ainda não segue o perfil?"
                                 return JsonResponse(data={"detail": mensagem}, status=404)
 
-                        except Exception as e:
-                            LOGGER.exception(msg=e)
-                            mensagem = "Perfil não encontrado, tente novamente mais tarde"
-                            return JsonResponse(data={"detail": mensagem}, status=403)
+
 
                     # atualizar o nome do jogador
                     if jogador.nome == jogador.usuario:

@@ -162,7 +162,7 @@ CRIAR PARTIDA
                                 <div class="col-lg-4 col-sm-5 container-input-create">
                                     <div class="form-group">
                                         <div class="form-control-wrap focused">
-                                            <select name="acoes_select" class="form-select-lg form-control form-control-outlined" required disabled>
+                                            <select name="acoes_select" class="form-select-lg form-control form-control-outlined" required readonly>
 
                                                 <option value="{{ acoes_tipo.0.0 }}">{{ acoes_tipo.0.1 }}</option>
 
@@ -174,7 +174,7 @@ CRIAR PARTIDA
                                     <div class="form-group">
                                         <div class="form-control-wrap focused">
                                             <input name="acoes_url" value="{{ perfil_default }}"
-                                                   type="text" class="form-control form-control-lg form-control-outlined" required {% if perfil_default %}disabled{% endif %}>
+                                                   type="text" class="form-control form-control-lg form-control-outlined" required {% if perfil_default %}readonly{% endif %}>
                                             <label class="form-label-outlined" for="id_url">URL</label>
                                         </div>
                                     </div>

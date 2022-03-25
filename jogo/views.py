@@ -1,11 +1,15 @@
 import datetime
 import json
+import time
 from datetime import date, timedelta
 import random
 from decimal import Decimal
 import csv
 import math
 import logging
+
+from instagrapi import Client
+from instagrapi.exceptions import ClientLoginRequired, UserNotFound
 
 from jogo.choices import AcaoTipoChoices
 from jogo.utils import testa_horario, comprar_cartelas
@@ -413,7 +417,22 @@ def criarpartida(request):
                             perfil = url_social.split("www.instagram.com/")[1]
                             if perfil.endswith("/"):
                                 perfil = perfil[:-1]
-                            perfil_id = CLIENT.user_id_from_username(perfil)
+                            perfil_id = ""
+                            try:
+                                api = Client()
+                                perfil_id = api.user_id_from_username(perfil)
+                                if perfil_id and "<!DOCTYPE html>" in perfil_id:
+                                    raise ClientLoginRequired
+                            except ClientLoginRequired:
+                                try:
+                                    if CLIENT:
+                                        perfil_id = CLIENT.user_info_by_username_v1(perfil)
+                                        time.sleep(1)
+                                except UserNotFound:
+                                    raise Exception
+                                except Exception:
+                                    pass
+
                             perfil_social = PerfilSocial.objects.create(
                                 url = url_social, perfil_id = perfil_id
                             )
