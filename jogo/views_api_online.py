@@ -22,6 +22,7 @@ def dados_bilhete(request,hash):
             cartela = Cartela.objects.filter(jogador=jogador,hash=hash, cancelado=False).first()
             cartelas = []
             dado = {
+                "nome":cartela.nome,
                 "codigo":cartela.codigo,
                 "linha1_lista":cartela.linha1_lista(),
                 "linha2_lista":cartela.linha2_lista(),

@@ -22,7 +22,8 @@ class ConexaoBilheteConsumer(AsyncJsonWebsocketConsumer):
     def proximos_sorteios(self, sorteio_id, hash):
         try:
             proximos = [Partida.objects.get(id=sorteio_id),]
-            bilhetes = [{"sorteio_id":sorteio_id,"bilhete":hash}]
+            cartela = Cartela.objects.filter(partida_id=sorteio_id,hash=hash).first()
+            bilhetes = [{"sorteio_id":sorteio_id,"bilhete":hash,"nome":cartela.nome}]
             serializer = PartidaProximaSerializer(instance=proximos, many=True)
             return {"type":"proximos_sorteios","sorteios":serializer.data,"bilhetes":bilhetes,
                     'datahora':datetime.datetime.strftime(datetime.datetime.now(),'%Y-%m-%dT%H:%M:%S')}
