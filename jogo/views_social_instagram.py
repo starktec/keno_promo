@@ -111,6 +111,7 @@ def gerar_bilhete(request):
                             jogador_instagram = None
                             try:
                                 api = Client()
+                                api.set_proxy(get_connection())
                                 jogador_instagram = api.user_info_by_username(perfil)
                                 if jogador_instagram and not isinstance(jogador_instagram,User):
                                     raise LoginRequired
@@ -137,15 +138,26 @@ def gerar_bilhete(request):
                                 nome = jogador_instagram.full_name if jogador_instagram else perfil
                                 partida.novos_participantes += 1
                                 partida.save()
+                                LOGGER.info("Criando Jogador "+perfil)
                                 jogador = Jogador.objects.create(usuario=perfil,nome=nome)
                             else:
                                 mensagem = "Você ainda não segue o perfil?"
+                                LOGGER.info(mensagem)
                                 return JsonResponse(data={"detail": mensagem}, status=404)
 
+                    else:
+                        CLIENT.set_proxy(get_connection())
+                        jogador_seguindo = CLIENT.search_followers_v1(user_id=perfil_id,
+                                                                      query=perfil) if CLIENT else True
+                        if not jogador_seguindo:
+                            mensagem = "Você deixou de seguir o perfil?"
+                            LOGGER.info(mensagem)
+                            return JsonResponse(data={"detail": mensagem}, status=404)
 
                     # atualizar o nome do jogador
                     if jogador.nome == jogador.usuario:
-                        #nome = CLIENT.user_info_by_username(perfil).full_name
+                        CLIENT.set_proxy(get_connection())
+                        nome = CLIENT.user_info_by_username(perfil).full_name
                         if nome:
                             jogador.nome = nome
                             jogador.save()
@@ -165,20 +177,24 @@ def gerar_bilhete(request):
                             cartela.save()
                         else:
                             mensagem = "Cartelas esgotadas"
+                            LOGGER.info(mensagem)
                             return JsonResponse(data={"detail": mensagem}, status=404)
                     return JsonResponse(
                         data={"detail": mensagem, "bilhete": cartela.hash, "sorteio": int(cartela.partida.id)})
 
                 else:
                     mensagem = "Não foi encontrado uma regra do tipo 'Seguir um perfil'"
+                    LOGGER.info(mensagem)
                     return JsonResponse(data={"detail": mensagem}, status=200)
             else:
                 mensagem = "Não há sorteios disponíveis no momento"
+                LOGGER.info(mensagem)
                 return JsonResponse(data={"detail": mensagem}, status=404)
 
         else:
             mensagem = "Faltam dados de perfil"
+            LOGGER.info(mensagem)
             return JsonResponse(data={"detail": mensagem}, status=403)
-
+    LOGGER.info(mensagem)
     return JsonResponse(data={"detail":mensagem},status=403)
 
