@@ -5,7 +5,7 @@ from asgiref.sync import sync_to_async
 from selenium.webdriver.common.by import By
 
 from jogo import local_settings
-from jogo.models import Automato, Regra, Usuario, Partida, Configuracao, TemplatePartida, Cartela
+from jogo.models import Automato, Regra, Usuario, Partida, Configuracao, TemplatePartida, Cartela, IPTabela
 from datetime import date, datetime, timedelta
 
 import datetime
@@ -154,6 +154,25 @@ def comprar_cartelas(partida,quantidade):
     numeros = random.sample(range(1000,10000),k=quantidade)
     for i in range(quantidade):
         Cartela.objects.create(partida=partida, codigo=numeros[i])
+
+def get_connection():
+    connection = ""
+    dados = IPTabela.objects.select_for_update().last()
+    if dados:
+        connection = dados.ip_proxy+":"
+        faixa = dados.faixa
+        ultima_posicao = dados.ip_ultima_posicao
+        if not ultima_posicao or ultima_posicao==faixa[1]:
+            ultima_posicao=faixa[0]
+        else:
+            ultima_posicao+=1
+        dados.ip_ultima_posicao = ultima_posicao
+        dados.save()
+        connection += str(ultima_posicao)
+    return connection
+
+
+
 
 """
 from selenium import webdriver

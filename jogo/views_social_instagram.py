@@ -22,6 +22,9 @@ from jogo.choices import AcaoTipoChoices
 from jogo.models import Jogador, Partida, Cartela, Regra, Configuracao
 
 import logging
+
+from jogo.utils import get_connection
+
 LOGGER = logging.getLogger(__name__)
 
 CLIENT = None
@@ -34,6 +37,7 @@ def setSocialConnection():
             try:
                 if not configuracao.instagram_connection:
                     CLIENT = Client()
+                    CLIENT.set_proxy(get_connection())
                     CLIENT.login(local_settings.INSTAGRAM_USER, local_settings.INSTAGRAM_PASSWORD)
                     configuracao.instagram_connection = pickle.dumps(CLIENT)
                     configuracao.save()
@@ -41,6 +45,7 @@ def setSocialConnection():
                     CLIENT = pickle.loads(configuracao.instagram_connection)
                     if not CLIENT.get_settings():
                         CLIENT = Client()
+                        CLIENT.set_proxy(get_connection())
                         CLIENT.login(local_settings.INSTAGRAM_USER, local_settings.INSTAGRAM_PASSWORD)
                         configuracao.instagram_connection = pickle.dumps(CLIENT)
                         configuracao.save()
@@ -111,13 +116,14 @@ def gerar_bilhete(request):
                             except (LoginRequired, PleaseWaitFewMinutes):
                                 try:
                                     if CLIENT:
+                                        CLIENT.set_proxy(get_connection())
                                         jogador_instagram = CLIENT.user_info_by_username_v1(perfil)
-                                        time.sleep(3)
+                                        #time.sleep(3)
                                 except UserNotFound:
                                     raise UserNotFound
                                 except Exception:
                                     pass
-                            jogador_seguindo = True
+                            CLIENT.set_proxy(get_connection())
                             jogador_seguindo = CLIENT.search_followers_v1(user_id=perfil_id, query=perfil) if CLIENT else True
                         except UserNotFound as e:
                             LOGGER.exception(msg=e)

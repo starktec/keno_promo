@@ -1,5 +1,6 @@
 import base64
 
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 
 # Create your models here.
@@ -553,3 +554,24 @@ class GrupoCanal(models.Model):
     def __str__(self):
         return self.nome
 
+class Conta(models.Model):
+    username = models.CharField(max_length=200)
+    password = models.CharField(max_length=200)
+    instagram_connection = models.BinaryField(blank=True, null=True)
+    ultimo_acesso = models.DateTimeField()
+    proximo = models.ForeignKey('self', on_delete=models.PROTECT, blank=True,null=True)
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        created = False
+        if not self.id:
+            create = True
+        super().save(force_insert,force_update,using,update_fields)
+        if created and self.id>1:
+            self.proximo = Conta.objects.get(id=self.id-1)
+            self.save()
+
+class IPTabela(models.Model):
+    ip_faixa = ArrayField(models.PositiveIntegerField(), size=2)
+    ip_proxy = models.CharField(max_length=15, )
+    ip_ultima_posicao = models.PositiveIntegerField()
