@@ -103,6 +103,7 @@ def gerar_bilhete(request):
                 if perfil_id:
                     jogador = Jogador.objects.filter(usuario=perfil).first()
                     nome = ""
+                    jogador_seguindo = True
                     if not jogador:
                         try:
                             global CLIENT
@@ -140,7 +141,6 @@ def gerar_bilhete(request):
                             else:
                                 mensagem = "Você ainda não segue o perfil?"
                                 return JsonResponse(data={"detail": mensagem}, status=404)
-
 
 
                     # atualizar o nome do jogador

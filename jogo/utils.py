@@ -161,7 +161,7 @@ def get_connection():
         dados = IPTabela.objects.select_for_update().last()
         if dados:
             connection = dados.ip_proxy+":"
-            faixa = dados.faixa
+            faixa = dados.ip_faixa
             ultima_posicao = dados.ip_ultima_posicao
             if not ultima_posicao or ultima_posicao==faixa[1]:
                 ultima_posicao=faixa[0]
