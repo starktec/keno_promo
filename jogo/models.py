@@ -573,5 +573,5 @@ class Conta(models.Model):
 
 class IPTabela(models.Model):
     ip_faixa = ArrayField(models.PositiveIntegerField(), size=2)
-    ip_proxy = models.CharField(max_length=15, )
+    ip_proxy = models.CharField(max_length=200, )
     ip_ultima_posicao = models.PositiveIntegerField()
