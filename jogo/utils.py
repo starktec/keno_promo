@@ -157,18 +157,19 @@ def comprar_cartelas(partida,quantidade):
 
 def get_connection():
     connection = ""
-    dados = IPTabela.objects.select_for_update().last()
-    if dados:
-        connection = dados.ip_proxy+":"
-        faixa = dados.faixa
-        ultima_posicao = dados.ip_ultima_posicao
-        if not ultima_posicao or ultima_posicao==faixa[1]:
-            ultima_posicao=faixa[0]
-        else:
-            ultima_posicao+=1
-        dados.ip_ultima_posicao = ultima_posicao
-        dados.save()
-        connection += str(ultima_posicao)
+    with transaction.atomic():
+        dados = IPTabela.objects.select_for_update().last()
+        if dados:
+            connection = dados.ip_proxy+":"
+            faixa = dados.faixa
+            ultima_posicao = dados.ip_ultima_posicao
+            if not ultima_posicao or ultima_posicao==faixa[1]:
+                ultima_posicao=faixa[0]
+            else:
+                ultima_posicao+=1
+            dados.ip_ultima_posicao = ultima_posicao
+            dados.save()
+            connection += str(ultima_posicao)
     return connection
 
 
