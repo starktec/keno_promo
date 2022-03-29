@@ -179,7 +179,7 @@ def get_conta():
         if contas:
             conta = contas.order_by("-ultimo_acesso").first()
             proximo = conta.proximo
-            proximo.ultimo_acesso = datetime.now()
+            proximo.ultimo_acesso = datetime.datetime.now()
             proximo.save()
             result = proximo
 
