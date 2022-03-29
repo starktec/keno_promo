@@ -181,9 +181,10 @@ def gerar_bilhete(request):
                     # atualizar o nome do jogador
                     if jogador.nome == jogador.usuario:
                         CLIENT.set_proxy(get_connection())
-                        nome = CLIENT.user_info_by_username(perfil).full_name
-                        if nome:
-                            jogador.nome = nome
+                        jogador_instagram = CLIENT.user_info_by_username(perfil)
+                        if jogador_instagram:
+                            jogador.nome = jogador_instagram.nome
+                            jogador.usuario_id = jogador_instagram.id
                             jogador.save()
                         else:
                             nome = jogador.nome
