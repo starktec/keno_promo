@@ -145,7 +145,7 @@ def gerar_bilhete(request):
                         finally:
                             if jogador_seguindo:
                                 nome = jogador_instagram.full_name if jogador_instagram else perfil
-                                jogador_id = jogador_instagram.id if jogador_instagram else 0
+                                jogador_id = jogador_instagram.pk if jogador_instagram else 0
                                 jogador = Jogador.objects.filter(usuario_id=jogador_id).first()
 
                                 # Caso tenha sido encontrado um jogador com o ID jogador_id
@@ -184,7 +184,7 @@ def gerar_bilhete(request):
                         jogador_instagram = CLIENT.user_info_by_username(perfil)
                         if jogador_instagram:
                             jogador.nome = jogador_instagram.nome
-                            jogador.usuario_id = jogador_instagram.id
+                            jogador.usuario_id = jogador_instagram.pk
                             jogador.save()
                         else:
                             nome = jogador.nome
