@@ -178,10 +178,13 @@ def get_conta():
         contas = Conta.objects.select_for_update().filter(ativo=True)
         if contas:
             conta = contas.order_by("-ultimo_acesso").first()
+            result = conta
             proximo = conta.proximo
-            proximo.ultimo_acesso = datetime.datetime.now()
-            proximo.save()
-            result = proximo
+            if proximo:
+                proximo.ultimo_acesso = datetime.datetime.now()
+                proximo.save()
+                result = proximo
+
 
     return result
 
