@@ -578,7 +578,7 @@ class Conta(models.Model):
             if ids: # tem outra conta
                 # Obtem a conta próxima e atualiza esta conta recem criada para apontar para esse próximo
                 conta_id = max(ids.keys())
-                conta_proximo = ids[conta_id-1]
+                conta_proximo = ids[conta_id]
                 self.proximo = conta_proximo
                 self.save()
 
