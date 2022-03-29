@@ -372,7 +372,8 @@ class TemplatePartida(models.Model):
 # NOVA CLASSE
 class Jogador(models.Model):
     nome = models.CharField(max_length=255, blank=True, null=True)
-    usuario = models.CharField(max_length=255,unique=True)
+    usuario = models.CharField(max_length=255)
+    usuario_id = models.CharField(max_length=100,blank=True,null=True)
     usuario_token = models.CharField(max_length=255)
     seguidores = models.BigIntegerField(default=0)
     cadastrado_em = models.DateTimeField(auto_now_add=True)
@@ -560,16 +561,32 @@ class Conta(models.Model):
     instagram_connection = models.BinaryField(blank=True, null=True)
     ultimo_acesso = models.DateTimeField()
     proximo = models.ForeignKey('self', on_delete=models.PROTECT, blank=True,null=True)
+    ativo = models.BooleanField(default=True)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
         created = False
         if not self.id:
-            create = True
+            created = True
+            self.proximo = self
+        else:
+            print(update_fields)
         super().save(force_insert,force_update,using,update_fields)
-        if created and self.id>1:
-            self.proximo = Conta.objects.get(id=self.id-1)
-            self.save()
+        if created:
+            # Listar todas as contas ativas por ID:Conta (excluindo a recem criada)
+            ids = {x.id:x for x in Conta.objects.filter(ativo=True).exclude(id=self.id).order_by("id")}
+            if ids: # tem outra conta
+                # Obtem a conta próxima e atualiza esta conta recem criada para apontar para esse próximo
+                conta_id = max(ids.keys())
+                conta_proximo = ids[conta_id-1]
+                self.proximo = conta_proximo
+                self.save()
+
+                # Obtem a primeira conta ativa por id e aponta o próximo dela para essa conta recem criada
+                conta_primeira = min(ids.keys())
+                conta_primeira.proximo = self
+                conta_primeira.save()
+
 
 class IPTabela(models.Model):
     ip_faixa = ArrayField(models.PositiveIntegerField(), size=2)

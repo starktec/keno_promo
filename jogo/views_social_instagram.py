@@ -1,54 +1,50 @@
+import base64
 import datetime
 import json
 import random
 import pickle
-import time
 
-import requests
 from django.db import transaction
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from instagrapi import Client
-from instagrapi.exceptions import ClientLoginRequired, UserNotFound, LoginRequired, PleaseWaitFewMinutes
+from instagrapi.exceptions import UserNotFound, LoginRequired, PleaseWaitFewMinutes
 from instagrapi.types import User
-from requests.adapters import HTTPAdapter
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
-#from urllib3 import Retry
+from rest_framework.decorators import api_view
 
-from jogo import local_settings
 from jogo.choices import AcaoTipoChoices
 from jogo.models import Jogador, Partida, Cartela, Regra, Configuracao
 
 import logging
 
-from jogo.utils import get_connection
+from jogo.utils import get_connection, get_conta
 
 LOGGER = logging.getLogger(__name__)
 
 CLIENT = None
 
+
 def setSocialConnection():
     with transaction.atomic():
         global CLIENT
-        configuracao = Configuracao.objects.select_for_update().last()
-        if configuracao:
+        conta = get_conta()
+        if conta:
             try:
-                if not configuracao.instagram_connection:
+                if not conta.instagram_connection:
                     CLIENT = Client()
                     CLIENT.set_proxy(get_connection())
-                    CLIENT.login(local_settings.INSTAGRAM_USER, local_settings.INSTAGRAM_PASSWORD)
-                    configuracao.instagram_connection = pickle.dumps(CLIENT)
-                    configuracao.save()
+                    CLIENT.login(conta.username,conta.password)
+                    conta.instagram_connection = pickle.dumps(CLIENT)
+                    conta.save()
                 else:
-                    CLIENT = pickle.loads(configuracao.instagram_connection)
+                    CLIENT = pickle.loads(conta.instagram_connection)
                     if not CLIENT.get_settings():
                         CLIENT = Client()
                         CLIENT.set_proxy(get_connection())
-                        CLIENT.login(local_settings.INSTAGRAM_USER, local_settings.INSTAGRAM_PASSWORD)
-                        configuracao.instagram_connection = pickle.dumps(CLIENT)
-                        configuracao.save()
+                        CLIENT.login(conta.username,conta.password)
+                        conta.instagram_connection = pickle.dumps(CLIENT)
+                        conta.save()
             except:
                 pass
 
@@ -85,46 +81,59 @@ def gerar_bilhete(request):
         token = request.headers['Authorization'].split("Token ")[1]
         dados = json.loads(request.body)
         perfil = dados.get("perfil")
+        # Formatando o dado perfil vindo do front para eliminar a url, @ e /, alem de forçar minusculo
         if perfil:
             if perfil.startswith("@"):
                 perfil = perfil[1:]
             if "/" in perfil:
                 perfil = perfil.split("/www.instagram.com/")[1].split("/")[0]
-
             perfil = perfil.lower()
+
             agora = datetime.datetime.now()
+
+            # Buscando próxima partida
             partida = Partida.objects.filter(data_partida__gt=agora).order_by("data_partida").first()
             if partida:
                 perfil_id = ""
+                # Buscando a regra de seguir
                 for acao in partida.regra.acao_set.all():
                     if acao.tipo == AcaoTipoChoices.SEGUIR:
                         perfil_id = acao.perfil_social.perfil_id
                         break
                 if perfil_id:
+                    # Encontrar um jogador já cadastrado localmente por perfil
                     jogador = Jogador.objects.filter(usuario=perfil).first()
                     nome = ""
+                    jogador_id = 0
                     jogador_seguindo = True
+
+                    # Se não encontrar
                     if not jogador:
                         try:
                             global CLIENT
-
                             jogador_instagram = None
                             try:
+                                # Fazendo a busca de dados do perfil
                                 api = Client()
                                 api.set_proxy(get_connection())
                                 jogador_instagram = api.user_info_by_username(perfil)
                                 if jogador_instagram and not isinstance(jogador_instagram,User):
+                                    # Falha na busca, forçar login
                                     raise LoginRequired
                             except (LoginRequired, PleaseWaitFewMinutes):
                                 try:
-                                    if CLIENT:
+                                    if CLIENT: # Caso a instancia já esteja montada faz a busca dos dados do perfil
                                         CLIENT.set_proxy(get_connection())
                                         jogador_instagram = CLIENT.user_info_by_username_v1(perfil)
                                         #time.sleep(3)
                                 except UserNotFound:
+                                    # Redirecionar para Usuario nao encontrado
                                     raise UserNotFound
                                 except Exception:
+                                    # Qualquer outra falha, despreze
                                     pass
+
+                            # Verificando se o perfil segue o outro
                             CLIENT.set_proxy(get_connection())
                             jogador_seguindo = CLIENT.search_followers_v1(user_id=perfil_id, query=perfil) if CLIENT else True
                         except UserNotFound as e:
@@ -136,10 +145,25 @@ def gerar_bilhete(request):
                         finally:
                             if jogador_seguindo:
                                 nome = jogador_instagram.full_name if jogador_instagram else perfil
-                                partida.novos_participantes += 1
-                                partida.save()
-                                LOGGER.info("Criando Jogador "+perfil)
-                                jogador = Jogador.objects.create(usuario=perfil,nome=nome)
+                                jogador_id = jogador_instagram.id if jogador_instagram else 0
+                                jogador = Jogador.objects.filter(usuario_id=jogador_id).first()
+
+                                # Caso tenha sido encontrado um jogador com o ID jogador_id
+                                if jogador:
+                                    # Atualiza seus dados
+                                    LOGGER.info("Atualizando Jogador " + perfil)
+                                    jogador.usuario=perfil
+                                    jogador.usuario_token = base64.b64encode(perfil.encode("ascii")).decode("ascii")
+                                    jogador.nome = nome
+                                    jogador.save()
+                                else:
+                                    # Cria um novo
+                                    LOGGER.info("Criando Jogador " + perfil)
+                                    jogador = Jogador.objects.create(
+                                        usuario=perfil,nome=nome,usuario_id=jogador_id if jogador_id else None
+                                    )
+                                    partida.novos_participantes += 1
+                                    partida.save()
                             else:
                                 mensagem = "Você ainda não segue o perfil?"
                                 LOGGER.info(mensagem)

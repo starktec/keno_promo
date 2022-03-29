@@ -5,7 +5,7 @@ from asgiref.sync import sync_to_async
 from selenium.webdriver.common.by import By
 
 from jogo import local_settings
-from jogo.models import Automato, Regra, Usuario, Partida, Configuracao, TemplatePartida, Cartela, IPTabela
+from jogo.models import Automato, Regra, Usuario, Partida, Configuracao, TemplatePartida, Cartela, IPTabela, Conta
 from datetime import date, datetime, timedelta
 
 import datetime
@@ -172,6 +172,18 @@ def get_connection():
             connection += str(ultima_posicao)
     return connection
 
+def get_conta():
+    result = Conta.objects.none()
+    with transaction.atomic():
+        contas = Conta.objects.select_for_update().filter(ativo=True)
+        if contas:
+            conta = contas.order_by("-ultimo_acesso").first()
+            proximo = conta.proximo
+            proximo.ultimo_acesso = datetime.now()
+            proximo.save()
+            result = proximo
+
+    return result
 
 
 
