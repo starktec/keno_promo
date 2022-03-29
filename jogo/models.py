@@ -583,7 +583,8 @@ class Conta(models.Model):
                 self.save()
 
                 # Obtem a primeira conta ativa por id e aponta o próximo dela para essa conta recem criada
-                conta_primeira = min(ids.keys())
+                conta_primeira_id = min(ids.keys())
+                conta_primeira = ids[conta_primeira_id]
                 conta_primeira.proximo = self
                 conta_primeira.save()
 
