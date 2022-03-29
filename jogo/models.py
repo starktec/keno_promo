@@ -568,11 +568,11 @@ class Conta(models.Model):
         created = False
         if not self.id:
             created = True
-            self.proximo = self
         else:
             print(update_fields)
         super().save(force_insert,force_update,using,update_fields)
         if created:
+            self.proximo = self
             # Listar todas as contas ativas por ID:Conta (excluindo a recem criada)
             ids = {x.id:x for x in Conta.objects.filter(ativo=True).exclude(id=self.id).order_by("id")}
             if ids: # tem outra conta
