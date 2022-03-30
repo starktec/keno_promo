@@ -110,7 +110,7 @@ CARTELAS
                         <tr>
                             <td scope="row">{{ c.partida.resumo }}</td>
                             <td scope="row">{% if c.jogador.nome %}
-                                <a href="https://www.instagram.com/{{ jogador.usuario }}/" target="_blank">
+                                <a href="https://www.instagram.com/{{ c.jogador.usuario }}/" target="_blank">
                                     @{{ c.jogador.usuario }}({{c.jogador.id}})
                                 </a>
                             {% else %}
