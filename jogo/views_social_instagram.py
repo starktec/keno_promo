@@ -170,7 +170,12 @@ def gerar_bilhete(request):
                                     # Atualiza seus dados
                                     LOGGER.info("Atualizando Jogador " + perfil)
                                     jogador.usuario=perfil
-                                    jogador.usuario_token = base64.b64encode(perfil.encode("ascii")).decode("ascii")
+                                    try:
+                                        jogador.usuario_token = base64.b64encode(perfil.encode("ascii")).decode("ascii")
+                                    except:
+                                        mensagem = "Perfil não encontrado"
+                                        LOGGER.info(mensagem)
+                                        return JsonResponse(data={"detail": mensagem}, status=404)
                                     jogador.nome = nome
                                     jogador.save()
                                 else:
@@ -203,8 +208,6 @@ def gerar_bilhete(request):
                             jogador.nome = jogador_instagram.nome
                             jogador.usuario_id = jogador_instagram.pk
                             jogador.save()
-                        else:
-                            nome = jogador.nome
 
                     cartela = Cartela.objects.filter(jogador=jogador, partida=partida).first()
                     if cartela:
@@ -214,8 +217,7 @@ def gerar_bilhete(request):
                         if cartelas:
                             cartela = random.choice(cartelas)
                             cartela.jogador = jogador
-                            if nome:
-                                cartela.nome = nome
+                            cartela.nome = jogador.nome
                             cartela.save()
                         else:
                             mensagem = "Cartelas esgotadas"
