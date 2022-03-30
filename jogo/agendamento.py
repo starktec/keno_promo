@@ -372,6 +372,12 @@ class Agenda():
                     self.log("Sorteio Finalizado (finally)")
 
                     self.atualizando_conexoes_websocket(partida)
+
+                    # Eliminando cartelas nao utilizadas
+                    codigos_participantes = partida.cartelas_participantes.split(",")
+                    Cartela.objects.filter(
+                        partida=partida,jogador__isnull=True
+                    ).exclude(codigo__in=codigos_participantes).delete()
                 if agenda:
                     agenda.shutdown(wait=False)
 

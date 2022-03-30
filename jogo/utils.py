@@ -183,13 +183,14 @@ def get_conta(deactivate=False):
             conta.ativo = False
             conta.save()
         else:
-            with transaction.atomic():
-                proximo = Conta.objects.select_for_update().filter(id=conta.proximo.id)
-                if proximo:
-                    proximo = proximo.first()
-                    proximo.ultimo_acesso = datetime.datetime.now()
-                    proximo.save()
-                    result = proximo
+            if conta.proximo:
+                with transaction.atomic():
+                    proximo = Conta.objects.select_for_update().filter(id=conta.proximo.id)
+                    if proximo:
+                        proximo = proximo.first()
+                        proximo.ultimo_acesso = datetime.datetime.now()
+                        proximo.save()
+                        result = proximo
 
     return result
 
