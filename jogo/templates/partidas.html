@@ -170,7 +170,7 @@ INFORMAÇÕES DAS PARTIDAS
                                 <td>
                                     {% if p.data_partida > agora %}
                                     <em class="icon ni ni-square-fill icon-identificacao icon-aguarde" ></em>
-                                    {% elif p.data_partida < agora and not p.bolas_sorteadas %}
+                                    {% elif p.data_partida < agora and not p.bolas_sorteadas and p.verifica_force %}
                                     <a href="partida/{{ p.id }}/force" class="btn btn-danger btn-create-secondary">
                                         <em class="icon ni ni-play-fill"></em>
                                     </a>
