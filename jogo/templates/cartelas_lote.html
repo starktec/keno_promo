@@ -31,6 +31,24 @@ CARTELAS
                                 </div>
                             </div>
                         </div>
+                        
+                        <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 container-input-create-secundary">
+                            <div class="form-group">
+                                <div class="form-control-wrap">
+                                    {{ form.codigo }}
+                                    <label class="form-label-outlined"  for="id_hash">Numero Cartela</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 container-input-create-secundary">
+                            <div class="form-group">
+                                <div class="form-control-wrap">
+                                    {{ form.resgatada }}
+                                    <label class="form-label-outlined"  for="id_hash">Status</label>
+                                </div>
+                            </div>
+                        </div>
 
                         <div class="col-12 col-sm-6 col-md-6 col-lg-6 col-xl-4 container-input-search text-right form-group">
                             <button onclick=test(1) class="col-3 col-sm-6 col-md-4 col-lg-3 col-xl-3 justify-content-center btn btn-success btn-search form-control-lg">
@@ -63,7 +81,7 @@ CARTELAS
                 <div class="card cards-status">
                     <div class="row text-center">
                         <em class="icon ni ni-trend-up icon-card color-card-pos"></em>
-                        <h6 class="title-card color-card-pos">Cartelas Resgatadas</h6>
+                        <h6 class="title-card color-card-pos">Cartelas</h6>
                     </div>
                     <div class="row">
                         <h6 class="col-12 text-right subtitle-card color-card-pos">{{ cartelas_num }}</h6>
@@ -82,15 +100,24 @@ CARTELAS
                             <th scope="col">Sorteio</th>
                             <th scope="col">Jogador</th>
                             <th scope="col">Hash</th>
+                            <th scope="col">Cartela</th>
                             <th scope="col">Status</th>
+                            <th scope="col"><th>
                         </tr>
                     </thead>
                     <tbody class="text-center tbody-content">
                     {% for c in cartelas %}
                         <tr>
                             <td scope="row">{{ c.partida.resumo }}</td>
-                            <td scope="row">{% if c.jogado.nome %}@{{ c.jogador.usuario }}{% else %}{{ c.nome }}{% endif %}</td>
+                            <td scope="row">{% if c.jogador.nome %}
+                                <a href="https://www.instagram.com/{{ jogador.usuario }}/" target="_blank">
+                                    @{{ c.jogador.usuario }}({{c.jogador.id}})
+                                </a>
+                            {% else %}
+                                {{ c.nome }}
+                            {% endif %}</td>
                             <td scope="row">{{ c.hash }}</td>
+                            <td scope="row">{{ c.codigo }}</td>
                             {% if hoje > c.partida.data_partida %}
                             <td scope="row">
                                 <p class="positivo">sorteada</p>
@@ -98,6 +125,15 @@ CARTELAS
                             {% else %}
                             <td scope="row">
                                 <p class="">À sortear</p>
+                            </td>
+                            {% endif %}
+                            {% if c.jogador %}
+                            <td scope="row">
+                                <p class="positivo">resgatada</p>
+                            </td>
+                            {% else %}
+                            <td scope="row">
+                                <p class="negativo">não resgatada</p>
                             </td>
                             {% endif %}
                         </tr>

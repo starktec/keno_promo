@@ -2,6 +2,7 @@ import datetime
 
 from django import forms
 from django.core.exceptions import ValidationError
+from jogo.choices import StatusCartelaChoice
 
 from jogo.consts import NamesValidations
 from jogo.models import TemplatePartida, Usuario, Partida, PARTIDA_TIPOS_CHOICES, \
@@ -651,8 +652,15 @@ class TemplateEditForm(forms.ModelForm):
                 "O valor do Kina deve ser maior que o valor da Kuadra!"
             )
 
+
+
 class CartelasFilterForm(forms.Form):
     partida = forms.IntegerField(required=False,widget=forms.NumberInput(
         attrs={'class': "form-control form-control-lg form-control-outlined", 'autocomplete': "off"}))
     hash = forms.CharField(required=False,widget=forms.TextInput(
         attrs={'class': "form-control form-control-lg form-control-outlined", 'autocomplete': "off"}))
+    codigo = forms.CharField(required=False,widget=forms.TextInput(
+        attrs={'class': "form-control form-control-lg form-control-outlined", 'autocomplete': "off"}))
+    resgatada = forms.ChoiceField(
+        widget=forms.Select(attrs={'class': "form-control form-control-lg form-control-outlined", 'autocomplete': "off"}),
+        choices=StatusCartelaChoice.choices, required=False)

@@ -1,10 +1,15 @@
-from django.db.models import TextChoices
+from django.db.models import TextChoices,IntegerChoices
 
 class AcaoTipoChoices(TextChoices):
     SEGUIR = "SEGUIR", "Seguir"
     CURTIR = "CURTIR", "Curtir"
     COMENTAR = "COMENTAR", "Comentar"
     RECOMENDAR = "RECOMENDAR", "Recomendar"
+
+class StatusCartelaChoice(IntegerChoices):
+    RESGATADA  = 1,"Resgatada"
+    NAORESGATADA = 2,"Não-resgatada"
+
 
 UF_CHOICES = (
     ('AC', 'Acre'),

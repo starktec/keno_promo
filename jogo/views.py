@@ -11,7 +11,7 @@ import logging
 from instagrapi import Client
 from instagrapi.exceptions import ClientLoginRequired, UserNotFound
 
-from jogo.choices import AcaoTipoChoices
+from jogo.choices import AcaoTipoChoices, StatusCartelaChoice
 from jogo.utils import testa_horario, comprar_cartelas
 from jogo.constantes import VALORES_VOZES
 
@@ -531,7 +531,7 @@ def cartelas(request):
     ultima_pagina = 0
     page_number = 0
     ordenacao = False
-    cartelas = Cartela.objects.filter(jogador__isnull=True).order_by('-id')
+    cartelas = Cartela.objects.all().order_by('-id')
     if request.method == "POST":
         form = CartelasFilterForm(request.POST)
         if form.is_valid():
@@ -541,6 +541,15 @@ def cartelas(request):
             if 'hash' in form.cleaned_data and form.cleaned_data['hash']:
                 hash = form.cleaned_data['hash']
                 cartelas = cartelas.filter(hash=hash)
+            if 'codigo' in form.cleaned_data and form.cleaned_data['codigo']:
+                codigo = form.cleaned_data['codigo']
+                cartelas = cartelas.filter(codigo=codigo)
+            if 'resgatada' in form.cleaned_data and form.cleaned_data['resgatada']:
+                status = form.cleaned_data['resgatada']
+                if int(status)  == StatusCartelaChoice.RESGATADA:
+                    cartelas = cartelas.filter(jogador__isnull=False)
+                else:
+                    cartelas = cartelas.filter(jogador__isnull=True)
     else:
         hoje = datetime.date.today()
         ordenacao = True
