@@ -21,6 +21,7 @@ from django.contrib.auth.models import User
 from jogo import local_settings
 from jogo.choices import AcaoTipoChoices
 from jogo.constantes import NOME_PESSOAS
+from jogo.websocket_triggers import event_doacoes
 
 
 def configuracao_images_path(instance, filename):
@@ -212,7 +213,7 @@ class Partida(models.Model):
              update_fields=None):
         super().save(force_insert, force_update, using, update_fields)
         # notificar?
-        #event_doacoes()
+        event_doacoes()
 
 
     def cartelas_compradas(self):
@@ -496,6 +497,7 @@ class Cartela(models.Model):
                 self.codigo = str(self.gerar_codigo())
 
         super().save(force_insert, force_update, using, update_fields)
+        event_doacoes()
 
     def __str__(self):
         if self.codigo:
