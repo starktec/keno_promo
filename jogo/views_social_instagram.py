@@ -9,7 +9,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from instagrapi import Client
-from instagrapi.exceptions import UserNotFound, LoginRequired, PleaseWaitFewMinutes
+from instagrapi.exceptions import UserNotFound, LoginRequired, PleaseWaitFewMinutes, ChallengeRequired
 from instagrapi.types import User
 from rest_framework.decorators import api_view
 
@@ -26,10 +26,10 @@ LOGGER = logging.getLogger(__name__)
 CLIENT = None
 
 
-def setSocialConnection():
+def setSocialConnection(deactivate=False):
     with transaction.atomic():
         global CLIENT
-        conta = get_conta()
+        conta = get_conta(deactivate)
         if conta:
             try:
                 if not conta.instagram_connection:
@@ -154,11 +154,11 @@ def gerar_bilhete(request):
                             setSocialConnection()
                             jogador_seguindo = CLIENT.search_followers_v1(user_id=perfil_id, query=perfil) if CLIENT else True
                         except UserNotFound as e:
-                            LOGGER.exception(msg=e)
                             mensagem = "Perfil não encontrado, tente novamente mais tarde"
+                            LOGGER.info(mensagem)
                             return JsonResponse(data={"detail": mensagem}, status=403)
-                        except PleaseWaitFewMinutes:
-                            pass
+                        except (PleaseWaitFewMinutes, ChallengeRequired):
+                            setSocialConnection(deactivate=True)
                         finally:
                             if jogador_seguindo:
                                 nome = jogador_instagram.full_name if jogador_instagram else perfil

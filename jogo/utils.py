@@ -172,20 +172,24 @@ def get_connection():
             connection += str(ultima_posicao)
     return connection
 
-def get_conta():
+def get_conta(deactivate=False):
     result = Conta.objects.none()
 
     contas = Conta.objects.filter(ativo=True)
     if contas:
         conta = contas.order_by("-ultimo_acesso").first()
         result = conta
-        with transaction.atomic():
-            proximo = Conta.objects.select_for_update().filter(id=conta.proximo.id)
-            if proximo:
-                proximo = proximo.first()
-                proximo.ultimo_acesso = datetime.datetime.now()
-                proximo.save()
-                result = proximo
+        if deactivate:
+            conta.ativo = False
+            conta.save()
+        else:
+            with transaction.atomic():
+                proximo = Conta.objects.select_for_update().filter(id=conta.proximo.id)
+                if proximo:
+                    proximo = proximo.first()
+                    proximo.ultimo_acesso = datetime.datetime.now()
+                    proximo.save()
+                    result = proximo
 
     return result
 

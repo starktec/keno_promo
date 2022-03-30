@@ -21,12 +21,25 @@ class ConexaoBilheteConsumer(AsyncJsonWebsocketConsumer):
     @sync_to_async
     def proximos_sorteios(self, sorteio_id, hash):
         try:
+            '''
             proximos = [Partida.objects.get(id=sorteio_id),]
             cartela = Cartela.objects.filter(partida_id=sorteio_id,hash=hash).first()
             bilhetes = [{"sorteio_id":sorteio_id,"bilhete":hash,"nome":cartela.nome}]
-            serializer = PartidaProximaSerializer(instance=proximos, many=True)
-            return {"type":"proximos_sorteios","sorteios":serializer.data,"bilhetes":bilhetes,
-                    'datahora':datetime.datetime.strftime(datetime.datetime.now(),'%Y-%m-%dT%H:%M:%S')}
+            '''
+            cartela_jogo = Cartela.objects.filter(hash=hash, partida_id=sorteio_id).first()
+            if cartela_jogo:
+                jogador = cartela_jogo.jogador
+                cartelas = Cartela.objects.filter(jogador=jogador).order_by("-id")
+                if cartelas.count()>5:
+                    cartelas = cartelas[:5]
+                proximos = Partida.objects.filter(cartela__in=cartelas)
+                bilhetes = [{"sorteio_id": cartela.partida_id, "bilhete": cartela.hash, "nome": cartela.nome} for cartela in cartelas]
+                serializer = PartidaProximaSerializer(instance=proximos, many=True)
+                return {"type":"proximos_sorteios","sorteios":serializer.data,"bilhetes":bilhetes,
+                        'datahora':datetime.datetime.strftime(datetime.datetime.now(),'%Y-%m-%dT%H:%M:%S')}
+            else:
+                return {"type": "proximos_sorteios", "sorteios": [], "bilhetes": [],
+                        'datahora': datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%dT%H:%M:%S')}
         except Exception as e:
             logger.exception(e)
             raise e
