@@ -756,11 +756,8 @@ def templates(request):
 
 
 @login_required
-def realtime_data(request):
-    if request.session.get('real_time'):
-        return render(request, 'realtime_data.html')
-    else:
-        return HttpResponse(status=401)
+def realtime_data(request):    
+    return render(request, 'realtime_data.html')
 
 
 
