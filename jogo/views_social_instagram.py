@@ -165,27 +165,27 @@ def gerar_bilhete(request):
                                 jogador_id = jogador_instagram.pk if jogador_instagram else 0
                                 jogador = Jogador.objects.filter(usuario_id=jogador_id).first()
 
-                                # Caso tenha sido encontrado um jogador com o ID jogador_id
-                                if jogador:
-                                    # Atualiza seus dados
-                                    LOGGER.info("Atualizando Jogador " + perfil)
-                                    jogador.usuario=perfil
-                                    try:
+                                try:
+                                    # Caso tenha sido encontrado um jogador com o ID jogador_id
+                                    if jogador:
+                                        # Atualiza seus dados
+                                        LOGGER.info("Atualizando Jogador " + perfil)
+                                        jogador.usuario=perfil
                                         jogador.usuario_token = base64.b64encode(perfil.encode("ascii")).decode("ascii")
-                                    except:
-                                        mensagem = "Perfil não encontrado"
-                                        LOGGER.info(mensagem)
-                                        return JsonResponse(data={"detail": mensagem}, status=404)
-                                    jogador.nome = nome
-                                    jogador.save()
-                                else:
-                                    # Cria um novo
-                                    LOGGER.info("Criando Jogador " + perfil)
-                                    jogador = Jogador.objects.create(
-                                        usuario=perfil,nome=nome,usuario_id=jogador_id if jogador_id else None
-                                    )
-                                    partida.novos_participantes += 1
-                                    partida.save()
+                                        jogador.nome = nome
+                                        jogador.save()
+                                    else:
+                                        # Cria um novo
+                                        LOGGER.info("Criando Jogador " + perfil)
+                                        jogador = Jogador.objects.create(
+                                            usuario=perfil,nome=nome,usuario_id=jogador_id if jogador_id else None
+                                        )
+                                        partida.novos_participantes += 1
+                                        partida.save()
+                                except UnicodeEncodeError:
+                                    mensagem = "Perfil não encontrado"
+                                    LOGGER.info(mensagem)
+                                    return JsonResponse(data={"detail": mensagem}, status=404)
                             else:
                                 mensagem = "Você ainda não segue o perfil?"
                                 LOGGER.info(mensagem)
