@@ -120,16 +120,12 @@ def dados_bilhete_v2(request,hash):
 
 @require_http_methods(["GET"])
 def ultimos_ganhadores_kol(request,sorteio_id = None):
-    if 'Authorization' in request.headers and "Token" in request.headers['Authorization']:
-        token = request.headers['Authorization'].split("Token ")[1]
-        jogador = Jogador.objects.filter(usuario_token=token).first()
-        if jogador and Cartela.objects.filter(jogador=jogador, cancelado=False):
-            logger.info(f" - Jogador {jogador}")
-            if sorteio_id:
-                ultimas_partidas = Partida.objects.filter(id = sorteio_id)
-            else:
-                ultimas_partidas = Partida.objects.filter(bolas_sorteadas__isnull=False,data_partida__lt=datetime.datetime.now()).order_by('-data_partida')[0:5]
-            dados = UltimosGanhadoresSerializer(ultimas_partidas,many=True).data
-            return JsonResponse(data={"sorteios":dados}, status=200, safe=False)
-        return JsonResponse(data={'details':'Token Inválido'},safe=True,status=401)
-    return JsonResponse(data={'details':'Token Inválido'},safe=True,status=401)
+    ultimas_partidas = Partida.objects.none()
+    if sorteio_id:
+        ultimas_partidas = Partida.objects.filter(id = sorteio_id)
+    else:
+        ultimas_partidas = Partida.objects.filter(bolas_sorteadas__isnull=False,data_partida__lt=datetime.datetime.now()).order_by('-data_partida')[:5]
+    dados = UltimosGanhadoresSerializer(ultimas_partidas,many=True).data
+    return JsonResponse(data={"sorteios":dados}, status=200, safe=False)
+
+

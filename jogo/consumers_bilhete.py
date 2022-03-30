@@ -79,7 +79,7 @@ class ConexaoBilheteConsumer(AsyncJsonWebsocketConsumer):
                 logger.info(f" - Não encontrado próximos sorteios ")
                 await self.send_json({'code': 404, 'message': 'Bilhetes não encontrados ou token inválido',
                                 'error_message': 'Não existe', 'data': {}})
-                self.websocket_disconnect(message={"code":1000})
+                await self.websocket_disconnect(message={"code":1000})
 
 
 

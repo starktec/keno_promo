@@ -40,13 +40,13 @@ def resultado_sorteio(request, local_id, sorteio_id):
                 partida:Partida = Partida.objects.filter(id=sorteio_id).first()
                 if partida:
                     cartela = Cartela.objects.filter(partida=partida, jogador=jogador).first()
-                    if not cartela:
+                    if cartela:
                         partida.cartelas_receberam_sorteio.add(cartela)
                         partida.save()
-                    serializer = PartidaSerializer(instance=Partida.objects.filter(id=sorteio_id).first())
-                    logger.info(f" - {jogador} Enviando sorteio {partida.id}")
-                    return JsonResponse(serializer.data, safe=False)
-                logger.warning(f" - {jogador} - Partida {sorteio_id} não existe")
+                        serializer = PartidaSerializer(instance=Partida.objects.filter(id=sorteio_id).first())
+                        logger.info(f" - {jogador} Enviando sorteio {partida.id}")
+                        return JsonResponse(serializer.data, safe=False)
+                logger.warning(f" - {jogador} - Partida {sorteio_id} não existe ou o jogador {jogador.nome} não tem cartela para esse sorteio")
                 return HttpResponse(status=403)
 
         else:
