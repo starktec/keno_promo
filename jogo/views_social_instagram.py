@@ -13,6 +13,7 @@ from instagrapi.exceptions import UserNotFound, LoginRequired, PleaseWaitFewMinu
 from instagrapi.types import User
 from rest_framework.decorators import api_view
 
+from jogo import local_settings
 from jogo.choices import AcaoTipoChoices
 from jogo.models import Jogador, Partida, Cartela, Regra, Configuracao
 
@@ -33,18 +34,32 @@ def setSocialConnection():
             try:
                 if not conta.instagram_connection:
                     CLIENT = Client()
-                    CLIENT.set_proxy(get_connection())
-                    CLIENT.login(conta.username,conta.password)
+                    proxy = get_connection()
+                    CLIENT.set_proxy(proxy)
+                    if conta:
+                        LOGGER.info(f"CONECTION {conta.username}: {proxy}")
+                        CLIENT.login(conta.username,conta.password)
+                    else:
+                        CLIENT.login(local_settings.username, local_settings.password)
                     conta.instagram_connection = pickle.dumps(CLIENT)
                     conta.save()
                 else:
                     CLIENT = pickle.loads(conta.instagram_connection)
-                    if not CLIENT.get_settings():
+                    if not CLIENT:
                         CLIENT = Client()
-                        CLIENT.set_proxy(get_connection())
-                        CLIENT.login(conta.username,conta.password)
+                        proxy = get_connection()
+                        CLIENT.set_proxy(proxy)
+                        if conta:
+                            LOGGER.info(f"CONECTION {conta.username}: {proxy}")
+                            CLIENT.login(conta.username, conta.password)
+                        else:
+                            CLIENT.login(local_settings.username, local_settings.password)
                         conta.instagram_connection = pickle.dumps(CLIENT)
                         conta.save()
+                    else:
+                        proxy = get_connection()
+                        CLIENT.set_proxy(proxy)
+                        LOGGER.info(f"CONECTION {conta.username}: {proxy}")
             except:
                 pass
 
@@ -115,7 +130,9 @@ def gerar_bilhete(request):
                             try:
                                 # Fazendo a busca de dados do perfil
                                 api = Client()
-                                api.set_proxy(get_connection())
+                                proxy = get_connection()
+                                api.set_proxy(proxy)
+                                LOGGER.info(f"CONECTION: Anonimo {proxy}")
                                 jogador_instagram = api.user_info_by_username(perfil)
                                 if jogador_instagram and not isinstance(jogador_instagram,User):
                                     # Falha na busca, forçar login
@@ -123,7 +140,7 @@ def gerar_bilhete(request):
                             except (LoginRequired, PleaseWaitFewMinutes):
                                 try:
                                     if CLIENT: # Caso a instancia já esteja montada faz a busca dos dados do perfil
-                                        CLIENT.set_proxy(get_connection())
+                                        setSocialConnection()
                                         jogador_instagram = CLIENT.user_info_by_username_v1(perfil)
                                         #time.sleep(3)
                                 except UserNotFound:
@@ -134,7 +151,7 @@ def gerar_bilhete(request):
                                     pass
 
                             # Verificando se o perfil segue o outro
-                            CLIENT.set_proxy(get_connection())
+                            setSocialConnection()
                             jogador_seguindo = CLIENT.search_followers_v1(user_id=perfil_id, query=perfil) if CLIENT else True
                         except UserNotFound as e:
                             LOGGER.exception(msg=e)
@@ -170,7 +187,7 @@ def gerar_bilhete(request):
                                 return JsonResponse(data={"detail": mensagem}, status=404)
 
                     else:
-                        CLIENT.set_proxy(get_connection())
+                        setSocialConnection()
                         jogador_seguindo = CLIENT.search_followers_v1(user_id=perfil_id,
                                                                       query=perfil) if CLIENT else True
                         if not jogador_seguindo:
@@ -180,7 +197,7 @@ def gerar_bilhete(request):
 
                     # atualizar o nome do jogador
                     if jogador.nome == jogador.usuario:
-                        CLIENT.set_proxy(get_connection())
+                        setSocialConnection()
                         jogador_instagram = CLIENT.user_info_by_username(perfil)
                         if jogador_instagram:
                             jogador.nome = jogador_instagram.nome
