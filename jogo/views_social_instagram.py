@@ -181,7 +181,7 @@ def gerar_bilhete(request):
                                             usuario=perfil,nome=nome,usuario_id=jogador_id if jogador_id else None
                                         )
                                         partida.novos_participantes += 1
-                                        partida.save()
+                                        
                                 except UnicodeEncodeError:
                                     mensagem = "Perfil não encontrado"
                                     LOGGER.info(mensagem)
@@ -214,6 +214,7 @@ def gerar_bilhete(request):
                         mensagem = f"Você já está participando do sorteio {partida.id}"
                     else:
                         cartelas = Cartela.objects.filter(partida=partida, jogador__isnull=True)
+                        partida.save()
                         if cartelas:
                             cartela = random.choice(cartelas)
                             cartela.jogador = jogador
