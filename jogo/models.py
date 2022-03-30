@@ -335,6 +335,12 @@ class Partida(models.Model):
         else:
             return Cartela.objects.filter(partida=self, cancelado=False).count()
 
+    def verifica_force(self):
+        agora = datetime.now()
+        if agora > self.data_partida + timedelta(seconds=15):
+            return True
+        else:
+            return False
 
 
 TEMPLATE_STATUS_CHOICES = ((0, "APLICADO"), (1, "CANCELADO"))
