@@ -89,7 +89,7 @@ def index_social(request):
     jogo_real_url = configuracao.perfil_default or ""
      
 
-    return JsonResponse(data={"seguir_url":seguir_url,"seguir":seguir,'jogo_real_url':jogo_real_url,''}, status=200)
+    return JsonResponse(data={"seguir_url":seguir_url,"seguir":seguir,'jogo_real_url':jogo_real_url}, status=200)
 
 
 @api_view(['POST'])
