@@ -86,10 +86,10 @@ def index_social(request):
         seguir += seguir_url.split("/www.instagram.com/")[1]
         if seguir.endswith("/"):
             seguir = seguir[:-1]
-    jogo_real_url = configuracao.perfil_default or ""
-     
+    url_botao = configuracao.perfil_default or ""
+    nome_botao = configuracao.nome_botao or ""
 
-    return JsonResponse(data={"seguir_url":seguir_url,"seguir":seguir,'jogo_real_url':jogo_real_url}, status=200)
+    return JsonResponse(data={"seguir_url":seguir_url,"seguir":seguir,'url_botao':url_botao,'nome_botao':nome_botao}, status=200)
 
 
 @api_view(['POST'])

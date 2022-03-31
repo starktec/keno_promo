@@ -97,7 +97,8 @@ class Configuracao(models.Model):
     perfil_default = models.URLField(blank=True,null=True)
 
     # Link para jogos reais
-    link_jogo_real = models.URLField(blank=True,null=True)
+    nome_botao = models.CharField(blank=True,null=True)
+    url_botao = models.URLField(blank=True,null=True)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
