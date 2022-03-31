@@ -166,17 +166,21 @@ def gerar_bilhete(request):
                             if jogador_seguindo:
                                 nome = jogador_instagram.full_name if jogador_instagram else perfil
                                 jogador_id = jogador_instagram.pk if jogador_instagram else 0
-                                jogador = Jogador.objects.filter(usuario_id=jogador_id).first()
+                                if jogador_id:
+                                    jogador = Jogador.objects.filter(usuario_id=jogador_id).first()
+                                else:
+                                    jogador = Jogador.objects.filter(usuario=perfil).first()
 
                                 try:
                                     # Caso tenha sido encontrado um jogador com o ID jogador_id
                                     if jogador:
-                                        # Atualiza seus dados
-                                        LOGGER.info("Atualizando Jogador " + perfil)
-                                        jogador.usuario=perfil
-                                        jogador.usuario_token = base64.b64encode(perfil.encode("ascii")).decode("ascii")
-                                        jogador.nome = nome
-                                        jogador.save()
+                                        if jogador_id:
+                                            # Atualiza seus dados caso tenha encontrado o ID do instagram
+                                            LOGGER.info("Atualizando Jogador " + perfil)
+                                            jogador.usuario=perfil
+                                            jogador.usuario_token = base64.b64encode(perfil.encode("ascii")).decode("ascii")
+                                            jogador.nome = nome
+                                            jogador.save()
                                     else:
                                         # Cria um novo
                                         LOGGER.info("Criando Jogador " + perfil)
