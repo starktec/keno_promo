@@ -43,3 +43,13 @@ def nome_server(request):
         return JsonResponse(data={'nome_server':configuracao.nome_server}, status=200, safe=False)
     else:
         return JsonResponse(data={'nome_server':None}, status=200, safe=False)
+
+def logo_promo(request):
+    configuracao = Configuracao.objects.last()
+    if configuracao.logo_promo:
+        img = Image.open('.'+ configuracao.logo_promo.url, mode='r')
+    else:
+        img = Image.open('./static/images-logo/mr-keno-login.png')
+    response = HttpResponse(content_type='image/png')
+    img.save(response, 'png')
+    return response

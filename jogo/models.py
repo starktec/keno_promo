@@ -59,6 +59,7 @@ class Configuracao(models.Model):
     logo_login = models.ImageField(upload_to=configuracao_images_path, blank=True, null=True)
     logo_dash = models.ImageField(upload_to=configuracao_images_path, blank=True, null=True)
     favicon = models.FileField(upload_to=configuracao_images_path, blank=True, null=True)
+    logo_promo = models.FileField(upload_to=configuracao_images_path, blank=True, null=True)
     nome_server = models.CharField(max_length=100, blank=True, null=True)
     token_server = models.CharField(max_length=100, blank=True, null=True)
 
@@ -94,6 +95,9 @@ class Configuracao(models.Model):
     # Conexao com o instagram
     instagram_connection = models.BinaryField(blank=True,null=True)
     perfil_default = models.URLField(blank=True,null=True)
+
+    # Link para jogos reais
+    link_jogo_real = models.URLField(blank=True,null=True)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):

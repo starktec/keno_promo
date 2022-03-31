@@ -72,6 +72,7 @@ def index_social(request):
     seguir = "@"
     agora = datetime.datetime.now()
     partida = Partida.objects.filter(data_partida__gt=agora).order_by('data_partida').first()
+    configuracao = Configuracao.objects.last()
     if partida:
         acoes = partida.regra.acao_set.all()
         for acao in acoes:
@@ -81,12 +82,14 @@ def index_social(request):
                 if seguir.endswith("/"):
                     seguir = seguir[:-1]
     else:
-        configuracao = Configuracao.objects.last()
         seguir_url = configuracao.perfil_default
         seguir += seguir_url.split("/www.instagram.com/")[1]
         if seguir.endswith("/"):
             seguir = seguir[:-1]
-    return JsonResponse(data={"seguir_url":seguir_url,"seguir":seguir}, status=200)
+    jogo_real_url = configuracao.perfil_default or ""
+     
+
+    return JsonResponse(data={"seguir_url":seguir_url,"seguir":seguir,'jogo_real_url':jogo_real_url,''}, status=200)
 
 
 @api_view(['POST'])
