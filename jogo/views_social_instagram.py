@@ -208,7 +208,7 @@ def gerar_bilhete(request):
                         setSocialConnection()
                         jogador_instagram = CLIENT.user_info_by_username(perfil)
                         if jogador_instagram:
-                            jogador.nome = jogador_instagram.nome
+                            jogador.nome = jogador_instagram.full_name
                             jogador.usuario_id = jogador_instagram.pk
                             jogador.save()
 
