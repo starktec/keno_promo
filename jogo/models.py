@@ -393,9 +393,12 @@ class Jogador(models.Model):
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
         if not self.id:
-            if not self.nome:
-                self.nome = self.usuario
+            jogador = Jogador.objects.filter(usuario_id__isnull=False,usuario_id=self.usuario_id).first()
+            if jogador:
+                return jogador
             self.usuario_token = base64.b64encode(self.usuario.encode("ascii")).decode("ascii")
+        if not self.nome:
+            self.nome = self.usuario
         super().save(force_insert,force_update,using,update_fields)
 
     def sorteios_participou(self):

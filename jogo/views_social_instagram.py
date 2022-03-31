@@ -208,13 +208,15 @@ def gerar_bilhete(request):
                             return JsonResponse(data={"detail": mensagem}, status=404)
 
                     # atualizar o nome do jogador
-                    if jogador.nome == jogador.usuario:
+                    if not jogador.nome or jogador.nome == jogador.usuario or jogador.nome=="":
                         setSocialConnection()
                         jogador_instagram = CLIENT.user_info_by_username(perfil)
                         if jogador_instagram:
                             jogador.nome = jogador_instagram.full_name
                             jogador.usuario_id = jogador_instagram.pk
-                            jogador.save()
+                        else:
+                            jogador.nome = jogador.usuario
+                        jogador.save()
 
                     cartela = Cartela.objects.filter(jogador=jogador, partida=partida).first()
                     if cartela:
