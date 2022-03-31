@@ -435,10 +435,18 @@ class ConfiguracaoForm(forms.ModelForm):
         attrs={'class': "custom-file-input", 'onChange':"document.getElementById('logo_login').src = window.URL.createObjectURL(this.files[0])"}))
     logo_dash = forms.ImageField(required=False, widget=forms.FileInput(
         attrs={'class': "custom-file-input", 'onChange':"document.getElementById('logo_dash').src = window.URL.createObjectURL(this.files[0])"}))
+    logo_promo = forms.ImageField(required=False, widget=forms.FileInput(
+        attrs={'class': "custom-file-input", 'onChange':"document.getElementById('logo_promo').src = window.URL.createObjectURL(this.files[0])"}))
     favicon = forms.ImageField(required=False, widget=forms.FileInput(
         attrs={'class': "custom-file-input", 'onChange':"document.getElementById('favicon').src = window.URL.createObjectURL(this.files[0])"}))
 
     nome_server = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'class': "form-control form-control-md form-control-outlined" ,'autocomplete': "off"}
+    ))
+    nome_botao = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'class': "form-control form-control-md form-control-outlined" ,'autocomplete': "off"}
+    ))
+    url_botao = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': "form-control form-control-md form-control-outlined" ,'autocomplete': "off"}
     ))
 
@@ -446,7 +454,7 @@ class ConfiguracaoForm(forms.ModelForm):
         model = Configuracao
         fields = ['tempo_min_entre_sorteios',
                   'iniciar_sorteio_em',
-                  'logo_dash','logo_login','favicon','nome_server']
+                  'logo_dash','logo_login','favicon','nome_server','nome_botao','url_botao','logo_promo']
 
 
 class PartidaEditForm(forms.ModelForm):

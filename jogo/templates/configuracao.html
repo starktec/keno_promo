@@ -81,6 +81,18 @@ CONFIGURAÇÃO
                                         {{ form.nome_server }}
                                     </div>
                                 </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_nome_server">Nome do Botão</label>
+                                    <div class="form-control-wrap">
+                                        {{ form.nome_botao }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_nome_server">URL do Botão</label>
+                                    <div class="form-control-wrap">
+                                        {{ form.url_botao }}
+                                    </div>
+                                </div>
                                 
                                 <div class="col-lg-12 col-md-12 col-sm-12 container-input-create input-container-conf">
                                     <label class="form-label" for="id_tempo_validade_bilhete">Avisos importantes</label>
@@ -129,6 +141,29 @@ CONFIGURAÇÃO
                                                 <div class="custom-file">
                                                     {{ form.logo_dash }}
                                                     <label class="custom-file-label" for="id_logo_dash" data-browse="Selecionar"></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 box-card-input">
+                                    <div class="row col-md-12 card-input padding-top-botton">
+                                        {% if configuracao.logo_promo %}
+                                        <div class="col-4 col-lg-4 col-sm-4 container-img-conf">
+                                            <img id="logo_promo" src="{{ configuracao.logo_promo.url }}">
+                                        </div>
+                                        {% else %}
+                                        <div class="col-4 col-lg-4 col-sm-4 container-img-conf">
+                                            <img id="logo_promo" src="">
+                                        </div>
+                                        {% endif %}
+                                        <div class="row col-8 col-lg-8 col-sm-8 padding-zero conatiner-img-input">
+                                            <h4 class="conf-img-title col-12">Logo Promo</h4>
+                                            <div class="input-group mb-3">
+                                                <div class="custom-file">
+                                                    {{ form.logo_promo }}
+                                                    <label class="custom-file-label" for="id_logo_promo" data-browse="Selecionar"></label>
                                                 </div>
                                             </div>
                                         </div>

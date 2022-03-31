@@ -616,6 +616,8 @@ def configuracao(request):
         form = ConfiguracaoForm(request.POST, request.FILES, instance=c)
         if form.is_valid():
             form.save()
+        else:
+            print(form.errors)
     else:
         form = ConfiguracaoForm(instance=c)
     return render(request, 'configuracao.html', {'form': form, 'configuracao': c})
