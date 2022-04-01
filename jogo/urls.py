@@ -29,14 +29,7 @@ urlpatterns = [
     path('cancelar_bilhete/<str:hash>/',cancelar_bilhete),
     path('partida_edit/<int:partida_id>/', partida_edit),
 
-    path('partidas/criar_automatica/', partida_automatica),
-    path('automatos/', automatos),
-    path('automatos/<int:codigo>/',automatos),
-    path('partida/<int:partida_id>/parar/', parar_automato),
-    path('sortear_template/<int:template_id>/',sortear_template),
-    path('template/<int:template_id>/cancelar/',cancelar_template),
-    path('template/<int:template_id>/edit/',editar_template),
-    #path('templates/',templates),
+
 
     path('realtime_data/',realtime_data),
 
@@ -83,3 +76,16 @@ urlpatterns = [
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+"""
+URLs desativadas sem previsão
+
+path('partidas/criar_automatica/', partida_automatica),
+path('automatos/', automatos),
+path('automatos/<int:codigo>/',automatos),
+path('partida/<int:partida_id>/parar/', parar_automato),
+path('sortear_template/<int:template_id>/',sortear_template),
+path('template/<int:template_id>/cancelar/',cancelar_template),
+path('template/<int:template_id>/edit/',editar_template),
+path('templates/',templates),
+"""

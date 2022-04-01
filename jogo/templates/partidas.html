@@ -48,10 +48,11 @@ INFORMAÇÕES DAS PARTIDAS
 
 
                              <div class="col-md-12 col-lg-4 col-xl-4 row container-btn-create">
-
+                                    <!--
                                     <a href="/partidas/criar_automatica/" class="btn btn-md btn-primary container-btn-create-automatica">
                                         <img src="/static/images-logo/icone_automato.svg" alt="automato" class="icon-robo"></img>
                                     </a>
+                                    -->
 
                                 <a href="/criar_partida/" class="btn btn-md btn-success btn-create">
                                     <em class="icon ni ni-plus"></em>
@@ -113,7 +114,7 @@ INFORMAÇÕES DAS PARTIDAS
                             <thead class="thead-dark text-center thead-content">
                               <tr>
                                 <th scope="col"></th>
-                                <th scope="col"></th>
+                                <!--<th scope="col"></th>-->
                                 <th scope="col">Sorteio</th>
                                 <th scope="col">Data/Hora</th>
                                 <th scope="col">Kuadra</th>
@@ -121,10 +122,11 @@ INFORMAÇÕES DAS PARTIDAS
                                 <th scope="col">Keno</th>
                                 <th scope="col">Tipo</th>
                                 <th scope="col">Participantes</th>
-                                <th scope="col">Novos Participantes</th>
+                                <th scope="col">Novos</th>
+                                  <th scope="col">Assistiram</th>
                                 <th scope="col"></th>
                                 <th scope="col"></th>
-                                <th scope="col"></th>
+                                <!--<th scope="col"></th>-->
                               </tr>
                             </thead>
                             <tbody class="text-center tbody-content">
@@ -145,8 +147,9 @@ INFORMAÇÕES DAS PARTIDAS
                                         </a>
                                     {% endif %}
                                 </td>
+                                  <!--
                                 <td class="celula-icon">{% if p.id_automato %}<img src="/static/images-logo/icone_automato.svg" class="icon-robo-2"/>{% endif %}</td>
-
+                                    -->
                                 <th scope="row">{{ p.id }}</th>
                                 <td class="font-table-2">{{ p.data_partida|date:"SHORT_DATETIME_FORMAT" }}</td>
                                 <td>{{ p.valor_kuadra }}</td>
@@ -158,6 +161,7 @@ INFORMAÇÕES DAS PARTIDAS
 
                                 <td>{{ p.num_participantes }}</td>
                                 <td>{{ p.novos_participantes }}</td>
+                                <td>{{ p.cartelas_receberam_sorteio.count }}</td>
                                 {% if p.num_participantes == 0 %}
                                 <td>
                                     <a href="/cancelar_partida/{{ p.id }}/" class="btn btn-danger btn-create-secondary">
@@ -178,13 +182,13 @@ INFORMAÇÕES DAS PARTIDAS
                                     <em class="icon ni ni-square-fill icon-identificacao icon-confirmado"></em>
                                     {% endif %}
                                 </td>
-                                <td>
+                                <!--<td>
                                     {% if p.id_automato and not p.bolas_sorteadas %}
                                     <a href="/partida/{{ p.id }}/parar" class="btn btn-danger btn-create-secondary btn-Branco">
                                         <em class="icon ni ni-stop-fill"></em>
                                     </a>
                                     {% endif %}
-                                </td>
+                                </td>-->
                               </tr>
                             {% endfor %}
 
