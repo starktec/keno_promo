@@ -95,6 +95,7 @@ class Configuracao(models.Model):
     # Conexao com o instagram
     instagram_connection = models.BinaryField(blank=True,null=True)
     perfil_default = models.URLField(blank=True,null=True)
+    validacao_ativa = models.BooleanField(default=True)
 
     # Link para jogos reais
     nome_botao = models.CharField(max_length=200,blank=True,null=True)
