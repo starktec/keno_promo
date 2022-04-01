@@ -54,7 +54,7 @@ class Agenda():
     # AGENDADOR PARA SORTEIOS
     def agendar(self, partida):
         try:
-            agenda = BackgroundScheduler(daemon=True,)
+            agenda = BackgroundScheduler(daemon=True,timezone="America/Recife")
             configuracao = Configuracao.objects.last()
             data = partida.data_partida + datetime.timedelta(seconds=configuracao.iniciar_sorteio_em)
             self.log("Agendamento sendo feito para a partida "+str(partida.id)+" horario + " + str(partida.data_partida))
@@ -387,7 +387,7 @@ class Agenda():
     # AGENDADOR PARA TEMPLATE DE PARTIDA
     def agendar_template(self, template, agora=False):
         try:
-            agenda_template = BackgroundScheduler(daemon=True,)
+            agenda_template = BackgroundScheduler(daemon=True,timezone="America/Recife")
             configuracao = Configuracao.objects.all().last()
             if agora:
                 self.sortear_template(template=template,agenda_t=None, restart=False)
