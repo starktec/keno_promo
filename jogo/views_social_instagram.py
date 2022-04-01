@@ -27,14 +27,14 @@ CLIENT = None
 
 
 def setSocialConnection(deactivate=False):
-    '''
+    """
     Função que gerencia as contas e as conexões, definindo quem será usada na próxima operação de
     interação com a rede social
     :param deactivate: Opcional. Informa se deve suspender uma conta por falha de comunicação
     :type deactivate: bool
     :return: True, informando que as operações envolvem validação ou False, quando não há validação
     :rtype: bool
-    '''
+    """
     
     with transaction.atomic():
         global CLIENT
@@ -94,13 +94,13 @@ setSocialConnection()
 @csrf_exempt
 @require_http_methods(["GET"])
 def index_social(request):
-    '''
+    """
     Busca a próxima partida criada e a sua regra
     :param request: HTTPRequest
     :type request: HTTPRequest
     :return: json informando a regra, a url da regra, o nome de botao e a url desse botao
     :rtype: JsonResponse
-    '''
+    """
     seguir_url = ""
     seguir = "@"
     agora = datetime.datetime.now()
@@ -127,13 +127,13 @@ def index_social(request):
 
 @api_view(['POST'])
 def gerar_bilhete(request):
-    '''
+    """
     Dado o perfil, validar (ou nao) o perfil, criar um jogador caso precise, associar o jogador a uma cartela
     :param request: HTTPRequest
     :type request: HTTPRequest
     :return: Json, com o codigo do bilhete e o codigo do sorteio, ou mensagens de erro
     :rtype: JsonResponse
-    '''
+    """
     mensagem = ""
     if 'Authorization' in request.headers and "Token" in request.headers['Authorization']:
         token = request.headers['Authorization'].split("Token ")[1]
