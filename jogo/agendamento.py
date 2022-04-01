@@ -71,7 +71,7 @@ class Agenda():
     def sortear_agendado(self, partida, reload=True, agenda=None):
         self.log("TENTATIVA: SORTEIO " + str(partida.id) + " reload: " + str(reload) + " agenda: " + str(agenda))
         modo_sorteio = False
-        # if (agenda and partida.id in self.agendas.keys()) or not agenda:
+        partida_id = partida.id
         try:
             c = Agendamento.objects.create(partida=partida)
             if c:
@@ -343,6 +343,9 @@ class Agenda():
                         partida.premios_set = premio
                         partida.data_fim = datetime.datetime.now(tz=RECIFE)
 
+                    # Garantindo que os dados do sorteio sejam salvos
+                    partida.em_sorteio = False
+                    partida.save()
                     self.log("Sorteio Finalizado")
 
                 else:
@@ -356,6 +359,8 @@ class Agenda():
         finally:
             if modo_sorteio:
                 self.log("************Finalizando a rotina de agendamento***************")
+                if not partida:
+                    partida = Partida.objects.filter(id=partida_id).first()
                 if partida:
                     partida.em_sorteio = False
                     partida.save()
@@ -363,12 +368,12 @@ class Agenda():
                     self.log("Disparando eventos WebSocket")
 
                     event_bilhete_sorteio(partida.id)
-
+                    """
                     if partida.partida_automatizada and partida.id_automato:
                         self.log("Sorteio Automatizado Iniciando Script")
                         self.log("id do automato" + str(partida.id_automato))
                         partida_automatizada(partida, self)
-
+                    """
                     self.log("Sorteio Finalizado (finally)")
 
                     self.atualizando_conexoes_websocket(partida)
@@ -378,6 +383,10 @@ class Agenda():
                     Cartela.objects.filter(
                         partida=partida,jogador__isnull=True
                     ).exclude(codigo__in=codigos_participantes).delete()
+                else:
+                    self.log(f"Partida {partida_id} - não encontrada")
+
+                # Encerrando o agendamento
                 if agenda:
                     agenda.shutdown(wait=False)
 
