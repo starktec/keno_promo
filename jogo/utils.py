@@ -1,11 +1,8 @@
-import os
 import random
 
 from asgiref.sync import sync_to_async
-from selenium.webdriver.common.by import By
 
-from jogo import local_settings
-from jogo.models import Automato, Regra, Usuario, Partida, Configuracao, TemplatePartida, Cartela, IPTabela, Conta
+from jogo.models import Regra, Partida, Configuracao, TemplatePartida, Cartela, IPTabela, Conta
 from datetime import date, datetime, timedelta
 
 import datetime
@@ -155,6 +152,8 @@ def comprar_cartelas(partida,quantidade):
     for i in range(quantidade):
         Cartela.objects.create(partida=partida, codigo=numeros[i])
 
+
+# Lidando com proxy
 def get_connection():
     connection = ""
     with transaction.atomic():
@@ -172,25 +171,54 @@ def get_connection():
             connection += str(ultima_posicao)
     return connection
 
-def get_conta(deactivate=False):
+# Lidando com as contas
+
+def desativar_conta(conta, atualizado=False):
+    with transaction.atomic():
+        conta_desativar = Conta.objects.select_for_update().filter(id=conta.id).first()
+        if not atualizado:
+            conta_desativar.ativo = False
+
+        conta_atualizar = Conta.objects.select_for_update().filter(proximo_id=conta.id).first()
+        if conta_atualizar:
+            conta_atualizar.proximo = conta_desativar.proximo
+            conta_desativar.proximo = None
+            conta_atualizar.save()
+
+        conta_desativar.save()
+
+
+def ativar_conta(conta, atualizado=False):
+    with transaction.atomic():
+        conta_ativar = Conta.objects.select_for_update().filter(id=conta.id).first()
+        if not atualizado:
+            conta_ativar.ativo = True
+
+        conta_proximo = Conta.objects.filter(ativo=True).exclude(id=conta.id).last()
+        conta_anterior = Conta.objects.select_for_update().filter(ativo=True).exclude(id=conta.id).first()
+
+        if conta_proximo and conta_anterior:
+            conta_ativar.proximo = conta_proximo
+            conta_anterior.proximo = conta_ativar
+            conta_anterior.save()
+
+        conta_ativar.save()
+
+def get_conta():
     result = Conta.objects.none()
 
     contas = Conta.objects.filter(ativo=True)
     if contas:
         conta = contas.order_by("-ultimo_acesso").first()
         result = conta
-        if deactivate:
-            conta.ativo = False
-            conta.save()
-        else:
-            if conta.proximo:
-                with transaction.atomic():
-                    proximo = Conta.objects.select_for_update().filter(id=conta.proximo.id)
-                    if proximo:
-                        proximo = proximo.first()
-                        proximo.ultimo_acesso = datetime.datetime.now()
-                        proximo.save()
-                        result = proximo
+        if conta.proximo:
+            with transaction.atomic():
+                proximo = Conta.objects.select_for_update().filter(id=conta.proximo.id)
+                if proximo:
+                    proximo = proximo.first()
+                    proximo.ultimo_acesso = datetime.datetime.now()
+                    proximo.save()
+                    result = proximo
 
     return result
 

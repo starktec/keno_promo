@@ -5,6 +5,8 @@ import random
 import pickle
 
 from django.db import transaction
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
@@ -19,12 +21,13 @@ from jogo.models import Jogador, Partida, Cartela, Regra, Configuracao
 
 import logging
 
-from jogo.utils import get_connection, get_conta
+from jogo.utils import get_connection, get_conta, desativar_conta
 
 LOGGER = logging.getLogger(__name__)
 
-CLIENT = None
 
+CLIENT = None
+CONTA_ATUAL = None
 
 def setSocialConnection(deactivate=False):
     """
@@ -38,10 +41,16 @@ def setSocialConnection(deactivate=False):
     
     with transaction.atomic():
         global CLIENT
+        global CONTA_ATUAL
+
+        if deactivate and CONTA_ATUAL:
+            return desativar_conta(CONTA_ATUAL)
+
         configuracao = Configuracao.objects.last()
         if configuracao.validacao_ativa: # Se o servidor está permitido a validar pela rede social
-            conta = get_conta(deactivate)
+            conta = get_conta()
             if conta: # Existem contas registradas no banco
+                CONTA_ATUAL = conta
                 try:
                     # Caso não encontre no banco a instancia da conexao
                     if not conta.instagram_connection:
@@ -68,23 +77,21 @@ def setSocialConnection(deactivate=False):
             else:
                 # Para o caso de não ter cadastrado contas no banco, ou nao estarem ativas, usar o perfil default
                 if configuracao.instagram_connection: # Caso tenha a instancia da conexao
-                    CLIENT = pickle.loads(conta.instagram_connection)
-                    LOGGER.info(f"CONECTION (R) {local_settings.username}")
+                    CLIENT = pickle.loads(configuracao.instagram_connection)
+                    LOGGER.info(f"CONECTION (R) {local_settings.INSTAGRAM_USER}")
                 else: # Caso não encontre no banco a instancia da conexao
                     CLIENT = Client()
-                    CLIENT.login(local_settings.username, local_settings.password) # Faz o login
+                    CLIENT.login(local_settings.INSTAGRAM_USER, local_settings.INSTAGRAM_PASSWORD) # Faz o login
 
                     # Atualizando a conexao no banco
                     configuracao.instagram_connection = pickle.dumps(CLIENT)
                     configuracao.save()
-                    LOGGER.info(f"CONECTION (N) {local_settings.username}")
+                    LOGGER.info(f"CONECTION (N) {local_settings.INSTAGRAM_USER}")
                 proxy = get_connection() # Seleciona uma conexao
                 if proxy:
                     CLIENT.set_proxy(proxy) # Define a conexao
                 return True
         else: # Se o servidor está proibido de validar pela rede social
-            if deactivate: # Ação de desativar uma conta
-                get_conta(deactivate)
             # Definindo o CLIENT como nulo para não ser usado
             CLIENT = None
         return False

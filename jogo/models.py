@@ -583,11 +583,19 @@ class Conta(models.Model):
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
         created = False
+        desativar = False
+        ativar = False
         if not self.id:
             created = True
         else:
-            print(update_fields)
+            conta_antes = Conta.objects.get(id=self.id)
+            if conta_antes.ativo and not self.ativo:
+                desativar = True
+            if not conta_antes.ativo and self.ativo:
+                ativar = True
+
         super().save(force_insert,force_update,using,update_fields)
+
         if created:
             self.proximo = self
             # Listar todas as contas ativas por ID:Conta (excluindo a recem criada)
@@ -604,6 +612,13 @@ class Conta(models.Model):
                 conta_primeira = ids[conta_primeira_id]
                 conta_primeira.proximo = self
                 conta_primeira.save()
+
+        else:
+            from jogo.utils import ativar_conta,desativar_conta
+            if desativar:
+                desativar_conta(self,atualizado=True)
+            if ativar:
+                ativar_conta(self,atualizado=True)
 
 
 class IPTabela(models.Model):
