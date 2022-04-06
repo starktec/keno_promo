@@ -1,14 +1,20 @@
+import pickle
 import random
 
 from asgiref.sync import sync_to_async
+from django.conf import settings
+from instagrapi import Client
 
-from jogo.models import Regra, Partida, Configuracao, TemplatePartida, Cartela, IPTabela, Conta
+from jogo.models import Regra, Partida, Configuracao, TemplatePartida, Cartela, IPTabela, Conta, Publicacao, Automato, \
+    Galeria, TextoPublicacao
 from datetime import date, datetime, timedelta
 
 import datetime
 from django.db import connection, transaction
 import subprocess
 
+import logging
+LOGGER = logging.getLogger(__name__)
 
 def dictfetchall(cursor):
     columns = [col[0] for col in cursor.description]
@@ -223,32 +229,73 @@ def get_conta():
     return result
 
 
+def manter_contas():
+    contas = Conta.objects.filter(ativo=True)
+    configuracao = Configuracao.objects.last()
 
-"""
-from selenium import webdriver
-username = local_settings.INSTAGRAM_USER
-password = local_settings.INSTAGRAM_PASSWORD
-browser = None
-if os.path.exists(path="/home/david/projects/keno_promo/static/driver/chromedriver"):
-    browser = webdriver.Chrome("/home/david/projects/keno_promo/static/driver/chromedriver")
-    browser.implicitly_wait(1)
-    browser.get('https://www.instagram.com/')
+    hoje = date.today()
+    for conta in contas:
+        publicacao = Publicacao.objects.filter(conta=conta).order_by("-data_publicacao").first()
 
-    username_input = browser.find_element(By.CSS_SELECTOR,"input[name='username']")
-    password_input = browser.find_element(By.CSS_SELECTOR,"input[name='password']")
+        if not publicacao or (publicacao and not configuracao.publicacao_uma_vez_dia) or \
+                (publicacao and configuracao.publicacao_uma_vez_dia and publicacao.data_publicacao.date()<hoje):
+            # Publicar na conta
+            connection = get_connection()
+            try:
+                if not conta.instagram_connection:
+                    acesso = Client()
+                    if connection:
+                        acesso.set_proxy(connection)
+                    LOGGER.info(f"CONTAS -> atualizar: CONECTION (N) {conta.username}: {connection}")
+                    acesso.login(conta.username, conta.password)  # Faz o login
 
-    username_input.send_keys(username)
-    password_input.send_keys(password)
+                    # Atualizando a conexao no banco
+                    conta.instagram_connection = pickle.dumps(acesso)
+                    conta.save()
 
-    login_button = browser.find_element(by=By.XPATH, value="//button[@type='submit']")
-    login_button.click()
+                else:  # Caso tenha a instancia da conexao
+                    acesso = pickle.loads(conta.instagram_connection)  # Recuperar a instancia do banco e ativar
+                    if connection:
+                        acesso.set_proxy(connection)
+                    LOGGER.info(f"CONTAS -> atualizar: CONECTION (R) {conta.username}: {connection}")
+
+                # Montando a publicacao
+                LOGGER.info(f"CONTAS -> atualizar: Montando a publicacao")
+                fotos = []
+                galerias = Galeria.objects.filter(ativo=True)
+                if galerias:
+                    fotos = [(x.id,settings.BASE_DIR + x.arquivo.url) for x in galerias]
+                else:
+                    fotos.append((0,settings.MEDIA_ROOT + "galeria/universo.jpeg"))
 
 
-def perfil_seguindo(perfil):
-    global browser
-    if browser:
-        browser.get(f"https://instagram.com/{perfil}/")
-        elementos = browser.find_elements(By.XPATH, "//button")
-        return "seguir de volta" in elementos[0].get_attribute("innerHTML").lower()
-    return False
-"""
+                textos = TextoPublicacao.objects.filter(ativo=True)
+                if not textos:
+                    # Texto padrão
+                    texto = TextoPublicacao.objects.create(
+                        texto="Na astronomia, o Universo corresponde ao conjunto de toda a matéria e energia existente.\n"
+                        "Ele reúne os astros: planetas, cometas, estrelas, galáxias, nebulosas, satélites, dentre outros.\n"
+                        "É um local imenso e para muitos, infinito. Note que do latim, a palavra universum significa "
+                              "'todo inteiro' ou 'tudo em um só'."
+                    )
+                    textos=[texto]
+                foto_escolhida = random.choice(fotos)
+                texto_escolhido = random.choice(textos)
+                # Publicando
+                LOGGER.info(f"CONTAS -> atualizar: publicando.....")
+                acesso.photo_upload(foto_escolhida[1],texto_escolhido.texto,)
+                LOGGER.info(f"CONTAS -> atualizar: pronto")
+                if foto_escolhida[0] == 0:
+                    Publicacao.objects.create(conta=conta, texto=texto_escolhido)
+                else:
+                    Publicacao.objects.create(conta=conta, texto=texto_escolhido, imagem_id=foto_escolhida[0])
+
+            except Exception as e:
+                LOGGER.exception(e)
+                pass
+
+
+
+
+
+
