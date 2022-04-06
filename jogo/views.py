@@ -12,7 +12,7 @@ from instagrapi import Client
 from instagrapi.exceptions import ClientLoginRequired, UserNotFound
 
 from jogo.choices import AcaoTipoChoices, StatusCartelaChoice
-from jogo.utils import testa_horario, comprar_cartelas
+from jogo.utils import testa_horario, comprar_cartelas, manter_contas
 from jogo.constantes import VALORES_VOZES
 
 from jogo.agendamento import Agenda
@@ -761,6 +761,9 @@ def templates(request):
 def realtime_data(request):    
     return render(request, 'realtime_data.html')
 
+def manter_contas_view(request):
+    manter_contas()
+    return HttpResponse(status=200,content="<h1>pronto</h1>")
 
 
 

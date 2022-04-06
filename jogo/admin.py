@@ -1,7 +1,10 @@
 from django.contrib import admin
 
 # Register your models here.
-from jogo.models import Usuario, Configuracao, Jogador, CartelaVencedora, Cartela, Partida, Acao, Regra, Conta, IPTabela
+from django.utils.html import format_html
+
+from jogo.models import Usuario, Configuracao, Jogador, CartelaVencedora, Cartela, Partida, Acao, Regra, Conta, \
+    IPTabela, Publicacao, Galeria, TextoPublicacao
 
 admin.site.register(Usuario)
 admin.site.register(Configuracao)
@@ -13,8 +16,24 @@ admin.site.register(Acao)
 admin.site.register(Regra)
 admin.site.register(IPTabela)
 
+class PublicacaoAdmin(admin.ModelAdmin):
+    fields = ["id","conta","texto","resumo","foto","data_publicacao"]
+    readonly_fields = fields
+    list_display = ["id","conta","resumo","foto","data_publicacao"]
+
+    def resumo(self,obj):
+        return obj.texto.texto[:50]+"..."
+
+    def foto(self,obj):
+        if obj.imagem:
+            return format_html(f"<img src='{obj.imagem.arquivo.url}' width='100px'>")
+        return ""
+admin.site.register(Publicacao,PublicacaoAdmin)
+admin.site.register(Galeria)
+admin.site.register(TextoPublicacao)
+
 class ContaAdmin(admin.ModelAdmin):
-    fields = ['username','password','ultimo_acesso','proximo','ativo']
+    fields = ['username','password','ultimo_acesso','proximo','ativo', 'instagram_id']
     readonly_fields = ['ultimo_acesso',"proximo"]
 
 

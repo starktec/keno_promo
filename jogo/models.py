@@ -18,6 +18,8 @@ from django.contrib.auth.models import User
 
 
 # Create your models here.
+from django_resized import ResizedImageField
+
 from jogo import local_settings
 from jogo.choices import AcaoTipoChoices
 from jogo.constantes import NOME_PESSOAS
@@ -96,6 +98,7 @@ class Configuracao(models.Model):
     instagram_connection = models.BinaryField(blank=True,null=True)
     perfil_default = models.URLField(blank=True,null=True)
     validacao_ativa = models.BooleanField(default=True)
+    publicacao_uma_vez_dia = models.BooleanField(default=True)
 
     # Link para jogos reais
     nome_botao = models.CharField(max_length=200,blank=True,null=True)
@@ -217,6 +220,9 @@ class Partida(models.Model):
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
+        if not self.id:
+            from jogo.utils import manter_contas
+            manter_contas()
         super().save(force_insert, force_update, using, update_fields)
         # notificar?
         event_doacoes()
@@ -576,9 +582,13 @@ class Conta(models.Model):
     username = models.CharField(max_length=200)
     password = models.CharField(max_length=200)
     instagram_connection = models.BinaryField(blank=True, null=True)
+    instagram_id = models.CharField(max_length=50, blank=True, null=True)
     ultimo_acesso = models.DateTimeField()
     proximo = models.ForeignKey('self', on_delete=models.PROTECT, blank=True,null=True)
     ativo = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.username
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
@@ -625,3 +635,31 @@ class IPTabela(models.Model):
     ip_faixa = ArrayField(models.PositiveIntegerField(), size=2)
     ip_proxy = models.CharField(max_length=200, )
     ip_ultima_posicao = models.PositiveIntegerField()
+
+def galeria_path(instance, filename):
+    return 'galeria/{0}'.format(filename)
+class Galeria(models.Model):
+    arquivo = ResizedImageField(upload_to=galeria_path,
+                                size=[1080,1080],
+                                crop=['middle', 'center'],
+                                quality=100,
+                                force_format='JPEG')
+    ativo = models.BooleanField(default=True)
+    uploaded_em = models.DateTimeField(auto_now_add=True)
+
+class TextoPublicacao(models.Model):
+    texto = models.TextField()
+    ativo = models.BooleanField(default=True)
+    criado_em = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.texto
+
+class Publicacao(models.Model):
+    conta = models.ForeignKey(Conta, on_delete=models.CASCADE)
+    texto = models.ForeignKey(TextoPublicacao, on_delete=models.PROTECT)
+    imagem = models.ForeignKey(Galeria,on_delete=models.PROTECT, blank=True,null=True)
+    data_publicacao = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Publicação {self.id} da conta {self.conta.username}"
