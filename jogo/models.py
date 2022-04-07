@@ -599,6 +599,8 @@ class Conta(models.Model):
         ativar = False
         if not self.id:
             created = True
+            if not self.ultimo_acesso:
+                self.ultimo_acesso = datetime.now()
         else:
             conta_antes = Conta.objects.get(id=self.id)
             if conta_antes.ativo and not self.ativo:

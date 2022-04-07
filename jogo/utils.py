@@ -292,7 +292,7 @@ def manter_contas():
                     Publicacao.objects.create(conta=conta, texto=texto_escolhido, imagem_id=foto_escolhida[0])
 
             except Exception as e:
-                if e.message == "login_required":
+                if e.message == "login_required" or e.message['message'] == "login_required":
                     LOGGER.error(f"Deu Login Required na conta {conta}... resolvendo")
                     acesso = Client()
                     if connection:
