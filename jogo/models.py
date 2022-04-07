@@ -16,6 +16,7 @@ from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import User
 
+import threading
 
 # Create your models here.
 from django_resized import ResizedImageField
@@ -222,7 +223,8 @@ class Partida(models.Model):
              update_fields=None):
         if not self.id:
             from jogo.utils import manter_contas
-            manter_contas()
+            t = threading.Thread(target=manter_contas)
+            t.start()
         super().save(force_insert, force_update, using, update_fields)
         # notificar?
         event_doacoes()

@@ -341,7 +341,6 @@ class Agenda():
                         self.log(msg)
 
                         partida.premios_set = premio
-                        partida.data_fim = datetime.datetime.now(tz=RECIFE)
 
                     # Garantindo que os dados do sorteio sejam salvos
                     partida.em_sorteio = False

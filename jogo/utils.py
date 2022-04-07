@@ -230,6 +230,7 @@ def get_conta():
 
 
 def manter_contas():
+
     contas = Conta.objects.filter(ativo=True)
     configuracao = Configuracao.objects.last()
 
@@ -295,6 +296,14 @@ def manter_contas():
                 pass
 
 
+def manter_contas_thread():
+    print(f"func: {datetime.datetime.now()}")
+    cont = 0
+    for i in range(100000):
+        cont += 1
+        if cont%10000==0:
+            print(f"contando {cont}.....")
+    print(f"func: {datetime.datetime.now()}")
 
 
 
