@@ -292,8 +292,29 @@ def manter_contas():
                     Publicacao.objects.create(conta=conta, texto=texto_escolhido, imagem_id=foto_escolhida[0])
 
             except Exception as e:
-                LOGGER.exception(e)
-                pass
+                if e.message == "login_required":
+                    LOGGER.error(f"Deu Login Required na conta {conta}... resolvendo")
+                    acesso = Client()
+                    if connection:
+                        acesso.set_proxy(connection)
+                    LOGGER.info(f"CONTAS -> atualizar: CONECTION (N) {conta.username}: {connection}")
+                    acesso.login(conta.username, conta.password)  # Faz o login
+
+                    # Atualizando a conexao no banco
+                    conta.instagram_connection = pickle.dumps(acesso)
+                    conta.save()
+
+                    LOGGER.info(f"CONTAS -> atualizar: publicando.....")
+                    acesso.photo_upload(foto_escolhida[1], texto_escolhido.texto, )
+                    LOGGER.info(f"CONTAS -> atualizar: pronto")
+                    if foto_escolhida[0] == 0:
+                        Publicacao.objects.create(conta=conta, texto=texto_escolhido)
+                    else:
+                        Publicacao.objects.create(conta=conta, texto=texto_escolhido, imagem_id=foto_escolhida[0])
+                    pass
+                else:
+                    LOGGER.exception(e)
+                    pass
 
 
 def manter_contas_thread():
