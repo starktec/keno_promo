@@ -588,6 +588,7 @@ class Conta(models.Model):
     ultimo_acesso = models.DateTimeField()
     proximo = models.ForeignKey('self', on_delete=models.PROTECT, blank=True,null=True)
     ativo = models.BooleanField(default=True)
+    atencao = models.BooleanField(default=False)
 
     def __str__(self):
         return self.username

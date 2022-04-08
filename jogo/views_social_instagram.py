@@ -209,6 +209,12 @@ def gerar_bilhete(request):
                             return JsonResponse(data={"detail": mensagem}, status=403)
                         except (PleaseWaitFewMinutes, ChallengeRequired):
                             setSocialConnection(deactivate=True)
+                        except Exception:
+                            CONTA_ATUAL.atencao = True
+                            CONTA_ATUAL.save()
+                            setSocialConnection()
+                            jogador_seguindo = CLIENT.search_followers_v1(user_id=perfil_id,
+                                                                          query=perfil) if CLIENT else True
                         finally:
                             if jogador_seguindo:
                                 nome = jogador_instagram.full_name if jogador_instagram else perfil
@@ -246,26 +252,52 @@ def gerar_bilhete(request):
                                 return JsonResponse(data={"detail": mensagem}, status=404)
 
                     else:
-                        setSocialConnection()
-                        jogador_seguindo = CLIENT.search_followers_v1(user_id=perfil_id,
-                                                                      query=perfil) if CLIENT else True
-                        if not jogador_seguindo:
-                            mensagem = "Você deixou de seguir o perfil?"
+                        try:
+                            setSocialConnection()
+                            jogador_seguindo = CLIENT.search_followers_v1(user_id=perfil_id,
+                                                                          query=perfil) if CLIENT else True
+                            if not jogador_seguindo:
+                                mensagem = "Você deixou de seguir o perfil?"
+                                LOGGER.info(mensagem)
+                                return JsonResponse(data={"detail": mensagem}, status=404)
+                        except UserNotFound as e:
+                            mensagem = "Perfil não encontrado, tente novamente mais tarde"
                             LOGGER.info(mensagem)
-                            return JsonResponse(data={"detail": mensagem}, status=404)
+                            return JsonResponse(data={"detail": mensagem}, status=403)
+                        except (PleaseWaitFewMinutes, ChallengeRequired):
+                            setSocialConnection(deactivate=True)
+                        except Exception:
+                            CONTA_ATUAL.atencao=True
+                            CONTA_ATUAL.save()
+                            setSocialConnection()
+                            jogador_seguindo = CLIENT.search_followers_v1(user_id=perfil_id,
+                                                                          query=perfil) if CLIENT else True
 
                     # atualizar o nome do jogador
                     if not jogador.nome or jogador.nome == jogador.usuario or jogador.nome=="":
-                        setSocialConnection()
-                        jogador_instagram = CLIENT.user_info_by_username(perfil) if CLIENT else False
-                        if jogador_instagram:
-                            jogador.nome = jogador_instagram.full_name
-                            jogador.usuario_id = jogador_instagram.pk
-                            jogador.save()
-                        else:
-                            if jogador.nome != jogador.usuario:
-                                jogador.nome = jogador.usuario
+                        try:
+                            setSocialConnection()
+                            jogador_instagram = CLIENT.user_info_by_username(perfil) if CLIENT else False
+                            if jogador_instagram:
+                                jogador.nome = jogador_instagram.full_name
+                                jogador.usuario_id = jogador_instagram.pk
                                 jogador.save()
+                            else:
+                                if jogador.nome != jogador.usuario:
+                                    jogador.nome = jogador.usuario
+                                    jogador.save()
+                        except UserNotFound as e:
+                            mensagem = "Perfil não encontrado, tente novamente mais tarde"
+                            LOGGER.info(mensagem)
+                            return JsonResponse(data={"detail": mensagem}, status=403)
+                        except (PleaseWaitFewMinutes, ChallengeRequired):
+                            setSocialConnection(deactivate=True)
+                        except Exception:
+                            CONTA_ATUAL.atencao=True
+                            CONTA_ATUAL.save()
+                            setSocialConnection()
+                            jogador_seguindo = CLIENT.search_followers_v1(user_id=perfil_id,
+                                                                          query=perfil) if CLIENT else True
 
                     cartela = Cartela.objects.filter(jogador=jogador, partida=partida).first()
                     if cartela:

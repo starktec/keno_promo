@@ -298,16 +298,16 @@ def manter_contas():
                         acesso = Client()
                         if connection:
                             acesso.set_proxy(connection)
-                        LOGGER.info(f"CONTAS -> atualizar: CONECTION (N) {conta.username}: {connection}")
+                        LOGGER.info(f"CONTAS (exception) -> atualizar: CONECTION (N) {conta.username}: {connection}")
                         acesso.login(conta.username, conta.password)  # Faz o login
 
                         # Atualizando a conexao no banco
                         conta.instagram_connection = pickle.dumps(acesso)
                         conta.save()
 
-                        LOGGER.info(f"CONTAS -> atualizar: publicando.....")
+                        LOGGER.info(f"CONTAS (exception) -> atualizar: publicando.....")
                         acesso.photo_upload(foto_escolhida[1], texto_escolhido.texto, )
-                        LOGGER.info(f"CONTAS -> atualizar: pronto")
+                        LOGGER.info(f"CONTAS (exception) -> atualizar: pronto")
                         if foto_escolhida[0] == 0:
                             Publicacao.objects.create(conta=conta, texto=texto_escolhido)
                         else:
@@ -318,6 +318,8 @@ def manter_contas():
                         conta.save()
                 else:
                     LOGGER.exception(e)
+                    conta.atencao = True
+                    conta.save()
                     pass
 
 
