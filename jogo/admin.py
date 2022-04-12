@@ -4,10 +4,11 @@ from django.contrib import admin
 from django.utils.html import format_html
 
 from jogo.models import Usuario, Configuracao, Jogador, CartelaVencedora, Cartela, Partida, Acao, Regra, Conta, \
-    IPTabela, Publicacao, Galeria, TextoPublicacao
+    IPTabela, Publicacao, Galeria, TextoPublicacao, ConfiguracaoInstagram
 
 admin.site.register(Usuario)
 admin.site.register(Configuracao)
+admin.site.register(ConfiguracaoInstagram)
 admin.site.register(Partida)
 admin.site.register(Cartela)
 admin.site.register(CartelaVencedora)
