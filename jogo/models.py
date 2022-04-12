@@ -1,4 +1,5 @@
 import base64
+import pickle
 
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
@@ -102,7 +103,7 @@ class Configuracao(models.Model):
     # instagram compatibilidade
     instagram_connection = models.BinaryField(blank=True, null=True)
     perfil_default = models.URLField(blank=True, null=True)
-    validacao_ativa = models.BooleanField(default=True)
+    validacao_ativa = models.BooleanField(default=False)
     publicacao_uma_vez_dia = models.BooleanField(default=True)
 
     def save(self, force_insert=False, force_update=False, using=None,
@@ -115,9 +116,18 @@ class ConfiguracaoInstagram(models.Model):
     # Conexao com o instagram
     instagram_connection = models.BinaryField(blank=True, null=True)
     perfil_default = models.URLField(blank=True, null=True)
-    validacao_ativa = models.BooleanField(default=True)
+    validacao_ativa = models.BooleanField(default=False)
     publicacao_uma_vez_dia = models.BooleanField(default=True)
     perfil_id = models.CharField(max_length=50, blank=True, null=True)
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        if not self.id:
+            conf = Configuracao.objecst.last()
+            if conf and conf.instagram_connection:
+                conexao = pickle.loads(conf.instagram_connection)
+                self.instagram_connection = pickle.dumps(conexao)
+        super().save(force_insert,force_update,using,update_fields)
 
 
 class Usuario(models.Model):
