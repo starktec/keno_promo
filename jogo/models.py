@@ -123,7 +123,7 @@ class ConfiguracaoInstagram(models.Model):
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
         if not self.id:
-            conf = Configuracao.objecst.last()
+            conf = Configuracao.objects.last()
             if conf and conf.instagram_connection:
                 conexao = pickle.loads(conf.instagram_connection)
                 self.instagram_connection = pickle.dumps(conexao)
