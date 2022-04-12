@@ -99,6 +99,12 @@ class Configuracao(models.Model):
     nome_botao = models.CharField(max_length=200,blank=True,null=True)
     url_botao = models.URLField(blank=True,null=True)
 
+    # instagram compatibilidade
+    instagram_connection = models.BinaryField(blank=True, null=True)
+    perfil_default = models.URLField(blank=True, null=True)
+    validacao_ativa = models.BooleanField(default=True)
+    publicacao_uma_vez_dia = models.BooleanField(default=True)
+
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
         if not self.id:
