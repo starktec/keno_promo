@@ -18,8 +18,9 @@ from jogo.constantes import VALORES_VOZES
 from jogo.agendamento import Agenda
 from jogo.forms import CartelasFilterForm, JogadoresForm, NovaPartidaAutomatizada, PartidaEditForm, GanhadoresForm, NovaPartidaForm, UsuarioAddForm, \
     ConfiguracaoForm, TemplateEditForm
-from jogo.models import Jogador, Partida, Automato, Cartela, Usuario, Configuracao, CartelaVencedora, TemplatePartida, Regra, \
-    Acao, PerfilSocial
+from jogo.models import Jogador, Partida, Automato, Cartela, Usuario, Configuracao, CartelaVencedora, TemplatePartida, \
+    Regra, \
+    Acao, PerfilSocial, ConfiguracaoInstagram
 from jogo.views_social_instagram import CLIENT
 from jogo.websocket_triggers_bilhete import event_bilhete_partida
 
@@ -418,21 +419,25 @@ def criarpartida(request):
                             if perfil.endswith("/"):
                                 perfil = perfil[:-1]
                             perfil_id = ""
-                            try:
-                                api = Client()
-                                perfil_id = api.user_id_from_username(perfil)
-                                if perfil_id and "<!DOCTYPE html>" in perfil_id:
-                                    raise ClientLoginRequired
-                            except ClientLoginRequired:
+                            configuracao_instagram = ConfiguracaoInstagram.objects.last()
+                            if configuracao_instagram and configuracao_instagram.validacao_ativa:
                                 try:
-                                    if CLIENT:
-                                        perfil_id = CLIENT.user_info_by_username_v1(perfil)
-                                        time.sleep(1)
-                                except UserNotFound:
-                                    raise Exception
-                                except Exception:
-                                    pass
-
+                                    api = Client()
+                                    perfil_id = api.user_id_from_username(perfil)
+                                    if perfil_id and "<!DOCTYPE html>" in perfil_id:
+                                        raise ClientLoginRequired
+                                except ClientLoginRequired:
+                                    try:
+                                        if CLIENT:
+                                            perfil_id = CLIENT.user_info_by_username_v1(perfil)
+                                            time.sleep(1)
+                                    except UserNotFound:
+                                        raise Exception
+                                    except Exception:
+                                        pass
+                            else:
+                                if configuracao_instagram:
+                                    perfil_id = configuracao_instagram.perfil_id or ""
                             perfil_social = PerfilSocial.objects.create(
                                 url = url_social, perfil_id = perfil_id
                             )

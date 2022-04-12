@@ -95,12 +95,6 @@ class Configuracao(models.Model):
     # Versao da branch
     versao = models.CharField(max_length=100, blank=True, null=True)
 
-    # Conexao com o instagram
-    instagram_connection = models.BinaryField(blank=True,null=True)
-    perfil_default = models.URLField(blank=True,null=True)
-    validacao_ativa = models.BooleanField(default=True)
-    publicacao_uma_vez_dia = models.BooleanField(default=True)
-
     # Link para jogos reais
     nome_botao = models.CharField(max_length=200,blank=True,null=True)
     url_botao = models.URLField(blank=True,null=True)
@@ -110,6 +104,14 @@ class Configuracao(models.Model):
         if not self.id:
             self.token_server = secrets.token_hex(20)
         super().save(force_insert, force_update, using, update_fields)
+
+class ConfiguracaoInstagram(models.Model):
+    # Conexao com o instagram
+    instagram_connection = models.BinaryField(blank=True, null=True)
+    perfil_default = models.URLField(blank=True, null=True)
+    validacao_ativa = models.BooleanField(default=True)
+    publicacao_uma_vez_dia = models.BooleanField(default=True)
+    perfil_id = models.CharField(max_length=50, blank=True, null=True)
 
 
 class Usuario(models.Model):

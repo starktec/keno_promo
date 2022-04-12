@@ -17,7 +17,7 @@ from rest_framework.decorators import api_view
 
 from jogo import local_settings
 from jogo.choices import AcaoTipoChoices
-from jogo.models import Jogador, Partida, Cartela, Regra, Configuracao
+from jogo.models import Jogador, Partida, Cartela, Regra, Configuracao, ConfiguracaoInstagram
 
 import logging
 
@@ -46,8 +46,8 @@ def setSocialConnection(deactivate=False):
         if deactivate and CONTA_ATUAL:
             return desativar_conta(CONTA_ATUAL)
 
-        configuracao = Configuracao.objects.last()
-        if configuracao.validacao_ativa: # Se o servidor está permitido a validar pela rede social
+        configuracao = ConfiguracaoInstagram.objects.last()
+        if configuracao and configuracao.validacao_ativa: # Se o servidor está permitido a validar pela rede social
             conta = get_conta()
             if conta: # Existem contas registradas no banco
                 CONTA_ATUAL = conta
@@ -75,22 +75,25 @@ def setSocialConnection(deactivate=False):
                 except:
                     return True
             else:
-                # Para o caso de não ter cadastrado contas no banco, ou nao estarem ativas, usar o perfil default
-                if configuracao.instagram_connection: # Caso tenha a instancia da conexao
-                    CLIENT = pickle.loads(configuracao.instagram_connection)
-                    LOGGER.info(f"CONECTION (R) {local_settings.INSTAGRAM_USER}")
-                else: # Caso não encontre no banco a instancia da conexao
-                    CLIENT = Client()
-                    CLIENT.login(local_settings.INSTAGRAM_USER, local_settings.INSTAGRAM_PASSWORD) # Faz o login
+                try:
+                    # Para o caso de não ter cadastrado contas no banco, ou nao estarem ativas, usar o perfil default
+                    if configuracao.instagram_connection: # Caso tenha a instancia da conexao
+                        CLIENT = pickle.loads(configuracao.instagram_connection)
+                        LOGGER.info(f"CONECTION (R) {local_settings.INSTAGRAM_USER}")
+                    else: # Caso não encontre no banco a instancia da conexao
+                        CLIENT = Client()
+                        CLIENT.login(local_settings.INSTAGRAM_USER, local_settings.INSTAGRAM_PASSWORD) # Faz o login
 
-                    # Atualizando a conexao no banco
-                    configuracao.instagram_connection = pickle.dumps(CLIENT)
-                    configuracao.save()
-                    LOGGER.info(f"CONECTION (N) {local_settings.INSTAGRAM_USER}")
-                proxy = get_connection() # Seleciona uma conexao
-                if proxy:
-                    CLIENT.set_proxy(proxy) # Define a conexao
-                return True
+                        # Atualizando a conexao no banco
+                        configuracao.instagram_connection = pickle.dumps(CLIENT)
+                        configuracao.save()
+                        LOGGER.info(f"CONECTION (N) {local_settings.INSTAGRAM_USER}")
+                    proxy = get_connection() # Seleciona uma conexao
+                    if proxy:
+                        CLIENT.set_proxy(proxy) # Define a conexao
+                    return True
+                except:
+                    CLIENT = None
         else: # Se o servidor está proibido de validar pela rede social
             # Definindo o CLIENT como nulo para não ser usado
             CLIENT = None
@@ -113,6 +116,7 @@ def index_social(request):
     agora = datetime.datetime.now()
     partida = Partida.objects.filter(data_partida__gt=agora).order_by('data_partida').first()
     configuracao = Configuracao.objects.last()
+    configuracao_instagram = ConfiguracaoInstagram.objects.last()
     if partida:
         acoes = partida.regra.acao_set.all()
         for acao in acoes:
@@ -122,8 +126,10 @@ def index_social(request):
                 if seguir.endswith("/"):
                     seguir = seguir[:-1]
     else:
-        seguir_url = configuracao.perfil_default
-        seguir += seguir_url.split("/www.instagram.com/")[1]
+        seguir_url = configuracao_instagram.perfil_default if configuracao_instagram else ""
+        seguir = ""
+        if seguir_url:
+            seguir += seguir_url.split("/www.instagram.com/")[1]
         if seguir.endswith("/"):
             seguir = seguir[:-1]
     url_botao = configuracao.url_botao or ""
