@@ -392,10 +392,14 @@ def jogadores(request):
 def criarpartida(request):
     usuario = Usuario.objects.filter(usuario=request.user).first()
     hoje = date.today()
-    form = NovaPartidaForm(initial={'dia_partida': hoje})
+    configuracao = Configuracao.objects.last()
+
+    form = NovaPartidaForm(
+        initial={'dia_partida': hoje,
+                 "numero_cartelas_iniciais":configuracao.quantidade_cartelas_compradas if configuracao else 500})
     ontem = datetime.datetime.now() - datetime.timedelta(days=1)
     partidas = Partida.objects.filter(data_partida__gte=ontem)
-    configuracao = Configuracao.objects.last()
+
     if request.method == "POST":
         form = NovaPartidaForm(request.POST)
 

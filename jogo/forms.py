@@ -155,7 +155,7 @@ class NovaPartidaForm(forms.ModelForm):
         min_value=1,max_value=30000,
         widget=forms.NumberInput(
             attrs={'class': "form-control form-control-lg form-control-outlined", 'autocomplete': "off", 'type': "number"}
-        ), initial=500
+        ),
     )
     chance_vitoria = forms.DecimalField(widget=forms.NumberInput(
         attrs={'class': "form-control form-control-lg form-control-outlined", 'autocomplete': "off", 'type': "number"}),
