@@ -778,7 +778,8 @@ def manter_contas_view(request):
 @login_required
 def aumentar_cartelas(request,partida_id,quantidade):
     if partida_id and quantidade:
-        partida = Partida.objects.filter(id=partida_id).first()
+        agora = datetime.datetime.now()
+        partida = Partida.objects.filter(id=partida_id,data_partida__gt=agora).first()
         if partida:
             codificacao = {
                 "F83A383C0FA81F295D057F8F5ED0BA4610947817":500,

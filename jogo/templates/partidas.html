@@ -161,6 +161,7 @@ INFORMAÇÕES DAS PARTIDAS
                                 {% elif p.get_tipo_rodada_display == 'SUPER ESPECIAL'%} color-green {% endif %}">{{ p.get_tipo_rodada_display }}
                                 </td>
                                 <td>
+                                    {% if p.data_partida > agora %}
                                     Atual: {{ p.cartelas.count }}<br >
                                     <a href="/partidas/{{ p.id }}/aumentar/F83A383C0FA81F295D057F8F5ED0BA4610947817/" style="margin-bottom:5px;"
                                        class="btn btn-sm btn-success" onclick="return confirm('Confirma aumento de 500 cartelas?');">
@@ -168,6 +169,9 @@ INFORMAÇÕES DAS PARTIDAS
                                     <a href="/partidas/{{ p.id }}/aumentar/E3CBBA8883FE746C6E35783C9404B4BC0C7EE9EB/" style="margin-bottom:5px;"
                                        class="btn btn-sm btn-success" onclick="return confirm('Confirma aumento de 1000 cartelas?');">
                                         <p>+ 1000</p></a>
+                                    {% else %}
+                                    Sorteadas: {{ p.cartelas.count }}
+                                    {% endif %}
                                 </td>
                                 <td>{{ p.num_participantes }}</td>
                                 <td>{{ p.novos_participantes }}</td>
