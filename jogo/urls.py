@@ -5,7 +5,8 @@ from django.urls import path, include
 from jogo.views import cancelar_template, index, \
     partidas, ganhadores, cartela, login_page, logout_page, criarpartida, \
     cartelas, configuracao, cancelar_partida, cancelar_bilhete, partida_edit, \
-    partida_automatica, automatos, parar_automato, sortear_template, editar_template, manter_contas_view
+    partida_automatica, automatos, parar_automato, sortear_template, editar_template, manter_contas_view, \
+    aumentar_cartelas
 
 from .views import jogadores, realtime_data
 from .views_api_media import logo_promo, media_login, nome_server, media_logo, media_favicon
@@ -29,7 +30,7 @@ urlpatterns = [
     path('cancelar_bilhete/<str:hash>/',cancelar_bilhete),
     path('partida_edit/<int:partida_id>/', partida_edit),
 
-
+    path("partidas/<int:partida_id>/aumentar/<str:quantidade>/",aumentar_cartelas),
 
     path('realtime_data/',realtime_data),
 

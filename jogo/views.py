@@ -775,5 +775,25 @@ def manter_contas_view(request):
     return HttpResponse(status=200,content="<h1>pronto</h1>")
 
 
+@login_required
+def aumentar_cartelas(request,partida_id,quantidade):
+    if partida_id and quantidade:
+        partida = Partida.objects.filter(id=partida_id).first()
+        if partida:
+            codificacao = {
+                "F83A383C0FA81F295D057F8F5ED0BA4610947817":500,
+                "E3CBBA8883FE746C6E35783C9404B4BC0C7EE9EB":1000,
+            }
+            if quantidade in codificacao.keys():
+                faixas = [(1000,10000),(10001,20000)]
+                quantidade_atual = partida.cartelas.count()
+                codigos = [int(x.codigo) for x in Cartela.objects.filter(partida=partida)]
+                faixa_usar = faixas[0]
+                if quantidade_atual + codificacao[quantidade] > 8000: # faixa 1
+                    faixa_usar = faixas[1]
+                lista_possiveis = [x for x in range(faixa_usar[0],faixa_usar[1]) if x not in codigos]
 
+                for lista in random.sample(lista_possiveis, k=codificacao[quantidade]):
+                    Cartela.objects.create(partida=partida,codigo=str(lista))
 
+    return redirect("/partidas/")
