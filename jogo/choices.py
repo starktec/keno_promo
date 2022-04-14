@@ -4,7 +4,7 @@ class AcaoTipoChoices(TextChoices):
     SEGUIR = "SEGUIR", "Seguir"
     CURTIR = "CURTIR", "Curtir"
     COMENTAR = "COMENTAR", "Comentar"
-    RECOMENDAR = "RECOMENDAR", "Recomendar"
+    RECOMENDAR = "RECOMENDAR", "Marcar"
 
 class StatusCartelaChoice(IntegerChoices):
     RESGATADA  = 1,"Resgatada"

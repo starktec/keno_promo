@@ -22,6 +22,7 @@ from jogo.models import Jogador, Partida, Cartela, Regra, Configuracao, Configur
 import logging
 
 from jogo.utils import get_connection, get_conta, desativar_conta
+from jogo.utils_instagram import estah_seguindo
 
 LOGGER = logging.getLogger(__name__)
 
@@ -165,13 +166,10 @@ def gerar_bilhete(request):
             # Buscando próxima partida
             partida = Partida.objects.filter(data_partida__gt=agora).order_by("data_partida").first()
             if partida:
-                perfil_id = ""
-                # Buscando a regra de seguir
-                for acao in partida.regra.acao_set.all():
-                    if acao.tipo == AcaoTipoChoices.SEGUIR:
-                        perfil_id = acao.perfil_social.perfil_id
-                        break
-                if perfil_id:
+
+                # Açoes
+                acoes = partida.regra.acao_set.all()
+                if acoes:
                     # Encontrar um jogador já cadastrado localmente por perfil
                     jogador = Jogador.objects.filter(usuario=perfil).first()
                     nome = ""
@@ -180,49 +178,43 @@ def gerar_bilhete(request):
 
                     # Se não encontrar Jogador
                     if not jogador:
+                        # VALIDANDO O PERFIL
+                        global CLIENT
+                        jogador_instagram = None
                         try:
-                            global CLIENT
-                            jogador_instagram = None
+                            # Fazendo a busca de dados do perfil
+                            if setSocialConnection():
+                                api = Client()
+                                proxy = get_connection()
+                                api.set_proxy(proxy)
+                                LOGGER.info(f"CONECTION: Anonimo {proxy}")
+                                jogador_instagram = api.user_info_by_username(perfil)
+                                if jogador_instagram and not isinstance(jogador_instagram,User):
+                                    # Falha na busca, forçar login
+                                    raise LoginRequired
+                        except (LoginRequired, PleaseWaitFewMinutes):
                             try:
-                                # Fazendo a busca de dados do perfil
-                                if setSocialConnection():
-                                    api = Client()
-                                    proxy = get_connection()
-                                    api.set_proxy(proxy)
-                                    LOGGER.info(f"CONECTION: Anonimo {proxy}")
-                                    jogador_instagram = api.user_info_by_username(perfil)
-                                    if jogador_instagram and not isinstance(jogador_instagram,User):
-                                        # Falha na busca, forçar login
-                                        raise LoginRequired
-                            except (LoginRequired, PleaseWaitFewMinutes):
-                                try:
-                                    if CLIENT: # Caso a instancia já esteja montada faz a busca dos dados do perfil
-                                        jogador_instagram = CLIENT.user_info_by_username_v1(perfil)
-                                        #time.sleep(3)
-                                except UserNotFound:
-                                    # Redirecionar para Usuario nao encontrado
-                                    raise UserNotFound
-                                except Exception:
-                                    # Qualquer outra falha, despreze
-                                    pass
+                                if CLIENT: # Caso a instancia já esteja montada faz a busca dos dados do perfil
+                                    jogador_instagram = CLIENT.user_info_by_username_v1(perfil)
+                                    #time.sleep(3)
+                            except UserNotFound:
+                                mensagem = "Perfil não encontrado, tente novamente mais tarde"
+                                LOGGER.info(mensagem)
+                                return JsonResponse(data={"detail": mensagem}, status=403)
+                            except (PleaseWaitFewMinutes, ChallengeRequired):
+                                setSocialConnection(deactivate=True)
+                            except Exception:
+                                CONTA_ATUAL.atencao = True
+                                CONTA_ATUAL.save()
+                                setSocialConnection()
+                                jogador_seguindo = CLIENT.search_followers_v1(user_id=perfil_id,
+                                                                              query=perfil) if CLIENT else True
+                                pass
 
-                            # Verificando se o perfil segue o outro
-                            setSocialConnection()
-                            jogador_seguindo = CLIENT.search_followers_v1(user_id=perfil_id, query=perfil) if CLIENT else True
-                        except UserNotFound as e:
-                            mensagem = "Perfil não encontrado, tente novamente mais tarde"
-                            LOGGER.info(mensagem)
-                            return JsonResponse(data={"detail": mensagem}, status=403)
-                        except (PleaseWaitFewMinutes, ChallengeRequired):
-                            setSocialConnection(deactivate=True)
-                        except Exception:
-                            CONTA_ATUAL.atencao = True
-                            CONTA_ATUAL.save()
-                            setSocialConnection()
-                            jogador_seguindo = CLIENT.search_followers_v1(user_id=perfil_id,
-                                                                          query=perfil) if CLIENT else True
-                        finally:
-                            if jogador_seguindo:
+                        # VALIDANDO AS ACOES
+                        for acao in acoes:
+                            if acao.tipo == AcaoTipoChoices.SEGUIR:
+                            if estah_seguindo(CLIENT, perfil_id, perfil):
                                 nome = jogador_instagram.full_name if jogador_instagram else perfil
                                 jogador_id = jogador_instagram.pk if jogador_instagram else 0
                                 if jogador_id:
@@ -323,10 +315,12 @@ def gerar_bilhete(request):
                     return JsonResponse(
                         data={"detail": mensagem, "bilhete": cartela.hash, "sorteio": int(cartela.partida.id)})
 
+                """
                 else:
                     mensagem = "Não foi encontrado uma regra do tipo 'Seguir um perfil'"
                     LOGGER.info(mensagem)
                     return JsonResponse(data={"detail": mensagem}, status=200)
+                """
             else:
                 mensagem = "Não há sorteios disponíveis no momento"
                 LOGGER.info(mensagem)

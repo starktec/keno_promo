@@ -196,6 +196,7 @@ class Acao(models.Model):
     regra = models.ForeignKey(Regra, on_delete=models.PROTECT)
     tipo = models.CharField(max_length=20, choices=AcaoTipoChoices.choices)
     perfil_social = models.ForeignKey(PerfilSocial, on_delete=models.PROTECT)
+    quantidade = models.PositiveSmallIntegerField(default=1)
 
     def __str__(self):
         return self.get_tipo_display() + " " + str(self.perfil_social)
