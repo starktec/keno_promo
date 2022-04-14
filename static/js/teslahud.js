@@ -8,8 +8,8 @@ let dev = false;
 //let t1 = 0;
 
      var c = document.getElementById("canvas");
-        c.width = 800;
-        c.height = 800;
+        c.width = 500;
+        c.height = 500;
 
         var ctx = c.getContext("2d");
 
@@ -116,7 +116,7 @@ let dev = false;
             ctx.fillText(speed, 250, 220);
 
             ctx.font = "15px MuseoSans_900-webfont";
-            ctx.fillText("mph", 250, 235);
+            ctx.fillText("@ph", 250, 235);
 
             if (gear == 0 && speed > 0) {
                 ctx.fillStyle = "#999";

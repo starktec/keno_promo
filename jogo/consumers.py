@@ -40,7 +40,8 @@ class DadosTempoRealConsumer(AsyncWebsocketConsumer):
                     "data_partida":datetime.datetime.strftime(p.data_partida,"%d-%m-%Y %H:%M"),
                     "tipo":p.get_tipo_rodada_display(),
                     "cartelas_count":cartelas_count,
-                    "novos_participantes":p.novos_participantes,  
+                    "novos_participantes":p.novos_participantes,
+                    "limite":p.numero_cartelas_iniciais,
                 }
                 dados.append(partida)
     
