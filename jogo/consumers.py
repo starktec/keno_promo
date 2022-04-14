@@ -32,7 +32,9 @@ class DadosTempoRealConsumer(AsyncWebsocketConsumer):
             dados = []
             novos_jogadores_min = Jogador.objects.filter(cadastrado_em__gt =(datetime.datetime.now() - datetime.timedelta(minutes=1)),
                                         cadastrado_em__lt = datetime.datetime.now()).count()
-            for p in Partida.objects.filter(data_partida__gt=datetime.datetime.now(),bolas_sorteadas__isnull = True):
+            for p in Partida.objects.filter(
+                    data_partida__gt=datetime.datetime.now(),bolas_sorteadas__isnull = True
+            ).order_by("data_partida"):
                 cartelas_count = Cartela.objects.filter(jogador__isnull=False,partida=p).count()
                 
                 partida = {
