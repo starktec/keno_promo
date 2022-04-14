@@ -8,13 +8,13 @@ let dev = false;
 //let t1 = 0;
 
      var c = document.getElementById("canvas");
-        c.width = 500;
-        c.height = 500;
+        c.width = 350;
+        c.height = 350;
 
         var ctx = c.getContext("2d");
 
         //Rescale the size
-        ctx.scale(1,1);
+        ctx.scale(0.7,0.7);
 
         var speedGradient = ctx.createLinearGradient(0, 500, 0, 0);
         speedGradient.addColorStop(0, '#00b8fe');

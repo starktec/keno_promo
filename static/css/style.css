@@ -145,3 +145,9 @@ body{
     background: rgb(23,100,161);
     background: linear-gradient(90deg, rgba(23,100,161,1) 0%, #283a6b 100%);    border-radius: 50px;
 }
+
+.content-cel{
+    flex: 0 0 50%;
+    max-width: 50%;
+
+}
