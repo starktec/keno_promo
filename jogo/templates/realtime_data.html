@@ -16,41 +16,6 @@ INFORMAÇÕES DAS PARTIDAS
 <div>
     
     <div class="row my-row">
-        {% comment %} <div class="col-sm-6 col-md-4 col-lg-3">
-            <div class="card cards-status">
-                <div class="row text-center">
-                    <em class="icon ni ni-home icon-card color-card-pos"></em>
-                    <h6 class="title-card color-card-pos">Total PDVs</h6>
-                </div>
-                <div class="row">
-                    <h6 class="col-12 text-right subtitle-card color-card-pos" id="pos_total">0</h6>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-sm-6 col-md-4 col-lg-3">
-            <div class="card cards-status">
-                <div class="row text-center">
-                    <em class="icon ni ni-thumbs-up icon-card color-card-pos"></em>
-                    <h6 class="title-card color-card-pos">PDVs On-line</h6>
-                </div>
-                <div class="row">
-                    <h6 class="col-12 text-right subtitle-card color-card-online" id="pos_online">0</h6>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-sm-6 col-md-4 col-lg-3">
-            <div class="card cards-status">
-                <div class="row text-center">
-                    <em class="icon ni ni-sign-mxn icon-card color-card-pos"></em>
-                    <h6 class="title-card color-card-pos">Doações</h6>
-                </div>
-                <div class="row">
-                    <h6 class="col-12 text-right subtitle-card color-card-pos" id="doacoes">0</h6>
-                </div>
-            </div>
-        </div> {% endcomment %}
         <div class="col-sm-12 col-md-6 col-lg-6">
             <div class="card cards-status">
                 <div class="row text-center">
@@ -143,7 +108,11 @@ INFORMAÇÕES DAS PARTIDAS
             });
             document.querySelector('#tbody').innerHTML = html
         }
-        drawSpeedo(doacoes_min,0,(participantes/10000),limite);
+        var velocidade_max = 100;
+        if (doacoes_min>100){
+            velocidade_max = doacoes_min;
+        }
+        drawSpeedo(doacoes_min,0,(participantes/limite),velocidade_max);
         timer = setTimeout(test_time_out, 60000,doacoes_min.toFixed(2));
         
     }
