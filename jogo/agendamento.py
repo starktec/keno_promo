@@ -1,6 +1,7 @@
 import datetime
 import json
 import random
+import time
 
 import traceback
 from decimal import Decimal
@@ -58,7 +59,7 @@ class Agenda():
             configuracao = Configuracao.objects.last()
             data = partida.data_partida + datetime.timedelta(seconds=configuracao.iniciar_sorteio_em)
             self.log("Agendamento sendo feito para a partida "+str(partida.id)+" horario + " + str(partida.data_partida))
-            job = agenda.add_job(self.sortear_agendado, 'date', run_date=data, args=[partida,agenda])
+            job = agenda.add_job(self.sortear_agendado, 'date', run_date=data, args=[partida,True,agenda])
             self.log("Agendado")
             if not partida.id in self.agendas.keys():
                 self.agendas[partida.id]=(agenda,False, job.id)
@@ -68,7 +69,7 @@ class Agenda():
             self.log(str(traceback.extract_stack()))
 
 
-    def sortear_agendado(self, partida, reload=True, agenda=None):
+    def sortear_agendado(self, partida, reload=True, agenda=None, contador=1):
         self.log("TENTATIVA: SORTEIO " + str(partida.id) + " reload: " + str(reload) + " agenda: " + str(agenda))
         modo_sorteio = False
         partida_id = partida.id
@@ -359,29 +360,43 @@ class Agenda():
             if modo_sorteio:
                 self.log("************Finalizando a rotina de agendamento***************")
                 if not partida:
+                    self.log(f"Reloading partida {partida_id}")
                     partida = Partida.objects.filter(id=partida_id).first()
                 if partida:
-                    partida.em_sorteio = False
-                    partida.save()
+                    if partida.sorteio:
+                        partida.em_sorteio = False
+                        partida.save()
 
-                    self.log("Disparando eventos WebSocket")
+                        self.log("Disparando eventos WebSocket")
 
-                    event_bilhete_sorteio(partida.id)
-                    """
-                    if partida.partida_automatizada and partida.id_automato:
-                        self.log("Sorteio Automatizado Iniciando Script")
-                        self.log("id do automato" + str(partida.id_automato))
-                        partida_automatizada(partida, self)
-                    """
-                    self.log("Sorteio Finalizado (finally)")
+                        event_bilhete_sorteio(partida.id)
+                        """
+                        if partida.partida_automatizada and partida.id_automato:
+                            self.log("Sorteio Automatizado Iniciando Script")
+                            self.log("id do automato" + str(partida.id_automato))
+                            partida_automatizada(partida, self)
+                        """
+                        self.log("Sorteio Finalizado (finally)")
 
-                    self.atualizando_conexoes_websocket(partida)
+                        self.atualizando_conexoes_websocket(partida)
 
-                    # Eliminando cartelas nao utilizadas
-                    codigos_participantes = partida.cartelas_participantes.split(",")
-                    Cartela.objects.filter(
-                        partida=partida,jogador__isnull=True
-                    ).exclude(codigo__in=codigos_participantes).delete()
+                        # Eliminando cartelas nao utilizadas
+                        codigos_participantes = partida.cartelas_participantes.split(",")
+                        Cartela.objects.filter(
+                            partida=partida,jogador__isnull=True
+                        ).exclude(codigo__in=codigos_participantes).delete()
+                    else:
+                        partida.em_sorteio = False
+                        partida.save()
+                        if contador < 5:
+                            self.log(f"FAIL: tentativa {contador}")
+                            CartelaVencedora.objects.filter(cartela__partida=partida).delete()
+                            Agendamento.objects.filter(partida=partida).delete()
+                            time.sleep(contador*2)
+                            self.log(f"FAIL: tentativa {contador}")
+                            self.sortear_agendado(partida, reload=False,agenda=agenda, contador=contador+1)
+                        else:
+                            self.log(f"FAIL: Sem mais tentativas")
                 else:
                     self.log(f"Partida {partida_id} - não encontrada")
 

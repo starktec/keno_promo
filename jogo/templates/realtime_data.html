@@ -3,6 +3,14 @@
 {% block titulo %}
 INFORMAÇÕES DAS PARTIDAS
 {% endblock %}
+{% block extra_head %}
+<style>
+  @font-face {
+    font-family: 'MuseoSans_900-webfont';
+    src: url('/static/fonts/MuseoSans_900-webfont.ttf');
+}
+</style>
+{% endblock %}
 {% block nav-bar %}
 <!------------------------------------------------------------------------------------------------------------> 
 <div>
@@ -52,6 +60,13 @@ INFORMAÇÕES DAS PARTIDAS
                 <div class="row">
                     <h6 class="col-12 text-right subtitle-card color-card-pos" id="novos_jogadores_min">0</h6>
                 </div>
+                <!--
+                <div class="row my-row">
+                    <div class="col-12">
+                    <canvas id="canvas"></canvas>
+                    </div>
+                </div>
+                -->
             </div>
         </div>
     </div>
@@ -81,11 +96,12 @@ INFORMAÇÕES DAS PARTIDAS
         </div>
     </div>
 </div>
-
+<script src="/static/js/teslahud.js"></script>
 <script>
     function test_time_out( valor ) {
         if (document.getElementById("novos_jogadores_min").textContent === valor){
             document.querySelector("#novos_jogadores_min").innerText = "0"
+            drawSpeedo(0,0,0,10);
         }
     }
     let timer = setTimeout(test_time_out, 5000,document.querySelector("#novos_jogadores_min").innerText);

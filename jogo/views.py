@@ -20,7 +20,7 @@ from jogo.forms import CartelasFilterForm, JogadoresForm, NovaPartidaAutomatizad
     ConfiguracaoForm, TemplateEditForm
 from jogo.models import Jogador, Partida, Automato, Cartela, Usuario, Configuracao, CartelaVencedora, TemplatePartida, \
     Regra, \
-    Acao, PerfilSocial, ConfiguracaoInstagram
+    Acao, PerfilSocial, ConfiguracaoInstagram, Agendamento
 from jogo.views_social_instagram import CLIENT
 from jogo.websocket_triggers_bilhete import event_bilhete_partida
 
@@ -796,5 +796,20 @@ def aumentar_cartelas(request,partida_id,quantidade):
 
                 for lista in random.sample(lista_possiveis, k=codificacao[quantidade]):
                     Cartela.objects.create(partida=partida,codigo=str(lista))
+
+    return redirect("/partidas/")
+
+@login_required()
+def forcar_sorteio(request, partida_id):
+    partida = Partida.objects.filter(id=partida_id).first()
+    agora = datetime.datetime.now()
+    if partida and not partida.sorteio and partida.data_partida + timedelta(seconds=20) < agora:
+        partida.em_sorteio = False
+        partida.save()
+        CartelaVencedora.objects.filter(cartela__partida=partida).delete()
+        agendamento = Agendamento.objects.filter(partida=partida).first()
+        if agendamento:
+            agendamento.delete()
+        agenda.sortear_agendado(partida,reload=False)
 
     return redirect("/partidas/")
