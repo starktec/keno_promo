@@ -122,10 +122,14 @@ def dados_bilhete_v2(request,hash):
 @require_http_methods(["GET"])
 def ultimos_ganhadores_kol(request,sorteio_id = None):
     ultimas_partidas = Partida.objects.none()
+    configuracao = Configuracao.objects.last()
+    data_liberacao = datetime.datetime.now() - datetime.timedelta(
+        minutes=configuracao.tempo_sorteio_online)
     if sorteio_id:
-        ultimas_partidas = Partida.objects.filter(id = sorteio_id)
+        ultimas_partidas = Partida.objects.filter(id = sorteio_id, data_partida__lte=data_liberacao)
     else:
-        ultimas_partidas = Partida.objects.filter(bolas_sorteadas__isnull=False,data_partida__lt=datetime.datetime.now()).order_by('-data_partida')[:5]
+        ultimas_partidas = Partida.objects.filter(bolas_sorteadas__isnull=False,
+                                                  data_partida__lte=data_liberacao).order_by('-data_partida')[:5]
     dados = UltimosGanhadoresSerializer(ultimas_partidas,many=True).data
     return JsonResponse(data={"sorteios":dados}, status=200, safe=False)
 

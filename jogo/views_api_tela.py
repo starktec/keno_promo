@@ -229,7 +229,7 @@ def ultimos_ganhadores(request):
             vencedores= []
             configuracao = Configuracao.objects.last()
             data_liberacao = datetime.datetime.now() - datetime.timedelta(
-                minutes=configuracao.liberar_resultado_sorteio_em)
+                minutes=configuracao.tempo_sorteio_online)
             for v in CartelaVencedora.objects.filter(partida__data_partida__lte=data_liberacao).order_by('-id')[:6]:
                 d = {
                     'sorteio':int(v.partida.id),
