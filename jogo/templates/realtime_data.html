@@ -112,7 +112,9 @@ INFORMAÇÕES DAS PARTIDAS
         if (doacoes_min>100){
             velocidade_max = doacoes_min;
         }
-        drawSpeedo(doacoes_min,0,(participantes/limite),velocidade_max);
+        var gear = Math.floor(doacoes_min/15)+1;
+
+        drawSpeedo(doacoes_min,gear,(participantes/limite),velocidade_max);
         timer = setTimeout(test_time_out, 60000,doacoes_min.toFixed(2));
         
     }
