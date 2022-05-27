@@ -167,12 +167,14 @@ def gerar_bilhete(request):
             partidas = Partida.objects.filter(data_partida__gt=agora).order_by("data_partida")
             if partidas:
                 partida = partidas.first()
+                LOGGER.info(f" Sorteio ESCOLHIDO: {partida.id}")
                 if not configuracao.reter_jogadores:
                     for p in partidas:
                         inicial = p.numero_cartelas_iniciais
                         atual = p.num_cartelas_atual()
                         if inicial > atual:
                             partida = p
+                            LOGGER.info(f" Sorteio MUDADO: {partida.id}")
                             break
 
                 perfil_id = ""
