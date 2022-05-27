@@ -106,6 +106,8 @@ class Configuracao(models.Model):
     validacao_ativa = models.BooleanField(default=False)
     publicacao_uma_vez_dia = models.BooleanField(default=True)
 
+    reter_jogadores = models.BooleanField(default=True)
+
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
         if not self.id:

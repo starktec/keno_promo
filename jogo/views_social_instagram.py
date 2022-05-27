@@ -162,9 +162,19 @@ def gerar_bilhete(request):
 
             agora = datetime.datetime.now()
 
+            configuracao = Configuracao.objects.last()
             # Buscando próxima partida
-            partida = Partida.objects.filter(data_partida__gt=agora).order_by("data_partida").first()
-            if partida:
+            partidas = Partida.objects.filter(data_partida__gt=agora).order_by("data_partida")
+            if partidas:
+                partida = partidas.first()
+                if not configuracao.reter_jogadores:
+                    for p in partidas:
+                        inicial = p.numero_cartelas_iniciais
+                        atual = p.num_cartelas_atual()
+                        if inicial > atual:
+                            partida = p
+                            break
+
                 perfil_id = ""
                 # Buscando a regra de seguir
                 for acao in partida.regra.acao_set.all():
