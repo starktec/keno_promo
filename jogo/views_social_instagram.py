@@ -171,7 +171,7 @@ def gerar_bilhete(request):
                 if not configuracao.reter_jogadores:
                     for p in partidas:
                         inicial = p.numero_cartelas_iniciais
-                        atual = p.num_cartelas_atual()
+                        atual = Cartela.objects.filter(partida=p, jogador__isnull=False, cancelado=False).count()
                         if inicial > atual:
                             partida = p
                             LOGGER.info(f" Sorteio MUDADO: {partida.id}")
