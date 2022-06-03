@@ -1,5 +1,6 @@
 import base64
 import pickle
+import string
 
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
@@ -11,7 +12,7 @@ import random
 import secrets
 
 from datetime import timedelta, datetime, date, time
-from django.db.models import Sum, Q
+from django.db.models import Sum, Q, IntegerChoices
 
 from django.conf import settings
 from django.db import models
@@ -20,7 +21,9 @@ from django.contrib.auth.models import User
 import threading
 
 # Create your models here.
+from django.utils.crypto import get_random_string
 from django_resized import ResizedImageField
+from rest_framework.exceptions import PermissionDenied
 
 from jogo import local_settings
 from jogo.choices import AcaoTipoChoices
@@ -418,6 +421,8 @@ class Jogador(models.Model):
     usuario_token = models.CharField(max_length=255)
     seguidores = models.BigIntegerField(default=0)
     cadastrado_em = models.DateTimeField(auto_now_add=True)
+    telefone = models.CharField(max_length=20, blank=True,null=True)
+    codigo_verificacao = models.CharField(max_length=10, blank=True,null=True)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
@@ -438,6 +443,14 @@ class Jogador(models.Model):
 
     def sorteios_participou_count(self):
         return self.sorteios_participou().count()
+
+    def gerar_codigo_verificacao(self):
+        self.codigo_verificacao = get_random_string(length=6,allowed_chars=string.digits)
+        self.save()
+        return self.codigo_verificacao
+
+    def get_telefone_digitos(self):
+        return "".join([s for s in self.telefone if s.isdigit()])
          
 
 class Cartela(models.Model):
@@ -548,6 +561,11 @@ PREMIO_CHOICES = (
 LINHA_CHOICES = (
     (-1, "Não Informado"), (0, "Linha Superior"), (1, "Linha do Meio"), (2, "Linha Inferior"), (3, "Todas as Linhas")
 )
+class VencedorStatus(IntegerChoices):
+    AGUARDANDO_VALIDACAO = 1, "Aguardando Validação"
+    VALIDADO = 2, "Validado"
+    PAGO = 3, "Pago"
+    CANCELADO = 4, "Cancelado"
 
 
 class CartelaVencedora(models.Model):
@@ -556,9 +574,24 @@ class CartelaVencedora(models.Model):
     premio = models.PositiveSmallIntegerField(choices=PREMIO_CHOICES)
     linha_vencedora = models.SmallIntegerField(default=-1)
     valor_premio = models.FloatField(default=0.0)
+    status = models.PositiveSmallIntegerField(choices=VencedorStatus.choices,default=VencedorStatus.AGUARDANDO_VALIDACAO)
 
     def __str__(self):
         return str(self.cartela)
+
+    def validar_cartela(self):
+        if self.status == VencedorStatus.AGUARDANDO_VALIDACAO:
+            self.status = VencedorStatus.VALIDADO
+            self.save()
+
+    def confirmar_cartela(self):
+        if self.status == VencedorStatus.VALIDADO:
+            self.status = VencedorStatus.PAGO
+            self.save()
+
+    def cancelar_pagamento(self):
+        self.status = VencedorStatus.CANCELADO
+        self.save()
 
 
 class Agendamento(models.Model):
@@ -688,3 +721,46 @@ class Publicacao(models.Model):
 
     def __str__(self):
         return f"Publicação {self.id} da conta {self.conta.username}"
+
+
+from django.conf import settings
+import requests
+
+class AccountSMS(models.Model):
+    username = models.CharField(max_length=255, unique=True)
+    password = models.CharField(max_length=255)
+    credits = models.DecimalField(default=0, max_digits=10, decimal_places=2)
+    url_access = models.CharField(max_length=255)
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        if not self.id:
+            response = requests.get(f'{self.url_access}/balance?user={self.username}&password={self.password}').json()
+            self.credits = response.get('balance_1')
+        return super().save(force_insert, force_update, using, update_fields)
+
+    def update_current_credits(self, current_credits):
+        self.credits = current_credits
+        self.save()
+
+    def send_sms(self, jogador):
+        codigo = jogador.gerar_codigo_verificacao()
+
+        msg = f"Código de verificação enviado: {codigo}"
+        country_code = '55'
+        type = 2
+        response = requests.get(
+            f"""
+                {self.url_access}/send-single?
+                user={self.username}&
+                password={self.password}&
+                country_code={country_code}&
+                number={jogador.get_telefone_digitos()}&
+                content={msg}&
+                campaign_id={get_random_string(length=32)}&
+                type={type}
+            """,{'Content-Type': 'application/x-www-form-urlencoded'}).json()
+        if not response.get('success'):
+            raise PermissionDenied(detail=response.get('responseDescription'))
+        return response
+
+
