@@ -1,6 +1,8 @@
+import os
 import pickle
 import random
 
+import requests
 from asgiref.sync import sync_to_async
 from django.conf import settings
 from instagrapi import Client
@@ -331,6 +333,19 @@ def manter_contas_thread():
         if cont%10000==0:
             print(f"contando {cont}.....")
     print(f"func: {datetime.datetime.now()}")
+
+
+def download_foto(url, nome,):
+    FILE_TYPE = ".jpg"
+    page = requests.get(url)
+    if page.status_code == 200:
+        path = os.path.join(settings.MEDIA_ROOT,"jogador")
+        if not os.path.exists(path):
+            os.makedirs(path)
+        f_name = os.path.join(path,f"{nome}{FILE_TYPE}")
+        with open(f_name, 'wb') as f:
+            f.write(page.content)
+        return f"/media/jogador/{nome}{FILE_TYPE}"
 
 
 

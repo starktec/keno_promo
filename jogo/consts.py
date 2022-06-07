@@ -1,4 +1,4 @@
-from django.db.models import TextChoices
+from django.db.models import TextChoices, IntegerChoices
 from string import digits,ascii_letters,whitespace
 
 
@@ -26,7 +26,12 @@ class TipoSolicitacaoRecolhe(TextChoices):
 
     @classmethod
     def dict_choices(cls) -> dict:
-        return dict(cls.choices) 
+        return dict(cls.choices)
+
+class StatusJogador(IntegerChoices):
+    ATIVO = 1, "Ativo"
+    SUSPENSO = 2, "Suspenso"
+    CANCELADO = 3, "Cancelado"
 
 # nome fantasia = numero + letra -> tudo maiusculo 
 

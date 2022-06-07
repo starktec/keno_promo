@@ -25,6 +25,7 @@ from django_resized import ResizedImageField
 from jogo import local_settings
 from jogo.choices import AcaoTipoChoices
 from jogo.constantes import NOME_PESSOAS
+from jogo.consts import StatusJogador
 from jogo.websocket_triggers import event_doacoes
 
 
@@ -410,7 +411,22 @@ class TemplatePartida(models.Model):
         data = self.data_introducao + timedelta(minutes=configuracao.tempo_expirar_template)
         return "Partida iniciará automaticamente as: " + data.strftime("%H:%M")
 
-# NOVA CLASSE
+# NOVAS CLASSES
+class SearchFollowers(models.Model):
+    user = models.ForeignKey(User,on_delete=models.PROTECT)
+    datetime = models.DateTimeField(auto_now_add=True)
+
+class InstagramAccount(models.Model):
+    instagram_id = models.CharField(max_length=50)
+    username = models.CharField(max_length=50)
+    full_name = models.CharField(max_length=200, blank=True)
+    pic = models.TextField(blank=True,null=True)
+    ativo = models.BooleanField(default=True)
+    data_cadastro = models.DateTimeField(auto_now_add=True)
+    data_atualizacao = models.DateTimeField(auto_now=True)
+    recente = models.BooleanField(default=True)
+
+
 class Jogador(models.Model):
     nome = models.CharField(max_length=255, blank=True, null=True)
     usuario = models.CharField(max_length=255)
@@ -418,6 +434,9 @@ class Jogador(models.Model):
     usuario_token = models.CharField(max_length=255)
     seguidores = models.BigIntegerField(default=0)
     cadastrado_em = models.DateTimeField(auto_now_add=True)
+    conta = models.OneToOneField(InstagramAccount, on_delete=models.PROTECT, blank=True,null=True)
+    status = models.PositiveSmallIntegerField(choices=StatusJogador.choices,default=StatusJogador.ATIVO)
+    foto = models.CharField(max_length=255,blank=True,null=True)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
@@ -688,3 +707,5 @@ class Publicacao(models.Model):
 
     def __str__(self):
         return f"Publicação {self.id} da conta {self.conta.username}"
+
+
