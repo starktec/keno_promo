@@ -15,10 +15,10 @@ JOGOSDASORTEBR_ID = "44328406722"
 
 CONTAS = [
     {"username":"teste.user.1","password":"teste123@"},
-    {"username":"teste.user.2","password":"teste123@"},
-    {"username":"teste.user.3","password":"teste123@"},
+    {"username":"teste.user.2","password":"teste123@."},
+    {"username":"teste.user.3","password":"teste123@."},
     {"username":"teste.user.4","password":"teste123@"},
-    {"username":"teste.user.5","password":"teste123@"},
+    {"username":"teste.user.5","password":"teste123@."},
 ]
 
 TIME_MIN = 15
