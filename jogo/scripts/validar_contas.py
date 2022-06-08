@@ -48,7 +48,7 @@ def run():
         print(f"Analisando {jogador.usuario} n°{contador}")
         contador += 1
         print(" - Aguardando 15s para a primeira busca...")
-        time.sleep(15)
+        time.sleep(int(TIME_MIN / len(CONTAS)) + 1)
         try:
             usuario = client.user_info_by_username(jogador.usuario)
             if not usuario:
@@ -63,6 +63,7 @@ def run():
         print(f" - Aguardando mais 15s para a segunda busca...")
         client = clients[posicao % len(CONTAS)]
         posicao += 1
+        time.sleep(int(TIME_MIN / len(CONTAS)) + 1)
         usuarios = client.search_followers(JOGOSDASORTEBR_ID,jogador.usuario)
         usuarios_dict = {u.username:u for u in usuarios}
         if usuarios and jogador.usuario in usuarios_dict.keys():
