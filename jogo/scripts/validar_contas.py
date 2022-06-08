@@ -37,7 +37,7 @@ def run():
 
     fake = []
     nao_segue = []
-    jogadores = Jogador.objects.filter(conta__isnull=True)
+    jogadores = Jogador.objects.filter(conta__isnull=True, status=1)
     print(f"Quantidade jogadores a analisar: {jogadores.count()}")
     contador = 1
     posicao = 0
