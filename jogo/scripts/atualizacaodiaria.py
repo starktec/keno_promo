@@ -243,7 +243,7 @@ def run():
                         jogador.save()
             save = True
     except Exception as e:
-        log(e.message)
+        log(str(e))
         save = False
     finally:
         if save:
