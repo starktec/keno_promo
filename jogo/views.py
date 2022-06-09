@@ -21,7 +21,7 @@ from jogo.forms import CartelasFilterForm, JogadoresForm, NovaPartidaAutomatizad
 from jogo.models import Jogador, Partida, Automato, Cartela, Usuario, Configuracao, CartelaVencedora, TemplatePartida, \
     Regra, \
     Acao, PerfilSocial, ConfiguracaoInstagram, Agendamento
-from jogo.views_social_instagram import CLIENT
+from jogo.utils import CLIENT
 from jogo.websocket_triggers_bilhete import event_bilhete_partida
 
 logger = logging.getLogger(__name__)

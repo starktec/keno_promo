@@ -123,6 +123,12 @@ class ConfiguracaoInstagram(models.Model):
     publicacao_uma_vez_dia = models.BooleanField(default=True)
     perfil_id = models.CharField(max_length=50, blank=True, null=True)
 
+    mensagem_nao_segue = models.CharField(max_length=255,blank=True,null=True, verbose_name="Mensagem para quem nao segue o perfil")
+    mensagem_nao_existe = models.CharField(max_length=255,blank=True,null=True, verbose_name="Mensagem para perfil fake")
+    mensagem_nao_ha_sorteios = models.CharField(max_length=255,blank=True,null=True, verbose_name="Mensagem para quando não houver sorteios")
+    mensagem_ja_participa_sorteio = models.CharField(max_length=255,blank=True,null=True, verbose_name="Mensagem para quem já está participando do sorteio")
+    mensagem_cartelas_esgotadas = models.CharField(max_length=255,blank=True,null=True, verbose_name="Mensagem para cartelas esgotadas")
+
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
         if not self.id:
@@ -412,8 +418,16 @@ class TemplatePartida(models.Model):
         return "Partida iniciará automaticamente as: " + data.strftime("%H:%M")
 
 # NOVAS CLASSES
-class SearchFollowers(models.Model):
-    user = models.ForeignKey(User,on_delete=models.PROTECT)
+class RelatorioAtualizacao(models.Model):
+    num_jogadores = models.IntegerField()
+    num_jogadores_ativo_total = models.IntegerField()
+    num_jogadores_ativo_novos = models.IntegerField()
+    num_jogadores_cancelado_total = models.IntegerField()
+    num_jogadores_cancelado_novos = models.IntegerField()
+    num_jogadores_suspenso_total = models.IntegerField()
+    num_jogadores_suspenso_novos = models.IntegerField()
+    num_jogadores_nao_analisados = models.IntegerField()
+
     datetime = models.DateTimeField(auto_now_add=True)
 
 class InstagramAccount(models.Model):

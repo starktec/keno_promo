@@ -7,8 +7,9 @@ from asgiref.sync import sync_to_async
 from django.conf import settings
 from instagrapi import Client
 
+from jogo import local_settings
 from jogo.models import Regra, Partida, Configuracao, TemplatePartida, Cartela, IPTabela, Conta, Publicacao, Automato, \
-    Galeria, TextoPublicacao
+    Galeria, TextoPublicacao, ConfiguracaoInstagram
 from datetime import date, datetime, timedelta
 
 import datetime
@@ -346,6 +347,85 @@ def download_foto(url, nome,):
         with open(f_name, 'wb') as f:
             f.write(page.content)
         return f"/media/jogador/{nome}{FILE_TYPE}"
+
+
+
+
+CLIENT = None
+CONTA_ATUAL = None
+
+def setSocialConnection(deactivate=False):
+    """
+    Função que gerencia as contas e as conexões, definindo quem será usada na próxima operação de
+    interação com a rede social
+    :param deactivate: Opcional. Informa se deve suspender uma conta por falha de comunicação
+    :type deactivate: bool
+    :return: True, informando que as operações envolvem validação ou False, quando não há validação
+    :rtype: bool
+    """
+
+    with transaction.atomic():
+        global CLIENT
+        global CONTA_ATUAL
+
+        if deactivate and CONTA_ATUAL:
+            return desativar_conta(CONTA_ATUAL)
+
+        configuracao = ConfiguracaoInstagram.objects.last()
+        if configuracao and configuracao.validacao_ativa:  # Se o servidor está permitido a validar pela rede social
+            conta = get_conta()
+            if conta:  # Existem contas registradas no banco
+                CONTA_ATUAL = conta
+                try:
+                    # Caso não encontre no banco a instancia da conexao
+                    if not conta.instagram_connection:
+                        CLIENT = Client()
+                        proxy = get_connection()  # Seleciona uma conexao
+                        if proxy:
+                            CLIENT.set_proxy(proxy)  # Define a conexao
+                        LOGGER.info(f"CONECTION (N) {conta.username}: {proxy}")
+                        CLIENT.login(conta.username, conta.password)  # Faz o login
+
+                        # Atualizando a conexao no banco
+                        conta.instagram_connection = pickle.dumps(CLIENT)
+                        conta.save()
+
+                    else:  # Caso tenha a instancia da conexao
+                        CLIENT = pickle.loads(conta.instagram_connection)  # Recuperar a instancia do banco e ativar
+                        proxy = get_connection()  # Seleciona uma conexao
+                        if proxy:
+                            CLIENT.set_proxy(proxy)  # Define a conexao
+                        LOGGER.info(f"CONECTION (R) {conta.username}: {proxy}")
+                    return True
+                except:
+                    return True
+            else:
+                try:
+                    # Para o caso de não ter cadastrado contas no banco, ou nao estarem ativas, usar o perfil default
+                    if configuracao.instagram_connection:  # Caso tenha a instancia da conexao
+                        CLIENT = pickle.loads(configuracao.instagram_connection)
+                        LOGGER.info(f"CONECTION (R) {local_settings.INSTAGRAM_USER}")
+                    else:  # Caso não encontre no banco a instancia da conexao
+                        CLIENT = Client()
+                        CLIENT.login(local_settings.INSTAGRAM_USER, local_settings.INSTAGRAM_PASSWORD)  # Faz o login
+
+                        # Atualizando a conexao no banco
+                        configuracao.instagram_connection = pickle.dumps(CLIENT)
+                        configuracao.save()
+                        LOGGER.info(f"CONECTION (N) {local_settings.INSTAGRAM_USER}")
+                    proxy = get_connection()  # Seleciona uma conexao
+                    if proxy:
+                        CLIENT.set_proxy(proxy)  # Define a conexao
+                    return True
+                except:
+                    CLIENT = None
+        else:  # Se o servidor está proibido de validar pela rede social
+            # Definindo o CLIENT como nulo para não ser usado
+            CLIENT = None
+        return False
+
+
+setSocialConnection()
 
 
 
