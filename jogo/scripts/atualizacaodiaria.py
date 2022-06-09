@@ -79,13 +79,16 @@ def run():
     try:
         CONTAS = Conta.objects.filter(ativo=True, atencao=False)
         proxies = IPTabela.objects.last()
-        proxy_list = [p.ip_proxy+":"+p.ip_faixa for p in proxies]
+        proxy_list = []
+        if proxies:
+            proxy_list = [p.ip_proxy+":"+p.ip_faixa for p in proxies]
         contador = 0
         for i_conta in CONTAS:
             log(f"Fazendo login na conta {i_conta.get('username')}...")
             time.sleep(15)
             con_client = Client()
-            con_client.set_proxy(proxy_list[contador])
+            if proxy_list:
+                con_client.set_proxy(proxy_list[contador])
             con_client.login(i_conta.username, i_conta.password)
             clients.append((con_client,i_conta.username))
             i_conta.instagram_connection = pickle.dumps(con_client)
