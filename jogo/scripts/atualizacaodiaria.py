@@ -74,6 +74,8 @@ def run():
     num_jogadores_suspenso_novos = 0
 
     clients = []
+    fake = []
+    nao_segue = []
     posicao = 0
     save = False
     try:
@@ -131,8 +133,7 @@ def run():
             seguidores_por_id = {x.pk: x for x in seguidores}
             seguidores_por_username = {x.username: x for x in seguidores}
             update_jogadores = []
-            fake = []
-            nao_segue = []
+
             for jogador in jogadores:
                 log(f"START {jogador.usuario}")
                 seguidor = None
@@ -240,7 +241,7 @@ def run():
                         jogador.save()
             save = True
     except Exception as e:
-        log(e.__dict__)
+        log(e)
         save = False
     finally:
         if save:
