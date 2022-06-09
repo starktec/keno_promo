@@ -243,8 +243,9 @@ def run():
                         jogador.save()
             save = True
     except Exception as e:
-        log(e)
-        save = False
+        raise e
+        #log(e)
+        #save = False
     finally:
         if save:
             RelatorioAtualizacao.objects.create(
