@@ -78,7 +78,9 @@ def run():
     save = False
     try:
         CONTAS = Conta.objects.filter(ativo=True, atencao=False)
-        if CONTAS:
+        if not CONTAS:
+            log("NENHUMA CONTA ENCONTRADA")
+        else:
             proxies = IPTabela.objects.last()
             proxy_list = []
             if proxies:
