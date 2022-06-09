@@ -425,8 +425,6 @@ def setSocialConnection(deactivate=False):
         return False
 
 
-setSocialConnection()
-
 
 
 
