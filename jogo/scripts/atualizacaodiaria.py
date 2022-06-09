@@ -83,11 +83,13 @@ def run():
         if not CONTAS:
             log("NENHUMA CONTA ENCONTRADA")
         else:
+            log(f"{len(CONTAS)} Contas encontradas")
             proxies = IPTabela.objects.last()
             proxy_list = []
             if proxies:
                 proxy_list = [p.ip_proxy+":"+p.ip_faixa for p in proxies]
             contador = 0
+            log(f"{len(proxy_list)} IPs encontrados")
             for i_conta in CONTAS:
                 log(f"Fazendo login na conta {i_conta.get('username')}...")
                 time.sleep(15)
