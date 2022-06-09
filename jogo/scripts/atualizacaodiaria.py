@@ -75,10 +75,10 @@ def run():
         time.sleep(15)
         con_client = Client()
         con_client.login(i_conta.get("username"), i_conta.get("password"))
-        clients.append(con_client)
+        clients.append((con_client,i_conta.get("username")))
 
-    client = clients[posicao%len(CONTAS)]
-    log(f"({CONTAS.keys()[(posicao % len(CONTAS))]}) Buscando seguidores")
+    client, connection = clients[posicao%len(CONTAS)]
+    log(f"({connection}) Buscando seguidores")
     posicao += 1
     antes = datetime.now()
     seguidores = client.user_followers(JOGOSDASORTEBR_ID)
@@ -164,8 +164,8 @@ def run():
             else:
                 log(f"{jogador.usuario} Nem tem um registro local nem veio na lista de seguidores...")
                 time.sleep(int(TIME_MIN/len(CONTAS))+1)
-                client = clients[posicao % len(CONTAS)]
-                log(f"({CONTAS.keys()[(posicao % len(CONTAS))]}) Buscando dados do perfil @{jogador.usuario} no instagram")
+                client, connection = clients[posicao % len(CONTAS)]
+                log(f"({connection}) Buscando dados do perfil @{jogador.usuario} no instagram")
                 posicao += 1
                 try:
                     usuario = client.user_info_by_username(jogador.usuario)
@@ -180,8 +180,8 @@ def run():
                     continue
 
                 time.sleep(int(TIME_MIN / len(CONTAS)) + 1)
-                client = clients[posicao % len(CONTAS)]
-                log(f"({CONTAS.keys()[(posicao % len(CONTAS))]}) Confirmando se @{jogador.usuario} segue o {PERFIL} no instagram")
+                client, connection = clients[posicao % len(CONTAS)]
+                log(f"({connection}) Confirmando se @{jogador.usuario} segue o {PERFIL} no instagram")
                 posicao += 1
                 usuarios = client.search_followers(user_id=JOGOSDASORTEBR_ID,query=jogador.usuario)
                 #seguidor_instagram = [x for x in seguidores_instagram if x.username == jogador.usuario]
