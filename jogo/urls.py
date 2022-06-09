@@ -2,10 +2,10 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path, include
-from jogo.views import cancelar_template, index, \
-    partidas, ganhadores, cartela, login_page, logout_page, criarpartida, \
+from jogo.views import index, \
+    partidas, ganhadores, login_page, logout_page, criarpartida, \
     cartelas, configuracao, cancelar_partida, cancelar_bilhete, partida_edit, \
-    partida_automatica, automatos, parar_automato, sortear_template, editar_template, manter_contas_view, \
+    manter_contas_view, \
     aumentar_cartelas, forcar_sorteio
 
 from .views import jogadores, realtime_data
