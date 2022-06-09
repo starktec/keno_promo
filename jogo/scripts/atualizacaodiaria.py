@@ -91,7 +91,7 @@ def run():
             contador = 0
             log(f"{len(proxy_list)} IPs encontrados")
             for i_conta in CONTAS:
-                log(f"Fazendo login na conta {i_conta.get('username')}...")
+                log(f"Fazendo login na conta {i_conta.username}...")
                 time.sleep(15)
                 con_client = Client()
                 if proxy_list:
@@ -243,9 +243,8 @@ def run():
                         jogador.save()
             save = True
     except Exception as e:
-        raise e
-        #log(e)
-        #save = False
+        log(e.message)
+        save = False
     finally:
         if save:
             RelatorioAtualizacao.objects.create(
