@@ -109,6 +109,9 @@ def run():
             posicao += 1
             antes = datetime.now()
             seguidores = client.user_followers(JOGOSDASORTEBR_ID)
+            if isinstance(seguidores,str):
+                log("FALHA: seguidores em str")
+                raise Exception
             agora = datetime.now()
             log(f" - {len(seguidores)} Seguidores encontrados em {int((agora-antes).seconds/60)} minutos")
 
