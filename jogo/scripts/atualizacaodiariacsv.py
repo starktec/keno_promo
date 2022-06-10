@@ -121,7 +121,7 @@ def run(*args,**kwargs):
             for linha in arquivo.readlines():
                 campos = linha[:-1].split("|")
                 pic_url = ""
-                if linha and campos and len(campos==4):
+                if linha and campos and len(campos)==4:
                     if campos[-1]=="" or campos[-1]=="None":
                         lista_seguidores.append(Seguidor(campos[0],campos[1],campos[2],""))
                     else:
