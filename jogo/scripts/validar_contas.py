@@ -3,7 +3,7 @@ import os
 import requests
 from django.conf import settings
 from instagrapi import Client
-from instagrapi.exceptions import ClientNotFoundError, UserNotFound
+from instagrapi.exceptions import ClientNotFoundError, UserNotFound, ClientBadRequestError
 
 from jogo.consts import StatusJogador
 from jogo.models import Jogador, InstagramAccount
@@ -53,7 +53,7 @@ def run():
             usuario = client.user_info_by_username(jogador.usuario)
             if not usuario:
                 raise ClientNotFoundError()
-        except (ClientNotFoundError,UserNotFound) as cnfe:
+        except (ClientNotFoundError,UserNotFound, ClientBadRequestError) as cnfe:
             print(" - Conta inexistente")
             # Conta nao existe
             jogador.status = StatusJogador.CANCELADO

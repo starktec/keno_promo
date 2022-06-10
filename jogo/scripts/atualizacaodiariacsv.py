@@ -4,7 +4,7 @@ from datetime import date,datetime
 
 from django.conf import settings
 from instagrapi import Client
-from instagrapi.exceptions import ClientNotFoundError, UserNotFound
+from instagrapi.exceptions import ClientNotFoundError, UserNotFound, ClientBadRequestError
 
 from jogo.consts import StatusJogador
 from jogo.models import InstagramAccount, Jogador, RelatorioAtualizacao, Conta, IPTabela
@@ -133,7 +133,7 @@ def run(*args,**kwargs):
 
             log(" - Processado. Entrando na Fase 2: atualizando o banco de dados")
             contas = InstagramAccount.objects.all()
-            jogadores = Jogador.objects.all()
+            jogadores = Jogador.objects.filter(status__lt=StatusJogador.CANCELADO)
 
             seguidores_por_id = {x.pk:x for x in lista_seguidores}
             seguidores_por_username = {x.username: x for x in lista_seguidores}
@@ -205,7 +205,7 @@ def run(*args,**kwargs):
                             usuario = client.user_info_by_username(jogador.usuario)
                             if not usuario:
                                 raise ClientNotFoundError()
-                        except (ClientNotFoundError, UserNotFound) as cnfe:
+                        except (ClientNotFoundError, UserNotFound, ClientBadRequestError) as cnfe:
                             log(f"@{jogador.usuario} é uma conta inexistente... cancelando jogador")
                             # Conta nao existe
                             jogador.status = StatusJogador.CANCELADO
