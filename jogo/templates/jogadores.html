@@ -146,7 +146,8 @@ JOGADORES
                         <tr>
                             <td scope="row">
                                 {% if jogador.foto %}<p><img src="{{ jogador.foto }}" width="60px"></p>{% endif %}
-                                (ID {{ jogador.id }}) <span {% if jogador.status == 1 %} class="btn-success"
+                                (ID {{ jogador.id }}) <span {% if jogador.status == 1 and not jogador.conta %} class="btn-black"
+                                    {% elif jogador.status == 1 %} class="btn-success"
                                 {% elif jogador.status == 2 %} class="btn-warning"
                                 {% elif jogador.status == 3 %} class="btn-danger"
                                 {% endif %}
