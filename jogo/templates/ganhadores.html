@@ -162,6 +162,12 @@ GANHADORES
                                             )
                                             {% if v.cartela.jogador %}
                                                 <span class="fundo-success-pago">JG</span>
+
+                                                {% if v.cartela.jogador.status == 1 %} <span class="btn-success">ATIVO</span>
+                                                {% elif v.cartela.jogador.status == 2 %} <span class="btn-warning">SUSPENSO</span>
+                                                {% elif v.cartela.jogador.status == 3 %} <span class="btn-danger">NAO ENCONTRADO</span>
+                                                {% endif %}
+
                                             {% else %}
                                                 <span class="fundo-alert-pago">NJG</span>
                                             {% endif %}
