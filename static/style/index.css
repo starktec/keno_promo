@@ -876,16 +876,20 @@ btn-text {
   z-index: 1 !important;
 }
 
-span .text-verde {
+.text-verde {
   color: #1ee0ac !important;
 }
 
-span .text-amarelo {
+.text-amarelo {
   color: #f3d83b !important;
 }
 
-span .text-azul {
+.text-azul {
   color: #1260d6 !important;
+}
+
+.text-vermelho {
+  color: red !important;
 }
 
 span .icon-img {
@@ -1030,4 +1034,6 @@ span .icon-img {
     width: 100%;
   }
 }
+
+
 

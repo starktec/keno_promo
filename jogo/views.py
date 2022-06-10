@@ -365,9 +365,14 @@ def jogadores(request):
                 jogadores = jogadores.filter(cartela__in=cartelas)
             if 'nome_jogador' in form.cleaned_data and form.cleaned_data['nome_jogador']:
                 jogadores = jogadores.filter(nome__icontains=form.cleaned_data['nome_jogador'])
+            if 'status' in form.cleaned_data and form.cleaned_data['status']:
+                jogadores = jogadores.filter(status=form.cleaned_data['status'])
         else:
             print(form.errors)  
     total_dados = jogadores.count()
+    total_ativos = jogadores.filter(status=1).count()
+    total_suspensos = jogadores.filter(status=2).count()
+    total_fake = jogadores.filter(status=3).count()
     ultima_pagina = 1
     jogadores = jogadores.annotate(num_cartelas = Count('cartela')).order_by('-num_cartelas')
     if (total_dados != 0 and itens_pagina != 0):
@@ -386,7 +391,9 @@ def jogadores(request):
     pagina_anterior = pagina - 1
 
     return render(request,'jogadores.html',{'jogadores':jogadores,'form':form,'pagina_atual': pagina,'ultima_pagina':ultima_pagina,'proxima_pagina': proxima_pagina,
-                                            'pagina_anterior': pagina_anterior,'pagina_anterior':pagina_anterior,'total_dados':total_dados})
+                                            'pagina_anterior': pagina_anterior,'pagina_anterior':pagina_anterior,
+                                            'total_dados':total_dados,'total_ativos':total_ativos,'total_suspensos':total_suspensos,
+                                            'total_fake':total_fake})
 
 @login_required(login_url="/login/")
 def criarpartida(request):

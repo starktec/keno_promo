@@ -53,8 +53,17 @@ JOGADORES
                                 <label class="form-label-outlined label-search" for="id_partida">Partida</label>
                                 </div>
                             </div>
-                        </div> 
-                        <div class="col-12 col-sm-12 col-md-12 col-lg-8 col-xl-8 container-input-search text-right form-group">
+                        </div>
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 container-input-create-secundary">
+                            <div class="form-group">
+                                <div class="form-control-wrap">
+                                {{ form.status }}
+                                <label class="form-label-outlined label-search" for="id_status">Status</label>
+                                </div>
+                            </div>
+                        </div>
+                        <! -- montar o alinhamento -->
+                        <div class="col-sm-12 col-md-12 col-lg-8 col-xl-8 container-input-search text-right form-group">
                             <button onclick=test(1) class="col-3 col-sm-3 col-md-2 col-lg-2 col-xl-2 justify-content-center btn btn-success btn-search form-control-lg">
                                 <em class="icon ni ni-search"></em>
                             </button>
@@ -73,11 +82,44 @@ JOGADORES
         <div class="col-sm-6 col-md-6 col-lg-3 ">
             <div class="card cards-status">
                 <div class="row text-center">
-                    <em class="icon ni ni-sign-mxn icon-card color-card-on-line"></em>
+                    <em class="icon ni ni-user icon-card color-card-on-line"></em>
                     <h6 class="title-card color-card-pos">Total Jogadores</h6>
                 </div>
                 <div class="row">
                     <h6 class="col-12 text-right subtitle-card color-card-pos">{{ total_dados }}</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-6 col-lg-3 ">
+            <div class="card cards-status text-verde">
+                <div class="row text-center ">
+                    <em class="icon ni ni-user icon-card color-card-on-line"></em>
+                    <h6 class="title-card color-card-pos text-verde">Ativos</h6>
+                </div>
+                <div class="row text-verde">
+                    <h6 class="col-12 text-right subtitle-card color-card-pos text-verde">{{ total_ativos }}</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-6 col-lg-3 ">
+            <div class="card cards-status text-amarelo">
+                <div class="row text-center">
+                    <em class="icon ni ni-user icon-card color-card-on-line"></em>
+                    <h6 class="title-card color-card-pos text-amarelo">Suspensos</h6>
+                </div>
+                <div class="row">
+                    <h6 class="col-12 text-right subtitle-card color-card-pos text-amarelo">{{ total_suspensos }}</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-6 col-lg-3 ">
+            <div class="card cards-status">
+                <div class="row text-center text-vermelho">
+                    <em class="icon ni ni-user icon-card color-card-on-line"></em>
+                    <h6 class="title-card color-card-pos text-vermelho">Não Encontrados</h6>
+                </div>
+                <div class="row">
+                    <h6 class="col-12 text-right subtitle-card color-card-pos text-vermelho">{{ total_fake }}</h6>
                 </div>
             </div>
         </div>
@@ -94,12 +136,20 @@ JOGADORES
                             <th scope="col">Instagram</th>
                             <th scope="col">Quantidade de sorteios</th>
                             <th scope="col">Sorteios que participou</th>
+                            <th scope="col"></th>
                         </tr>
                     </thead>
                     <tbody class="text-center tbody-content">
                     {% for jogador in jogadores %}
                         <tr>
-                            <td scope="row">{{ jogador.id }}</td>
+                            <td scope="row">
+                                {% if jogador.foto %}<p><img src="{{ jogador.foto }}" width="50%"></p>{% endif %}
+                                (ID {{ jogador.id }}) <span {% if jogador.status == 1 %} class="btn-success"
+                                {% elif jogador.status == 2 %} class="btn-warning"
+                                {% elif jogador.status == 3 %} class="btn-danger"
+                                {% endif %}
+                            >{{ jogador.get_status_display }}</span>
+                            </td>
                             <td scope="row">{{ jogador.nome }}</td>
                             <td scope="row">
                                 <a href="https://www.instagram.com/{{ jogador.usuario }}/" target="_blank">
@@ -137,7 +187,11 @@ JOGADORES
                                     </div>
                                 </div>
                             </td>
-                            <!-- Ganhou Acumulado -->
+                            <td>
+                                {% if jogador.status == 2 %}
+                                <button class="btn-success" >Ativar jogador</button>
+                                {% endif %}
+                            </td>
                         </tr>
                     {% endfor %}
 
