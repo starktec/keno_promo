@@ -260,6 +260,6 @@ def run(*args,**kwargs):
                 num_jogadores_suspenso_novos = num_jogadores_suspenso_novos,
                 num_jogadores_nao_analisados = Jogador.objects.filter(conta__isnull=True,status=1).count(),
             )
-        log(f"Relatorio 1 (FAKE): {', '.join(fake)}")
-        log(f"Relatorio 2 (NAO SEGUE): {', '.join(nao_segue)}")
+        log(f"Relatorio 1 (FAKE): {len(fake)} - {', '.join(fake)}")
+        log(f"Relatorio 2 (NAO SEGUE): {len(nao_segue)} - {', '.join(nao_segue)}")
         log("************************************************************")
