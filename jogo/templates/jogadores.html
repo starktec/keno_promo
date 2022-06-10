@@ -148,7 +148,7 @@ JOGADORES
                                 {% if jogador.foto %}<p><img src="{{ jogador.foto }}" width="60px"></p>{% endif %}
                                 (ID {{ jogador.id }}) <span
                                     {% if jogador.status == 1 %}
-                                        {% if not jogador.conta %} class="btn-black"
+                                        {% if not jogador.conta %} class="btn-dark"
                                         {% else %} class="btn-success"
                                         {% endif %}
                                     {% elif jogador.status == 2 %} class="btn-warning"
