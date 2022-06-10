@@ -146,11 +146,14 @@ JOGADORES
                         <tr>
                             <td scope="row">
                                 {% if jogador.foto %}<p><img src="{{ jogador.foto }}" width="60px"></p>{% endif %}
-                                (ID {{ jogador.id }}) <span {% if jogador.status == 1 and not jogador.conta %} class="btn-black"
-                                    {% elif jogador.status == 1 %} class="btn-success"
-                                {% elif jogador.status == 2 %} class="btn-warning"
-                                {% elif jogador.status == 3 %} class="btn-danger"
-                                {% endif %}
+                                (ID {{ jogador.id }}) <span
+                                    {% if jogador.status == 1 %}
+                                        {% if not jogador.conta %} class="btn-black"
+                                        {% else %} class="btn-success"
+                                        {% endif %}
+                                    {% elif jogador.status == 2 %} class="btn-warning"
+                                    {% elif jogador.status == 3 %} class="btn-danger"
+                                    {% endif %}
                             >{{ jogador.get_status_display }}</span>
                             </td>
                             <td scope="row">{{ jogador.nome }}</td>
