@@ -6,7 +6,7 @@ from jogo.views import index, \
     partidas, ganhadores, login_page, logout_page, criarpartida, \
     cartelas, configuracao, cancelar_partida, cancelar_bilhete, partida_edit, \
     manter_contas_view, \
-    aumentar_cartelas, forcar_sorteio
+    aumentar_cartelas, forcar_sorteio, ativar_jogador
 
 from .views import jogadores, realtime_data
 from .views_api_media import logo_promo, media_login, nome_server, media_logo, media_favicon
@@ -23,6 +23,7 @@ urlpatterns = [
 
     path('ganhadores/', ganhadores),
     path('jogadores/', jogadores),
+    path('jogador/<int:jogador_id>/ativar/', ativar_jogador),
     path('cartelas/', cartelas),
     path('configuracao/', configuracao),
 

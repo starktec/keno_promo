@@ -8,10 +8,12 @@ import csv
 import math
 import logging
 
+from django.contrib import messages
 from instagrapi import Client
 from instagrapi.exceptions import ClientLoginRequired, UserNotFound
 
 from jogo.choices import AcaoTipoChoices, StatusCartelaChoice
+from jogo.consts import StatusJogador
 from jogo.utils import testa_horario, comprar_cartelas, manter_contas
 from jogo.constantes import VALORES_VOZES
 
@@ -394,6 +396,19 @@ def jogadores(request):
                                             'pagina_anterior': pagina_anterior,'pagina_anterior':pagina_anterior,
                                             'total_dados':total_dados,'total_ativos':total_ativos,'total_suspensos':total_suspensos,
                                             'total_fake':total_fake})
+
+@login_required(login_url="/login/")
+def ativar_jogador(request,jogador_id):
+    if jogador_id:
+        jogador = Jogador.objects.filter(id=jogador_id).first()
+        if jogador:
+            jogador.status = StatusJogador.ATIVO
+            jogador.save()
+            messages.success(request,f"Jogador {jogador.usuario} voltou a estar ativo")
+            return redirect("/jogadores/")
+    return HttpResponse(status=404)
+
+
 
 @login_required(login_url="/login/")
 def criarpartida(request):
