@@ -65,9 +65,9 @@ def update_jogador(j,conta,status=None):
         return j
     return None
 
-def run():
+def run(*args,**kwargs):
     # Obtenção dos dados e salvar em CSV
-    log("Fase1: Geração de CSV")
+    log("Fase1: Abrindo o CSV")
     log("Fazendo login")
     num_jogadores_ativo_novos = 0
     num_jogadores_cancelado_novos = 0
@@ -92,43 +92,43 @@ def run():
             log(f"{len(proxy_list)} IPs encontrados")
             for i_conta in CONTAS:
                 log(f"Fazendo login na conta {i_conta.username}...")
-                time.sleep(15)
-                con_client = Client()
-                if proxy_list:
-                    con_client.set_proxy(proxy_list[contador])
-                con_client.login(i_conta.username, i_conta.password)
-                clients.append((con_client,i_conta.username))
-                i_conta.instagram_connection = pickle.dumps(con_client)
-                i_conta.ultimo_acesso = datetime.now()
-                i_conta.save()
+                if i_conta.instagram_connection and i_conta.ultimo_acesso.date() == date.today():
+                    clients.append((pickle.loads(i_conta.instagram_connection),i_conta.username))
+                else:
+                    time.sleep(15)
+                    con_client = Client()
+                    if proxy_list:
+                        con_client.set_proxy(proxy_list[contador])
+                    con_client.login(i_conta.username, i_conta.password)
+                    clients.append((con_client,i_conta.username))
+                    i_conta.instagram_connection = pickle.dumps(con_client)
+                    i_conta.ultimo_acesso = datetime.now()
+                    i_conta.save()
 
-                contador += 1
+                    contador += 1
 
-            client, connection = clients[posicao%len(CONTAS)]
-            log(f"({connection}) Buscando seguidores")
-            posicao += 1
-            antes = datetime.now()
-            seguidores = client.user_followers(JOGOSDASORTEBR_ID)
-            if isinstance(seguidores,str):
-                log("FALHA: seguidores em str")
-                raise Exception
-            agora = datetime.now()
-            log(f" - {len(seguidores)} Seguidores encontrados em {int((agora-antes).seconds/60)} minutos")
-
-            log(" - Registrando csv...")
             hoje = date.today()
-            nome_arquivo = f"{hoje.year}{hoje.month}{hoje.day}_seguidores.csv"
-            arquivo = open(settings.BASE_DIR + "/logs/"+nome_arquivo,"w",encoding="utf-8")
+            agora = datetime.now()
+            nome_arquivo = ""
+            if args:
+                nome_arquivo = args[0]
+            else:
+                nome_arquivo = f"{hoje.year}{hoje.month}{hoje.day}_seguidores.csv"
+            arquivo = open(settings.BASE_DIR + "/logs/"+nome_arquivo)
 
             lista_seguidores = []
 
-            for seguidor in seguidores.values():
+            for linha in arquivo.readlines():
+                campos = linha[:-1].split("|")
                 pic_url = ""
-                if seguidor.profile_pic_url:
-                    pic_url = str(seguidor.profile_pic_url)
-                lista = (seguidor.pk,seguidor.username,seguidor.full_name,pic_url)
-                lista_seguidores.append(Seguidor(seguidor.pk,seguidor.username,seguidor.full_name,pic_url))
-                arquivo.write("|".join(lista)+"\n")
+                if linha and campos and len(campos==4):
+                    if campos[-1]=="" or campos[-1]=="None":
+                        lista_seguidores.append(Seguidor(campos[0],campos[1],campos[2],""))
+                    else:
+                        lista_seguidores.append(Seguidor(campos[0], campos[1], campos[2], campos[3]))
+                else:
+                    log(f"Pulando a avalição da linha {linha}")
+
             arquivo.close()
 
             log(" - Processado. Entrando na Fase 2: atualizando o banco de dados")
@@ -246,7 +246,7 @@ def run():
                         jogador.save()
             save = True
     except Exception as e:
-        log(str(e))
+        log("FALHA: "+str(e))
         save = False
     finally:
         if save:
