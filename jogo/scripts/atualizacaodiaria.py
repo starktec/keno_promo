@@ -1,3 +1,5 @@
+import json
+import os
 import pickle
 import time
 from datetime import date,datetime
@@ -85,18 +87,19 @@ def run():
         else:
             log(f"{len(CONTAS)} Contas encontradas")
             proxies = IPTabela.objects.last()
-            proxy_list = []
-            if proxies:
-                proxy_list = [p.ip_proxy+":"+p.ip_faixa for p in proxies]
             contador = 0
-            log(f"{len(proxy_list)} IPs encontrados")
             for i_conta in CONTAS:
                 log(f"Fazendo login na conta {i_conta.username}...")
                 time.sleep(15)
                 con_client = Client()
-                if proxy_list:
-                    con_client.set_proxy(proxy_list[contador])
-                con_client.login(i_conta.username, i_conta.password)
+                if i_conta.proxy:
+                    con_client.set_proxy(i_conta.proxy)
+                if i_conta.settings:
+                    con_client.set_settings(i_conta.settings)
+                    con_client.login(i_conta.username, i_conta.password)
+                else:
+                    con_client.login(i_conta.username, i_conta.password)
+                    i_conta.settings = con_client.get_settings()
                 clients.append((con_client,i_conta.username))
                 i_conta.instagram_connection = pickle.dumps(con_client)
                 i_conta.ultimo_acesso = datetime.now()

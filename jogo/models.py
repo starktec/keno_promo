@@ -642,6 +642,8 @@ class Conta(models.Model):
     proximo = models.ForeignKey('self', on_delete=models.PROTECT, blank=True,null=True)
     ativo = models.BooleanField(default=True)
     atencao = models.BooleanField(default=False)
+    settings = models.JSONField(blank=True, null=True)
+    proxy = models.CharField(max_length=50, blank=True, null=True)
 
     def __str__(self):
         return self.username
