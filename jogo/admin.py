@@ -35,7 +35,7 @@ admin.site.register(Galeria)
 admin.site.register(TextoPublicacao)
 
 class ContaAdmin(admin.ModelAdmin):
-    fields = ['username','password','ultimo_acesso','proximo','ativo', 'instagram_id']
+    fields = ['username','password','ultimo_acesso','proximo','ativo', 'instagram_id', "proxy"]
     readonly_fields = ['ultimo_acesso',"proximo"]
 
 
