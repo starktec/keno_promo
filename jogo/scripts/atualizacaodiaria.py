@@ -100,9 +100,11 @@ def run():
                 else:
                     con_client.login(i_conta.username, i_conta.password)
                     i_conta.settings = con_client.get_settings()
+                agora = datetime.now()
+                i_conta.ultimo_login = agora
                 clients.append((con_client,i_conta.username))
                 i_conta.instagram_connection = pickle.dumps(con_client)
-                i_conta.ultimo_acesso = datetime.now()
+                i_conta.ultimo_acesso = agora
                 i_conta.save()
 
                 contador += 1
