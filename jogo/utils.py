@@ -338,20 +338,16 @@ def manter_contas_thread():
 
 def download_foto(url, nome,):
     FILE_TYPE = ".jpg"
-    page = requests.get(url)
-    print(f"D {page.__dict__}")
-    if page.status_code == 200:
-        path = os.path.join(settings.MEDIA_ROOT,"jogador")
-        if not os.path.exists(path):
-            print(f"D Criando pasta...")
-            os.makedirs(path)
-        f_name = os.path.join(path,f"{nome}{FILE_TYPE}")
-        print(f"D nome {f_name}")
-        with open(f_name, 'wb') as f:
-            f.write(page.content)
-        print("D return OK")
-        return f"/media/jogador/{nome}{FILE_TYPE}"
-    print("D return None")
+    if url and url.startswith("https://"):
+        page = requests.get(url)
+        if page.status_code == 200:
+            path = os.path.join(settings.MEDIA_ROOT,"jogador")
+            if not os.path.exists(path):
+                os.makedirs(path)
+            f_name = os.path.join(path,f"{nome}{FILE_TYPE}")
+            with open(f_name, 'wb') as f:
+                f.write(page.content)
+            return f"/media/jogador/{nome}{FILE_TYPE}"
     return None
 
 
