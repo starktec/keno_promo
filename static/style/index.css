@@ -1037,3 +1037,7 @@ span .icon-img {
 
 .input-full { width: 100%; }
 
+.caixa-texto-verde {color: #fff; background-color: #1ee0ac; padding: 0.5rem 1.25rem; margin-bottom: 0; border-bottom: 0 solid rgba(0, 0, 0, 0.125); }
+.caixa-texto-vermelho {color: #fff; background-color: #e85347; padding: 0.5rem 1.25rem; margin-bottom: 0; border-bottom: 0 solid rgba(0, 0, 0, 0.125); }
+
+

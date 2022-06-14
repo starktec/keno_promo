@@ -853,3 +853,12 @@ def forcar_sorteio(request, partida_id):
 def relatorio(request):
     ra = RelatorioAtualizacao.objects.all().order_by("-id")[:5]
     return render(request,"relatorio.html",{"relatorios":ra})
+
+@login_required()
+def conta_status(request, conta_id):
+    conta = Conta.objects.filter(id=conta_id).first()
+    if conta:
+        conta.ativo = not conta.ativo
+        conta.save()
+        messages.success(request,f"Conta {conta.username} atualizada com sucesso")
+    return redirect("/configuracao_instagram/")
