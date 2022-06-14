@@ -347,6 +347,7 @@ def download_foto(url, nome,):
         with open(f_name, 'wb') as f:
             f.write(page.content)
         return f"/media/jogador/{nome}{FILE_TYPE}"
+    return None
 
 
 
