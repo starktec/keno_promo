@@ -6,7 +6,7 @@ from jogo.views import index, \
     partidas, ganhadores, login_page, logout_page, criarpartida, \
     cartelas, configuracao, cancelar_partida, cancelar_bilhete, partida_edit, \
     manter_contas_view, \
-    aumentar_cartelas, forcar_sorteio, ativar_jogador
+    aumentar_cartelas, forcar_sorteio, ativar_jogador, configuracao_instagram
 
 from .views import jogadores, realtime_data
 from .views_api_media import logo_promo, media_login, nome_server, media_logo, media_favicon
@@ -26,6 +26,7 @@ urlpatterns = [
     path('jogador/<int:jogador_id>/ativar/', ativar_jogador),
     path('cartelas/', cartelas),
     path('configuracao/', configuracao),
+    path('configuracao_instagram/', configuracao_instagram),
 
     path('cancelar_partida/<int:partida_id>/',cancelar_partida),
     path('cancelar_bilhete/<str:hash>/',cancelar_bilhete),

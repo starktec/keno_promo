@@ -644,6 +644,7 @@ class Conta(models.Model):
     atencao = models.BooleanField(default=False)
     settings = models.JSONField(blank=True, null=True)
     proxy = models.CharField(max_length=50, blank=True, null=True)
+    ultimo_login = models.DateTimeField(blank=True,null=True)
 
     def __str__(self):
         return self.username

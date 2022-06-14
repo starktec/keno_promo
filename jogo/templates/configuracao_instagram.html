@@ -1,0 +1,193 @@
+{% extends "index.html" %}
+{% block titulo %}
+CONFIGURAÇÃO
+{% endblock %}
+{% block nav-bar %}
+
+
+        {% if messages %}
+        <div class="row justify-content-center bg-success">
+            <div class="row col-lg-12 col-md-12 col-sm-12 justify-content-center padding-zero">
+                <ul class="messages">
+                    {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="row justify-content-center">
+            <div class="row col-lg-12 col-md-12 col-sm-12 justify-content-center padding-zero">
+                <div class="col-md-12">
+                    <div class="row card card-tabs col-md-12 padding-zero">
+                        <div class="col-md-12 padding-zero">
+                            <div class="row card col-md-12 container-card justify-content-center container-center">
+                                <nav class="col-12 tab">
+                                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                                      <button class="nav-link active-tabs tabs-margin" id="jogo-conf" data-bs-toggle="tab" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Configuração Instagram</button>
+                                      <button class="nav-link deactivate-tabs tabs-margin" id="server-conf" data-bs-toggle="tab" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Monitoramento das Contas</button>
+                                    </div>
+                                </nav>
+                            </div>
+                        </div>
+                        
+                        <form class="col-12 row justify-content-start form-group" method="post">
+                        {% csrf_token %}
+                            {% if form.non_fields_errors %}
+                            <div class="errors-box container-error container-center">
+                              {{ form.non_fields_errors }}
+                            </div>
+                        {% endif %}
+                            {% if form.fields_errors %}
+                            <div class="errors-box container-error container-center">
+                              {{ form.fields_errors }}
+                            </div>
+                        {% endif %}
+                            <div class="row container-jogo-conf">
+                                <div class="col-lg-12 col-md-12 col-sm-12 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_perfil_default">Perfil do jogo (padrão)</label>
+                                    <div class="form-control-wrap col-sm-12">
+                                        {{ configuracao.perfil_default }} - ({{ configuracao.perfil_id }})
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_validacao_ativa">Ativar validação pelo instagram?</label>
+                                    <div class="form-control-wrap">
+                                        {{ form.validacao_ativa }}
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6 col-md-6 col-sm-12 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_publicacao_uma_vez_dia">Publicação automatica 1 vez por dia (com validação ativa)?</label>
+                                    <div class="form-control-wrap">
+                                        {{ form.publicacao_uma_vez_dia }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_mensagem_nao_segue">Mensagem para quem nao segue o perfil</label>
+                                    <div class="form-control-wrap">
+                                        {{ form.mensagem_nao_segue }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_mensagem_nao_existe">Mensagem para perfil não encontrado</label>
+                                    <div class="form-control-wrap">
+                                        {{ form.mensagem_nao_existe }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_mensagem_nao_ha_sorteios">Mensagem para quando não houver sorteios futuros</label>
+                                    <div class="form-control-wrap">
+                                        {{ form.mensagem_nao_ha_sorteios }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_mensagem_ja_participa_sorteio">Mensagem para quem já está participando do sorteio atual</label>
+                                    <div class="form-control-wrap">
+                                        {{ form.mensagem_ja_participa_sorteio }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_mensagem_cartelas_esgotadas">Mensagem para cartelas esgotadas (modo retenção)</label>
+                                    <div class="form-control-wrap">
+                                        {{ form.mensagem_cartelas_esgotadas }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row container-server-conf">
+                                {% for conta in contas %}
+                                <div class="row justify-content-center col-lg-12 col-sm-12 container-input-create">
+                                    <div class="form-group">
+                                        <div class="form-control-wrap">
+                                            <h6 class="conf-subtitle">Conta {{ conta.username }} - {{ conta.instagram_id }}</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-4 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_nome_server">Ativo</label>
+                                    <div class="form-control-wrap">
+                                        {{ conta.ativo }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-4 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_nome_server">Atenção</label>
+                                    <div class="form-control-wrap">
+                                        {{ conta.atencao }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-4 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_proxy">Proxy</label>
+                                    <div class="form-control-wrap">
+                                        {% if conta.proxy %}{{ conta.proxy }}{% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_ultimo_acesso">Data último acesso</label>
+                                    <div class="form-control-wrap">
+                                        {{ conta.ultimo_acesso }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_ultimo_login">Data último login</label>
+                                    <div class="form-control-wrap">
+                                        {% if conta.ultimo_login %}{{ conta.ultimo_login }}{% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_settings">Settings</label>
+                                    <div class="form-control-wrap">
+                                        {% if conta.settings %}{{ conta.settings }}{% endif %}
+                                    </div>
+                                </div>
+
+                                {% endfor %}
+                            </div>
+                            <div class="col-12 row justify-content-end container-btn-create-estabelecimento">
+                                <div class="col-12 text-right container-input-create container-salve-conf">
+                                     <div class="form-group">
+                                        <div class="form-control-wrap">
+                                            <button class="btn btn-success btn-create-secondary">Salvar</button>
+                                        </div>
+                                     </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<!-- content @e -->
+<!------------------------------------------------------------------------------------------------------------>
+<script>
+    
+    const jogo = $('#jogo-conf');
+    const server = $('#server-conf');
+
+    const jogoContainer = $('.container-jogo-conf');
+    const serverContainer = $('.container-server-conf');
+
+    $(jogo).click(function () {
+        jogo.removeClass('deactivate-tabs');
+        jogo.addClass('active-tabs');
+        jogoContainer.css('display','flex');
+
+        server.removeClass('active-tabs');
+        server.addClass('deactivate-tabs');
+        serverContainer.css('display','none');
+    })
+
+    $(server).click(function () {
+        server.removeClass('deactivate-tabs');
+        server.addClass('active-tabs');
+        serverContainer.css('display','flex');
+
+        jogo.removeClass('active-tabs');
+        jogo.addClass('deactivate-tabs');
+        jogoContainer.css('display','none');
+    })
+
+</script>
+
+{% endblock %}

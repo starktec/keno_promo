@@ -18,11 +18,12 @@ from jogo.utils import testa_horario, comprar_cartelas, manter_contas
 from jogo.constantes import VALORES_VOZES
 
 from jogo.agendamento import Agenda
-from jogo.forms import CartelasFilterForm, JogadoresForm, NovaPartidaAutomatizada, PartidaEditForm, GanhadoresForm, NovaPartidaForm, UsuarioAddForm, \
-    ConfiguracaoForm, TemplateEditForm
+from jogo.forms import CartelasFilterForm, JogadoresForm, NovaPartidaAutomatizada, PartidaEditForm, GanhadoresForm, \
+    NovaPartidaForm, UsuarioAddForm, \
+    ConfiguracaoForm, TemplateEditForm, ConfiguracaoInstagramForm
 from jogo.models import Jogador, Partida, Automato, Cartela, Usuario, Configuracao, CartelaVencedora, TemplatePartida, \
     Regra, \
-    Acao, PerfilSocial, ConfiguracaoInstagram, Agendamento
+    Acao, PerfilSocial, ConfiguracaoInstagram, Agendamento, InstagramAccount, Conta
 from jogo.utils import CLIENT
 from jogo.websocket_triggers_bilhete import event_bilhete_partida
 
@@ -647,9 +648,23 @@ def configuracao(request):
         form = ConfiguracaoForm(request.POST, request.FILES, instance=c)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Dados Atualizados')
     else:
         form = ConfiguracaoForm(instance=c)
     return render(request, 'configuracao.html', {'form': form, 'configuracao': c})
+
+@login_required(login_url="/login/")
+def configuracao_instagram(request):
+    c = ConfiguracaoInstagram.objects.last()
+    if request.method == "POST":
+        form = ConfiguracaoInstagramForm(request.POST, instance=c)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Dados Atualizados')
+    else:
+        form = ConfiguracaoInstagramForm(instance=c)
+    contas = Conta.objects.all()
+    return render(request, 'configuracao_instagram.html', {'form': form, 'configuracao': c, "contas":contas})
 
 
 @login_required(login_url="/login/")

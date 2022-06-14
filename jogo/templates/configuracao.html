@@ -12,6 +12,17 @@ CONFIGURAÇÃO
                 </div>
             </div>
         </div> -->
+        {% if messages %}
+        <div class="row justify-content-center bg-success">
+            <div class="row col-lg-12 col-md-12 col-sm-12 justify-content-center padding-zero">
+                <ul class="messages">
+                    {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
 
         <div class="row justify-content-center">
             <div class="row col-lg-12 col-md-12 col-sm-12 justify-content-center padding-zero">
@@ -60,12 +71,13 @@ CONFIGURAÇÃO
                                         {{ form.liberar_resultado_sorteio_em }}
                                     </div>
                                 </div>
-                                <!--<div class="col-lg-6 col-md-6 col-sm-12 container-input-create input-container-conf">
-                                    <label class="form-label" for="id_velo_sorteio">Velocidade do Sorteio Online</label>
+                                <div class="col-lg-6 col-md-6 col-sm-12 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_reter_jogadores">Reter jogadores? (se NÃO, ao utrapassar o
+                                        limite de cartelas do sorteio automaticamente passa pro próximo)</label>
                                     <div class="form-control-wrap">
-                                        {{ form.velocidade_replay_online }}
+                                        {{ form.reter_jogadores }}
                                     </div>
-                                </div>-->
+                                </div>
                             </div>
                             <div class="row container-server-conf">
                                 <!-- <div class="row justify-content-center col-lg-12 col-sm-12 container-input-create">

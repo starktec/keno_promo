@@ -6,7 +6,7 @@ from jogo.choices import StatusCartelaChoice
 
 from jogo.consts import NamesValidations, StatusJogador
 from jogo.models import TemplatePartida, Usuario, Partida, PARTIDA_TIPOS_CHOICES, \
-    Configuracao, TEMPO_CHOICES, TEMPO_LIBERAR_CHOICES, TEMPO_MINIMO_ANTECIPADO
+    Configuracao, TEMPO_CHOICES, TEMPO_LIBERAR_CHOICES, TEMPO_MINIMO_ANTECIPADO, ConfiguracaoInstagram
 from jogo.utils import testa_horario
 
 
@@ -458,7 +458,20 @@ class ConfiguracaoForm(forms.ModelForm):
         model = Configuracao
         fields = ['tempo_min_entre_sorteios',
                   'iniciar_sorteio_em',
-                  'logo_dash','logo_login','favicon','nome_server','nome_botao','url_botao','logo_promo']
+                  'logo_dash','logo_login','favicon','nome_server','nome_botao','url_botao','logo_promo',
+                  "reter_jogadores"]
+
+class ConfiguracaoInstagramForm(forms.ModelForm):
+    mensagem_nao_segue = forms.CharField(required=False,widget=forms.TextInput(attrs={"class":"input-full"}))
+    mensagem_nao_existe = forms.CharField(required=False,widget=forms.TextInput(attrs={"class":"input-full"}))
+    mensagem_nao_ha_sorteios = forms.CharField(required=False,widget=forms.TextInput(attrs={"class":"input-full"}))
+    mensagem_ja_participa_sorteio = forms.CharField(required=False,widget=forms.TextInput(attrs={"class":"input-full"}))
+    mensagem_cartelas_esgotadas = forms.CharField(required=False,widget=forms.TextInput(attrs={"class":"input-full"}))
+    class Meta:
+        model = ConfiguracaoInstagram
+        fields = ["validacao_ativa","publicacao_uma_vez_dia","mensagem_nao_segue",
+                  "mensagem_nao_existe","mensagem_nao_ha_sorteios","mensagem_ja_participa_sorteio",
+                  "mensagem_cartelas_esgotadas"]
 
 
 class PartidaEditForm(forms.ModelForm):
