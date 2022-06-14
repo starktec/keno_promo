@@ -100,14 +100,20 @@ CONFIGURAÇÃO
                                 <div class="row justify-content-center col-lg-12 col-sm-12 container-input-create">
                                     <div class="form-group">
                                         <div class="form-control-wrap">
-                                            <h6 class="conf-subtitle">Conta {{ conta.username }} - {{ conta.instagram_id }}</h6>
+                                            <h6 class="conf-subtitle">Conta {{ conta.username }} {% if conta.instagram_id %}- {{ conta.instagram_id }}{% endif %}</h6>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-lg-4 col-md-4 col-sm-4 container-input-create input-container-conf">
                                     <label class="form-label" for="id_nome_server">Ativo</label>
-                                    <div class="form-control-wrap">
-                                        {{ conta.ativo }}
+                                    <div class="form-control-wrap ">
+                                        {% if conta.ativo %}
+                                        <span class="btn-success">
+                                            {% else %}
+                                        <span class="btn-danger">
+                                            {% endif %}
+                                            {{ conta.ativo }}
+                                        </span>
                                     </div>
                                 </div>
                                 <div class="col-lg-4 col-md-4 col-sm-4 container-input-create input-container-conf">
