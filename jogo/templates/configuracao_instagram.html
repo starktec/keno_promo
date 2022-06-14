@@ -150,7 +150,7 @@ CONFIGURAÇÃO
                                 <div class="col-lg-12 col-md-12 col-sm-12 container-input-create input-container-conf">
                                     <label class="form-label" for="id_settings">Settings</label>
                                     <div class="form-control-wrap">
-                                        {% if conta.settings %}{{ conta.settings|json_script:"settings" }}{% endif %}
+                                        {% if conta.settings %}{{ conta.settings }}{% endif %}
                                     </div>
                                 </div>
 
