@@ -1,0 +1,65 @@
+{% extends "index.html" %}
+{% block titulo %}
+RELATÓRIO
+{% endblock %}
+{% block nav-bar %}
+{% if messages %}
+<div class="row justify-content-center align-items-center bg-success">
+    <div class="col-lg-12">
+        <ul class="messages">
+            {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }} bg-white close"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endif %}
+    <!-------------------------------tabela de generica de cambistas-------------------------------->
+    <div class="row my-row">
+        <div class="col-12">
+            <div class="card card-table table-responsive-xl overflow-auto">
+                {% if relatorios %}
+                <table id="tabelaJogadores" class="table position-relative table-content">
+                    <thead class="thead-dark text-center thead-content">
+                        <tr>
+                            <th scope="col">Data</th>
+                            <th scope="col">Ativos</th>
+                            <th scope="col">Cancelados</th>
+                            <th scope="col">Suspensos</th>
+                            <th scope="col">Não analisados</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-center tbody-content">
+                    {% for relatorio in relatorios %}
+                        <tr>
+                            <td scope="row">
+                                {{ relatorio.num_jogadores }}
+                            </td>
+                            <td scope="row">
+                                {{ relatorio.num_jogadores_ativo_novos }}
+                                ({{ relatorio.num_jogadores_ativo_total }})
+                            </td>
+                            <td scope="row">
+                                {{ relatorio.num_jogadores_cancelado_novos }}
+                                ({{ relatorio.num_jogadores_cancelado_total }})
+                            </td>
+                            <td scope="row">
+                                {{ relatorio.num_jogadores_suspenso_novos }}
+                                ({{ relatorio.num_jogadores_suspenso_total }})
+                            </td>
+                            <td scope="row">
+                                {{ relatorio.num_jogadores_nao_analisados }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+                {% else %}
+                <h6>Não há relatórios produzidos até o momento</h6>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

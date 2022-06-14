@@ -23,7 +23,7 @@ from jogo.forms import CartelasFilterForm, JogadoresForm, NovaPartidaAutomatizad
     ConfiguracaoForm, TemplateEditForm, ConfiguracaoInstagramForm
 from jogo.models import Jogador, Partida, Automato, Cartela, Usuario, Configuracao, CartelaVencedora, TemplatePartida, \
     Regra, \
-    Acao, PerfilSocial, ConfiguracaoInstagram, Agendamento, InstagramAccount, Conta
+    Acao, PerfilSocial, ConfiguracaoInstagram, Agendamento, InstagramAccount, Conta, RelatorioAtualizacao
 from jogo.utils import CLIENT
 from jogo.websocket_triggers_bilhete import event_bilhete_partida
 
@@ -848,3 +848,8 @@ def forcar_sorteio(request, partida_id):
         agenda.sortear_agendado(partida,reload=False)
 
     return redirect("/partidas/")
+
+@login_required()
+def relatorio(request):
+    ra = RelatorioAtualizacao.objects.all().order_by("-id")[:5]
+    return render(request,"relatorio.html",{"relatorios":ra})
