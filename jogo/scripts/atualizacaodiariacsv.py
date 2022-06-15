@@ -99,7 +99,12 @@ def run(*args,**kwargs):
                     con_client = Client()
                     if proxy_list:
                         con_client.set_proxy(proxy_list[contador])
-                    con_client.login(i_conta.username, i_conta.password)
+                    if i_conta.settings:
+                        con_client.set_settings(i_conta.settings)
+                        con_client.login(i_conta.username, i_conta.password)
+                    else:
+                        con_client.login(i_conta.username, i_conta.password)
+                        i_conta.settings = con_client.get_settings()
                     clients.append((con_client,i_conta.username))
                     i_conta.instagram_connection = pickle.dumps(con_client)
                     i_conta.ultimo_acesso = datetime.now()
