@@ -88,25 +88,27 @@ def run(*args,**kwargs):
 
             for i_conta in CONTAS:
                 log(f"Fazendo login na conta {i_conta.username}...")
+                """
                 if i_conta.instagram_connection and i_conta.ultimo_acesso.date() == date.today():
                     clients.append((pickle.loads(i_conta.instagram_connection),i_conta.username))
                 else:
-                    time.sleep(15)
-                    con_client = Client()
-                    if i_conta.proxy:
-                        con_client.set_proxy(i_conta.proxy)
-                    if i_conta.settings:
-                        con_client.set_settings(i_conta.settings)
-                        con_client.login(i_conta.username, i_conta.password)
-                    else:
-                        con_client.login(i_conta.username, i_conta.password)
-                        i_conta.settings = con_client.get_settings()
-                    clients.append((con_client,i_conta.username))
-                    i_conta.instagram_connection = pickle.dumps(con_client)
-                    i_conta.ultimo_acesso = datetime.now()
-                    i_conta.save()
+                """
+                time.sleep(15)
+                con_client = Client()
+                if i_conta.proxy:
+                    con_client.set_proxy(i_conta.proxy)
+                if i_conta.settings:
+                    con_client.set_settings(i_conta.settings)
+                    con_client.login(i_conta.username, i_conta.password)
+                else:
+                    con_client.login(i_conta.username, i_conta.password)
+                    i_conta.settings = con_client.get_settings()
+                clients.append((con_client,i_conta.username))
+                i_conta.instagram_connection = pickle.dumps(con_client)
+                i_conta.ultimo_acesso = datetime.now()
+                i_conta.save()
 
-                    contador += 1
+                contador += 1
 
             hoje = date.today()
             agora = datetime.now()
