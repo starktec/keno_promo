@@ -207,7 +207,7 @@ def run():
                         log(f"({connection}) Buscando dados do perfil @{jogador.usuario} no instagram")
                         posicao += 1
                         try:
-                            usuario = client.user_info_by_username(jogador.usuario)
+                            usuario = client.user_info_by_username_v1(jogador.usuario)
                             if not usuario:
                                 raise ClientNotFoundError()
                         except (ClientNotFoundError, UserNotFound, ClientBadRequestError) as cnfe:
@@ -223,7 +223,7 @@ def run():
                         client, connection = clients[posicao % len(CONTAS)]
                         log(f"({connection}) Confirmando se @{jogador.usuario} segue o {PERFIL} no instagram")
                         posicao += 1
-                        usuarios = client.search_followers(user_id=JOGOSDASORTEBR_ID,query=jogador.usuario)
+                        usuarios = client.search_followers_v1(user_id=JOGOSDASORTEBR_ID,query=jogador.usuario)
                         #seguidor_instagram = [x for x in seguidores_instagram if x.username == jogador.usuario]
 
                         usuarios_dict = {u.username: u for u in usuarios}
