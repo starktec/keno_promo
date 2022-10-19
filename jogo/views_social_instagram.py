@@ -17,6 +17,7 @@ from rest_framework.decorators import api_view
 
 from jogo import local_settings
 from jogo.choices import AcaoTipoChoices
+from jogo.consts import StatusJogador
 from jogo.models import Jogador, Partida, Cartela, Regra, Configuracao, ConfiguracaoInstagram
 
 import logging
@@ -270,6 +271,8 @@ def gerar_bilhete(request):
                                 return JsonResponse(data={"detail": mensagem}, status=404)
 
                     else:
+                        if jogador.status != StatusJogador.ATIVO:
+                            raise PermissionError()
                         try:
                             setSocialConnection()
                             jogador_seguindo = CLIENT.search_followers_v1(user_id=perfil_id,
