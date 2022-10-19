@@ -333,7 +333,7 @@ def ganhadores(request):
 @login_required(login_url="/login/")
 def jogadores(request):
     form = JogadoresForm()
-    jogadores = Jogador.objects.all()
+    jogadores = Jogador.objects.all().order_by('-id')
     itens_pagina = 100
     if request.method == "POST":
         form = JogadoresForm(request.POST)
