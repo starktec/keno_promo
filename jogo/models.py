@@ -25,6 +25,7 @@ from django_resized import ResizedImageField
 from jogo import local_settings
 from jogo.choices import AcaoTipoChoices
 from jogo.constantes import NOME_PESSOAS
+from jogo.consts import StatusJogador
 from jogo.websocket_triggers import event_doacoes
 
 
@@ -418,6 +419,7 @@ class Jogador(models.Model):
     usuario_token = models.CharField(max_length=255)
     seguidores = models.BigIntegerField(default=0)
     cadastrado_em = models.DateTimeField(auto_now_add=True)
+    status = models.SmallIntegerField(default=StatusJogador.ATIVO, choices=StatusJogador.choices)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
@@ -426,6 +428,9 @@ class Jogador(models.Model):
             if jogador:
                 return jogador
             self.usuario_token = base64.b64encode(self.usuario.encode("ascii")).decode("ascii")
+            if Jogador.objects.filter(usuario__startswith=jogador.usuario[:14]).exists():
+                self.status = StatusJogador.SUSPEITO
+
         if not self.nome:
             self.nome = self.usuario
         super().save(force_insert,force_update,using,update_fields)

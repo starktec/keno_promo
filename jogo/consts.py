@@ -1,6 +1,10 @@
-from django.db.models import TextChoices
+from django.db.models import TextChoices, IntegerChoices
 from string import digits,ascii_letters,whitespace
 
+class StatusJogador(IntegerChoices):
+    ATIVO = 1, "Ativo"
+    SUSPEITO = 0, "Suspeito"
+    BLOQUEADO = -1, "Bloqueado"
 
 class StatusSolicitacaoRecolhe(TextChoices):
     AGUADANDO  = 'A', 'Aguardando'

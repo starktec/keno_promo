@@ -12,6 +12,7 @@ from instagrapi import Client
 from instagrapi.exceptions import ClientLoginRequired, UserNotFound
 
 from jogo.choices import AcaoTipoChoices, StatusCartelaChoice
+from jogo.consts import StatusJogador
 from jogo.utils import testa_horario, comprar_cartelas, manter_contas
 from jogo.constantes import VALORES_VOZES
 
@@ -33,7 +34,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, BadRequest
 from django.db import transaction
 from django.db.models import Count, Q, Sum
 from django.db.models.signals import post_save
@@ -333,7 +334,7 @@ def ganhadores(request):
 def jogadores(request):
     form = JogadoresForm()
     jogadores = Jogador.objects.all()
-    itens_pagina = 10
+    itens_pagina = 100
     if request.method == "POST":
         form = JogadoresForm(request.POST)
         if form.is_valid():
@@ -365,8 +366,9 @@ def jogadores(request):
                 jogadores = jogadores.filter(cartela__in=cartelas)
             if 'nome_jogador' in form.cleaned_data and form.cleaned_data['nome_jogador']:
                 jogadores = jogadores.filter(nome__icontains=form.cleaned_data['nome_jogador'])
-        else:
-            print(form.errors)  
+            if 'status' in form.cleaned_data and form.cleaned_data['status']:
+                jogadores = jogadores.filter(status=form.cleaned_data['status'])
+
     total_dados = jogadores.count()
     ultima_pagina = 1
     jogadores = jogadores.annotate(num_cartelas = Count('cartela')).order_by('-num_cartelas')
@@ -387,6 +389,43 @@ def jogadores(request):
 
     return render(request,'jogadores.html',{'jogadores':jogadores,'form':form,'pagina_atual': pagina,'ultima_pagina':ultima_pagina,'proxima_pagina': proxima_pagina,
                                             'pagina_anterior': pagina_anterior,'pagina_anterior':pagina_anterior,'total_dados':total_dados})
+
+@login_required(login_url="/login/")
+def jogador_bloquear(request, jogador_id):
+    jogador = Jogador.objects.filter(id=jogador_id).first()
+    if jogador:
+        with transaction.atomic():
+            jogador.status = StatusJogador.BLOQUEADO
+            jogador.save()
+
+            agora = datetime.datetime.now()
+            partidas = Partida.objects.filter(data_partida__gt=agora)
+            if partidas:
+                cartelas = Cartela.objects.filter(partida__in=partidas,cancelado=False,jogador=jogador)
+                for cartela in cartelas:
+                    cartela.cancelado = True
+                    cartela.save()
+        return redirect("/jogadores/")
+    raise BadRequest()
+
+@login_required(login_url="/login/")
+def jogador_desbloquear(request, jogador_id):
+    jogador = Jogador.objects.filter(id=jogador_id).first()
+    if jogador:
+        with transaction.atomic():
+            jogador.status = StatusJogador.ATIVO
+            jogador.save()
+
+            agora = datetime.datetime.now()
+            partidas = Partida.objects.filter(data_partida__lt=agora)
+            if partidas:
+                cartelas = Cartela.objects.filter(partida__in=partidas, cancelado=True, jogador=jogador)
+                for cartela in cartelas:
+                    cartela.cancelado = False
+                    cartela.save()
+
+        return redirect("/jogadores/")
+    raise BadRequest()
 
 @login_required(login_url="/login/")
 def criarpartida(request):
