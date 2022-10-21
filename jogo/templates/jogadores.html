@@ -179,20 +179,20 @@ JOGADORES
     <!--------Paginação versão django-------->
     <div class="pagination">
     <span class="step-links">
-        {% if page_obj.has_previous %}
+        {% if jogadores.has_previous %}
             <a href="?page=1">&laquo; primeira</a>
-            <a href="?page={{ page_obj.previous_page_number }}">anterior</a>
+            <a href="?page={{ jogadores.previous_page_number }}">anterior</a>
         {% endif %}
 
-        {% if page_obj %}
+        {% if jogadores %}
         <span class="current">
-            Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+            Página {{ jogadores.number }} de {{ jogadores.paginator.num_pages }}.
         </span>
         {% endif %}
 
-        {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}">próxima</a>
-            <a href="?page={{ page_obj.paginator.num_pages }}">última &raquo;</a>
+        {% if jogadores.has_next %}
+            <a href="?page={{ jogadores.next_page_number }}">próxima</a>
+            <a href="?page={{ jogadores.paginator.num_pages }}">última &raquo;</a>
         {% endif %}
     </span>
 </div>
