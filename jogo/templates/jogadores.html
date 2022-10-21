@@ -180,8 +180,8 @@ JOGADORES
     <div class="pagination">
     <span class="step-links">
         {% if jogadores.has_previous %}
-            <a href="?page=1">&laquo; primeira</a>
-            <a href="?page={{ jogadores.previous_page_number }}">anterior</a>
+            <a href="/jogadores/?page=1">&laquo; primeira</a>
+            <a href="/jogadores/?page={{ jogadores.previous_page_number }}">anterior</a>
         {% endif %}
 
         {% if jogadores %}
@@ -191,8 +191,8 @@ JOGADORES
         {% endif %}
 
         {% if jogadores.has_next %}
-            <a href="?page={{ jogadores.next_page_number }}">próxima</a>
-            <a href="?page={{ jogadores.paginator.num_pages }}">última &raquo;</a>
+            <a href="/jogadores/?page={{ jogadores.next_page_number }}">próxima</a>
+            <a href="/jogadores/?page={{ jogadores.paginator.num_pages }}">última &raquo;</a>
         {% endif %}
     </span>
 </div>
