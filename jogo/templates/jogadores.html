@@ -123,7 +123,7 @@ JOGADORES
                             </td>
                             <td scope="row">
                                 {% if jogador.status == 1 %}
-                                <a href="jogador/{{ jogador.id }}/bloquear/" class="btn btn-md btn-success btn-create">
+                                <a href="jogador/{{ jogador.id }}/bloquear/" class="btn btn-md btn-danger btn-create">
                                     <p>BLOQUEAR</p>
                                 </a>
                                 {% elif jogador.status == -1 %}
@@ -176,7 +176,29 @@ JOGADORES
 
     <!------------------------------->
 
+    <!--------Paginação versão django-------->
+    <div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; primeira</a>
+            <a href="?page={{ page_obj.previous_page_number }}">anterior</a>
+        {% endif %}
+
+        {% if page_obj %}
+        <span class="current">
+            Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+        </span>
+        {% endif %}
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">próxima</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">última &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+
     <!--------Paginação -------->
+    <!--
     <div class="row my-row pagination-container">
         <div class="col-12 row justify-content-center">
             <nav aria-label="Navegação de página exemplo">
@@ -204,6 +226,7 @@ JOGADORES
             </nav>
         </div>
     </div>
+
     <script>
         $(document).ready( function () {
             $('#tabelaJogadores').DataTable({
@@ -223,7 +246,7 @@ JOGADORES
             }
         }
     </script>
-    
+    -->
 
 
 

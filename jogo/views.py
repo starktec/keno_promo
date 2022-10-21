@@ -8,6 +8,7 @@ import csv
 import math
 import logging
 
+from django.core.paginator import Paginator
 from instagrapi import Client
 from instagrapi.exceptions import ClientLoginRequired, UserNotFound
 
@@ -370,7 +371,9 @@ def jogadores(request):
                 jogadores = jogadores.filter(status=form.cleaned_data['status'])
 
     total_dados = jogadores.count()
-    ultima_pagina = 1
+    #ultima_pagina = 1
+
+    """
     jogadores = jogadores.annotate(num_cartelas = Count('cartela')).order_by('-num_cartelas')
     if (total_dados != 0 and itens_pagina != 0):
         ultima_pagina = int(math.ceil(total_dados / itens_pagina))
@@ -383,12 +386,19 @@ def jogadores(request):
     else:
         pagina = 1
         jogadores = jogadores[0:itens_pagina]
-    
-    proxima_pagina = pagina + 1
-    pagina_anterior = pagina - 1
+    """
 
-    return render(request,'jogadores.html',{'jogadores':jogadores,'form':form,'pagina_atual': pagina,'ultima_pagina':ultima_pagina,'proxima_pagina': proxima_pagina,
-                                            'pagina_anterior': pagina_anterior,'pagina_anterior':pagina_anterior,'total_dados':total_dados})
+    paginator = Paginator(jogadores, itens_pagina)  # Show 25 contacts per page.
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    #proxima_pagina = pagina + 1
+    #pagina_anterior = pagina - 1
+
+    return render(request,'jogadores.html',{'jogadores':page_obj,'form':form,'total_dados':total_dados})
+                                            #'pagina_atual': pagina,'ultima_pagina':ultima_pagina,'proxima_pagina': proxima_pagina,
+                                            #'pagina_anterior': pagina_anterior,'pagina_anterior':pagina_anterior})
 
 @login_required(login_url="/login/")
 def jogador_bloquear(request, jogador_id):
