@@ -428,7 +428,7 @@ class Jogador(models.Model):
             if jogador:
                 return jogador
             self.usuario_token = base64.b64encode(self.usuario.encode("ascii")).decode("ascii")
-            if Jogador.objects.filter(usuario__startswith=jogador.usuario[:14]).exists():
+            if len(self.usuario)>14 and Jogador.objects.filter(usuario__startswith=self.usuario[:14]).exists():
                 self.status = StatusJogador.SUSPEITO
 
         if not self.nome:
