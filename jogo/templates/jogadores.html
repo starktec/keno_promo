@@ -122,11 +122,11 @@ JOGADORES
                                 {{ jogador.get_status_display }}
                             </td>
                             <td scope="row">
-                                {% if jogador.status == 1 %}
+                                {% if jogador.status == 1 or jogador.status == 0 %}
                                 <a href="jogador/{{ jogador.id }}/bloquear/" class="btn btn-md btn-danger btn-create">
                                     <p>BLOQUEAR</p>
                                 </a>
-                                {% elif jogador.status == -1 %}
+                                {% elif jogador.status == -1 or jogador.status == 0 %}
                                 <a href="jogador/{{ jogador.id }}/desbloquear/" class="btn btn-md btn-success btn-create">
                                     <p>REATIVAR</p>
                                 </a>
