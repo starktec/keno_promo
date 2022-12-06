@@ -16,7 +16,7 @@ from django.http import HttpResponse, JsonResponse
 # Create your views here.
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
-from easyaudit.models import CRUDEvent
+#from easyaudit.models import CRUDEvent
 
 from jogo.models import Partida, CartelaVencedora, \
     Configuracao, Jogador, Cartela

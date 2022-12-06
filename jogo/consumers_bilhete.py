@@ -91,6 +91,8 @@ class ConexaoBilheteConsumer(AsyncJsonWebsocketConsumer):
 
     @sync_to_async
     def aumentar_quantidade_conexoes_sala(self):
+        pass
+        '''
         try:
             d, created = DispositivosConectados.objects.get_or_create(nome_sala= self.nome_sala)
             d.quantidade += 1
@@ -98,9 +100,12 @@ class ConexaoBilheteConsumer(AsyncJsonWebsocketConsumer):
         except Exception as e:
             logger.exception(e)
             raise e
+        '''
 
     @sync_to_async
     def diminuir_quantidade_conexoes_sala(self):
+        pass
+        '''
         try:
             d = DispositivosConectados.objects.filter(nome_sala= self.nome_sala).first()
             if d:
@@ -109,7 +114,7 @@ class ConexaoBilheteConsumer(AsyncJsonWebsocketConsumer):
         except Exception as e:
             logger.exception(e)
             raise e
-
+        '''
 
     async def disconnect(self,code):
         logger.info(f"WS Disconnect {self.channel_name}")

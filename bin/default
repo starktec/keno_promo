@@ -12,8 +12,7 @@ map $http_upgrade $connection_upgrade {
 
 
 server {
-listen   80;
-server_name 130.185.238.121;
+server_name admf12bet.mrkeno.com;
 client_max_body_size 4G;
 access_log /home/project/keno_promo/logs/nginx-access.log;
 error_log /home/project/keno_promo/logs/nginx-error.log;
@@ -24,7 +23,8 @@ location /media/ {
 alias   /home/project/keno_promo/media/;
 }
 location /ws/ {
-    proxy_pass http://unix:/home/project/keno_promo/bin/gunicorn.sock;
+    #proxy_pass http://unix:/home/project/keno_promo/bin/gunicorn.sock;
+    proxy_pass http://localhost:8000;
     proxy_http_version 1.1;
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header Connection $connection_upgrade;
@@ -47,11 +47,12 @@ proxy_redirect off;
 # using only serving fast clients with Unicorn + nginx.
 # Otherwise you _want_ nginx to buffer responses to slow
 # clients, really.
-# proxy_buffering off;
+proxy_buffering off;
 # Try to serve static files from nginx, no point in making an
 # *application* server like Unicorn/Rainbows! serve static files.
 if (!-f $request_filename) {
-proxy_pass http://keno_app_server;
+proxy_pass http://localhost:8000; 
+#proxy_pass http://keno_app_server;
 break;
 }
 }
@@ -60,4 +61,26 @@ error_page 500 502 503 504 /500.html;
 location = /500.html {
 root /home/project/keno_promo/static/;
 }
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/admf12bet.mrkeno.com/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/admf12bet.mrkeno.com/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+}
+
+
+
+server {
+    if ($host = admf12bet.mrkeno.com) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+listen   80;
+server_name admf12bet.mrkeno.com;
+    return 404; # managed by Certbot
+
+
 }

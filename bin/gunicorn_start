@@ -6,7 +6,7 @@ DJANGODIR=/home/project/keno_promo
 # we will communicte using this unix socket
 SOCKFILE=/home/project/keno_promo/bin/gunicorn.sock
 # how many worker processes should Gunicorn spawn
-NUM_WORKERS=8
+NUM_WORKERS=128
 # which settings file should Django use
 DJANGO_SETTINGS_MODULE=keno_promo.settings
 # WSGI module name
@@ -25,9 +25,13 @@ RUNDIR=$(dirname $SOCKFILE)
 test -d $RUNDIR || mkdir -p $RUNDIR
 # Start your Django Unicorn
 # Programs meant to be run under supervisor should not daemonize themselves (do not use --daemon)
-exec gunicorn -k uvicorn.workers.UvicornWorker ${DJANGO_ASGI_MODULE}:application \
+exec ddtrace-run gunicorn -k uvicorn.workers.UvicornWorker ${DJANGO_ASGI_MODULE}:application \
 --name $NAME \
 --workers $NUM_WORKERS \
---bind=unix:$SOCKFILE \
+#--bind=unix:$SOCKFILE \
+--bind=0.0.0.0:8003 \
 --log-level=debug \
+--worker-connections=10240 \
+#--threads=64 \
+--max_requests=512 \
 --log-file=$LOGFILE
