@@ -150,7 +150,7 @@ class CadastroJogadorSerializer(serializers.Serializer):
     usuario = serializers.CharField(max_length=100)
     email = serializers.EmailField()
     whatsapp = serializers.CharField(max_length=20)
-    instagram = serializers.CharField(max_length=50, required=False)
+    instagram = serializers.CharField(max_length=50)
     senha = serializers.CharField(max_length=20)
     confirmar_senha = serializers.CharField(max_length=20)
 
@@ -214,7 +214,7 @@ class LoginJogadorSerializer(serializers.Serializer):
             raise serializers.ValidationError(detail="Jogador não encontrado")
 
         user = authenticate(username=usuario, password=senha)
-        if not user:
+        if not user or not user.active:
             raise serializers.ValidationError(detail="Usuário ou senha inválidos")
 
         return attrs

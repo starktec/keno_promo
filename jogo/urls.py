@@ -6,7 +6,7 @@ from jogo.views import cancelar_template, index, \
     partidas, ganhadores, cartela, login_page, logout_page, criarpartida, \
     cartelas, configuracao, cancelar_partida, cancelar_bilhete, partida_edit, \
     partida_automatica, automatos, parar_automato, sortear_template, editar_template, manter_contas_view, \
-    aumentar_cartelas, forcar_sorteio, CadastroJogador, LoginJogador, PegarCartela
+    aumentar_cartelas, forcar_sorteio, CadastroJogador, LoginJogador, PegarCartela, status_jogador, mudar_senha_jogador
 
 from .views import jogadores, realtime_data
 from .views_api_media import logo_promo, media_login, nome_server, media_logo, media_favicon
@@ -34,6 +34,9 @@ urlpatterns = [
     path("partidas/<int:partida_id>/force/",forcar_sorteio),
 
     path('realtime_data/',realtime_data),
+
+    path("jogador/<int:jogador_id>/status/<int:status>/", status_jogador),
+    path("jogador/<int:jogador_id>/senha/", mudar_senha_jogador),
 
     path('api/v1/', include(
         [
@@ -84,16 +87,3 @@ urlpatterns = [
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-"""
-URLs desativadas sem previsão
-
-path('partidas/criar_automatica/', partida_automatica),
-path('automatos/', automatos),
-path('automatos/<int:codigo>/',automatos),
-path('partida/<int:partida_id>/parar/', parar_automato),
-path('sortear_template/<int:template_id>/',sortear_template),
-path('template/<int:template_id>/cancelar/',cancelar_template),
-path('template/<int:template_id>/edit/',editar_template),
-path('templates/',templates),
-"""

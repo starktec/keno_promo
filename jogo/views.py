@@ -925,3 +925,25 @@ class PegarCartela(APIView):
             mensagem = "Não há sorteios disponíveis no momento"
             LOGGER.info(mensagem)
             return Response(data={"detail": mensagem}, status=404)
+
+@login_required()
+def status_jogador(request, jogador_id, status):
+    if status == 0 or status == 1:
+        if Usuario.objects.filter(usuario=request.user):
+            jogador = Jogador.objects.filter(id=jogador_id).first()
+            if jogador:
+                user = jogador.user
+                user.active = bool(status)
+                user.save()
+    return redirect("/jogadores/")
+
+@login_required()
+def mudar_senha_jogador(request, jogador_id):
+    if Usuario.objects.filter(usuario=request.user) and request.method == "POST":
+        jogador = Jogador.objects.filter(id=jogador_id).first()
+        if jogador:
+            senha = request.POST.get("senha")
+            user = jogador.user
+            user.set_password(senha)
+            user.save()
+    return redirect("/jogadores/")
