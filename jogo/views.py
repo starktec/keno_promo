@@ -933,7 +933,7 @@ def status_jogador(request, jogador_id, status):
             jogador = Jogador.objects.filter(id=jogador_id).first()
             if jogador:
                 user = jogador.user
-                user.active = bool(status)
+                user.is_active = bool(status)
                 user.save()
     return redirect("/jogadores/")
 

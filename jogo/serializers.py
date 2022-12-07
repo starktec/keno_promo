@@ -214,7 +214,7 @@ class LoginJogadorSerializer(serializers.Serializer):
             raise serializers.ValidationError(detail="Jogador não encontrado")
 
         user = authenticate(username=usuario, password=senha)
-        if not user or not user.active:
+        if not user or not user.is_active:
             raise serializers.ValidationError(detail="Usuário ou senha inválidos")
 
         return attrs
