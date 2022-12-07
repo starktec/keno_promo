@@ -1,7 +1,11 @@
 from datetime import datetime, timedelta
+
+from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
 from rest_framework import serializers
 
-from jogo.models import CartelaVencedora, Partida, Cartela, Configuracao
+from jogo.models import CartelaVencedora, Partida, Cartela, Configuracao, Jogador
+
 
 class CartelaSerializer(serializers.ModelSerializer):
     codigo = serializers.IntegerField(source='id')
@@ -141,3 +145,60 @@ class CartelasVencedorasSerializer(serializers.ModelSerializer):
     class Meta:
         model = CartelaVencedora
         fields = ['numero_cartela','premio',"nome"]
+
+class CadastroJogadorSerializer(serializers.Serializer):
+    usuario = serializers.CharField(max_length=100)
+    email = serializers.EmailField()
+    whatsapp = serializers.CharField(max_length=20)
+    senha = serializers.CharField(max_length=20)
+    confirmar_senha = serializers.CharField(max_length=20)
+
+    def validate(self, attrs):
+        usuario = attrs.get("usuario")
+        email = attrs.get("email")
+        whatsapp = attrs.get("whatsapp")
+        senha = attrs.get("senha")
+        confirmar_senha = attrs.get("confirmar_senha")
+        if Jogador.objects.filter(usuario=usuario).exists() or User.objects.filter(username=usuario).exists():
+            raise serializers.ValidationError(detail="Login já cadastrado")
+        if Jogador.objects.filter(user__email=email).exists():
+            raise serializers.ValidationError(detail="E-mail já cadastrado")
+        if Jogador.objects.filter(whatsapp=whatsapp).exists():
+            raise serializers.ValidationError(detail="Número de Whatsapp já usado")
+        if senha!=confirmar_senha:
+            raise serializers.ValidationError(detail="'Senha' está diferente de 'Confirmar Senha'")
+        return attrs
+
+    def create(self, validated_data):
+        usuario = validated_data.get("usuario")
+        email = validated_data.get("email")
+        whatsapp = validated_data.get("whatsapp")
+        senha = validated_data.get("senha")
+        user = User.objects.create_user(username=usuario,email=email,password=senha)
+        jogador = Jogador.objects.create(
+            usuario=usuario,whatsapp=whatsapp,user=user
+        )
+        return jogador
+
+class JogadorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Jogador
+        fields = ["id","usuario"]
+
+class LoginJogadorSerializer(serializers.Serializer):
+    usuario = serializers.CharField(max_length=100)
+    senha = serializers.CharField(max_length=20)
+
+    def validate(self, attrs):
+        usuario = attrs.get("usuario")
+        senha = attrs.get("senha")
+        confirmar_senha = attrs.get("confirmar_senha")
+
+        if not Jogador.objects.filter(usuario=usuario).exists() or not User.objects.filter(username=usuario).exists():
+            raise serializers.ValidationError(detail="Jogador não encontrado")
+
+        user = authenticate(username=usuario, password=senha)
+        if not user:
+            raise serializers.ValidationError(detail="Usuário ou senha inválidos")
+
+        return attrs

@@ -332,6 +332,14 @@ def manter_contas_thread():
             print(f"contando {cont}.....")
     print(f"func: {datetime.datetime.now()}")
 
+def format_serializer_message(errors):
+    if isinstance(errors,dict):
+        if "non_field_errors" in errors.keys():
+            return {"detail":errors.get("non_field_errors")[0]}
+        else:
+            msg = " ".join([f"'{x}': {y[0]}" for x,y in errors.items()])
+            return {"detail": msg}
+
 
 
 

@@ -10,9 +10,14 @@ import logging
 
 from instagrapi import Client
 from instagrapi.exceptions import ClientLoginRequired, UserNotFound
+from rest_framework import status, serializers
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from jogo.choices import AcaoTipoChoices, StatusCartelaChoice
-from jogo.utils import testa_horario, comprar_cartelas, manter_contas
+from jogo.serializers import CadastroJogadorSerializer, JogadorSerializer, LoginJogadorSerializer
+from jogo.utils import testa_horario, comprar_cartelas, manter_contas, format_serializer_message
 from jogo.constantes import VALORES_VOZES
 
 from jogo.agendamento import Agenda
@@ -813,3 +818,22 @@ def forcar_sorteio(request, partida_id):
         agenda.sortear_agendado(partida,reload=False)
 
     return redirect("/partidas/")
+
+
+# Views para cadastro e login do jogador
+class CadastroJogador(APIView):
+    def post(self,request):
+        serializer = CadastroJogadorSerializer(data=request.data)
+        if serializer.is_valid():
+            jogador = serializer.save()
+            return Response(data=JogadorSerializer(jogador).data, status=status.HTTP_201_CREATED)
+        raise serializers.ValidationError(detail=format_serializer_message(serializer.errors))
+
+class LoginJogador(APIView):
+    def post(self,request):
+        serializer = LoginJogadorSerializer(data=request.data)
+        if serializer.is_valid():
+            return Response(data={"mensagem":"login realizado com sucesso"},status=status.HTTP_200_OK)
+
+        raise serializers.ValidationError(detail=format_serializer_message(serializer.errors))
+

@@ -418,6 +418,8 @@ class Jogador(models.Model):
     usuario_token = models.CharField(max_length=255)
     seguidores = models.BigIntegerField(default=0)
     cadastrado_em = models.DateTimeField(auto_now_add=True)
+    user = models.OneToOneField(User,on_delete=models.PROTECT)
+    whatsapp = models.CharField(max_length=20)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):

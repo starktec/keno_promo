@@ -99,7 +99,7 @@ def setSocialConnection(deactivate=False):
             CLIENT = None
         return False
    
-setSocialConnection()
+#setSocialConnection()
 
 @csrf_exempt
 @require_http_methods(["GET"])
