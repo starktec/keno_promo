@@ -95,6 +95,8 @@ JOGADORES
                             <th scope="col">Whatsapp</th>
                             <th scope="col">Quantidade de sorteios</th>
                             <th scope="col">Sorteios que participou</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Senha</th>
                         </tr>
                     </thead>
                     <tbody class="text-center tbody-content">
@@ -145,7 +147,21 @@ JOGADORES
                                     </div>
                                 </div>
                             </td>
-                            <!-- Ganhou Acumulado -->
+                            <td>
+                                {% if jogador.user.is_active %}
+                                <a href="/jogador/{{ jogador.id }}/status/0/">DESATIVAR</a>
+                                {% else %}
+                                <a href="/jogador/{{ jogador.id }}/status/1/">ATIVAR</a>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <form id="form{{ jogador.id }}" method="post" action="/jogador/{{ jogador.id }}/senha/">
+                                    {% csrf_token %}
+                                    Nova: <input type="text" name="senha" size="10"/>
+                                    <input type="submit" value="enviar" >
+                                </form>
+
+                            </td>
                         </tr>
                     {% endfor %}
 
