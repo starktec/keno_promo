@@ -150,6 +150,7 @@ class CadastroJogadorSerializer(serializers.Serializer):
     usuario = serializers.CharField(max_length=100)
     email = serializers.EmailField()
     whatsapp = serializers.CharField(max_length=20)
+    instagram = serializers.CharField(max_length=50, required=False)
     senha = serializers.CharField(max_length=20)
     confirmar_senha = serializers.CharField(max_length=20)
 
@@ -159,6 +160,7 @@ class CadastroJogadorSerializer(serializers.Serializer):
         whatsapp = attrs.get("whatsapp")
         senha = attrs.get("senha")
         confirmar_senha = attrs.get("confirmar_senha")
+        instagram = attrs.get("instagram")
         if Jogador.objects.filter(usuario=usuario).exists() or User.objects.filter(username=usuario).exists():
             raise serializers.ValidationError(detail="Login já cadastrado")
         if Jogador.objects.filter(user__email=email).exists():
@@ -167,23 +169,37 @@ class CadastroJogadorSerializer(serializers.Serializer):
             raise serializers.ValidationError(detail="Número de Whatsapp já usado")
         if senha!=confirmar_senha:
             raise serializers.ValidationError(detail="'Senha' está diferente de 'Confirmar Senha'")
+        if instagram:
+            if instagram.startswith("@"):
+                instagram = instagram[1:]
+            if "/" in instagram:
+                instagram = instagram.split("/www.instagram.com/")[1].split("/")[0]
+            instagram = instagram.lower()
+
+            if Jogador.objects.filter(instagram=instagram).exists():
+                raise serializers.ValidationError(detail="Perfil do instagram já cadastrado")
+
+            attrs['instagram'] = instagram
+        if not whatsapp.isdigit():
+            raise serializers.ValidationError(detail="Número do whatsapp deve ser apenas NÚMEROS")
         return attrs
 
     def create(self, validated_data):
         usuario = validated_data.get("usuario")
         email = validated_data.get("email")
         whatsapp = validated_data.get("whatsapp")
+        instagram = validated_data.get("instagram")
         senha = validated_data.get("senha")
         user = User.objects.create_user(username=usuario,email=email,password=senha)
         jogador = Jogador.objects.create(
-            usuario=usuario,whatsapp=whatsapp,user=user
+            usuario=usuario,whatsapp=whatsapp,user=user,instagram=instagram
         )
         return jogador
 
 class JogadorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Jogador
-        fields = ["id","usuario"]
+        fields = ["id","usuario","instagram"]
 
 class LoginJogadorSerializer(serializers.Serializer):
     usuario = serializers.CharField(max_length=100)

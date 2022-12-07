@@ -339,7 +339,7 @@ def ganhadores(request):
 def jogadores(request):
     form = JogadoresForm()
     jogadores = Jogador.objects.all()
-    itens_pagina = 10
+    itens_pagina = 100
     if request.method == "POST":
         form = JogadoresForm(request.POST)
         if form.is_valid():
@@ -834,7 +834,9 @@ class LoginJogador(APIView):
     def post(self,request):
         serializer = LoginJogadorSerializer(data=request.data)
         if serializer.is_valid():
-            return Response(data={"mensagem":"login realizado com sucesso"},status=status.HTTP_200_OK)
+            usuario = request.data.get("usuario")
+            jogador = Jogador.objects.filter(usuario=usuario).exists()
+            return Response(data=JogadorSerializer(jogador).data,status=status.HTTP_200_OK)
 
         raise serializers.ValidationError(detail=format_serializer_message(serializer.errors))
 

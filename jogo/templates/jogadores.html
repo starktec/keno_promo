@@ -92,6 +92,7 @@ JOGADORES
                             <th scope="col"></th>
                             <th scope="col">Nome</th>
                             <th scope="col">Instagram</th>
+                            <th scope="col">Whatsapp</th>
                             <th scope="col">Quantidade de sorteios</th>
                             <th scope="col">Sorteios que participou</th>
                         </tr>
@@ -102,11 +103,18 @@ JOGADORES
                             <td scope="row">{{ jogador.id }}</td>
                             <td scope="row">{{ jogador.nome }}</td>
                             <td scope="row">
-                                <a href="https://www.instagram.com/{{ jogador.usuario }}/" target="_blank">
-                                    @{{ jogador.usuario }}
+                                {% if jogador.instagram %}
+                                <a href="https://www.instagram.com/{{ jogador.instagram }}/" target="_blank">
+                                    @{{ jogador.instagram }}
+                                </a>
+                                {% endif %}
+                            </td>
+                            <td scope="row">
+                                <a href="https://wa.me/55{{ jogador.whatsapp }}/" target="_blank">
+                                    {{ jogador.whatsapp }}
                                 </a>
                             </td>
-                            <td scope="row">{{ jogador.sorteios_participou_count}}
+                            <td scope="row">{{ jogador.sorteios_participou_count }}
                             <td scope="row" class="celula-media">
                                 <a class="btn btn-danger btn-create-secondary btn-checkbox btn-informacoes" data-toggle="modal" data-target="#modal-informacao-{{ jogador.id }}">
                                     <p>Sorteios Participados</p>
