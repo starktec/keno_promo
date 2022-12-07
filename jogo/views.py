@@ -835,7 +835,7 @@ class LoginJogador(APIView):
         serializer = LoginJogadorSerializer(data=request.data)
         if serializer.is_valid():
             usuario = request.data.get("usuario")
-            jogador = Jogador.objects.filter(usuario=usuario).exists()
+            jogador = Jogador.objects.filter(usuario=usuario).first()
             return Response(data=JogadorSerializer(jogador).data,status=status.HTTP_200_OK)
 
         raise serializers.ValidationError(detail=format_serializer_message(serializer.errors))
@@ -852,13 +852,14 @@ class PegarCartela(APIView):
         nome = ""
 
         # Formatando o dado perfil vindo do front para eliminar a url, @ e /, alem de forçar minusculo
-        if perfil:
+        if not jogador.instagram and perfil:
             if perfil.startswith("@"):
                 perfil = perfil[1:]
             if "/" in perfil:
                 perfil = perfil.split("/www.instagram.com/")[1].split("/")[0]
             perfil = perfil.lower()
             jogador.instagram = perfil
+            jogador.save()
         agora = datetime.datetime.now()
 
         configuracao = Configuracao.objects.last()
@@ -897,9 +898,12 @@ class PegarCartela(APIView):
                         codigos_possiveis = range(1,partida.numero_cartelas_iniciais)
                         codigos_cartelas = [x.codigo for x in Cartela.objects.filter(partida=partida)]
                         codigos_a_sortear = [x for x in codigos_possiveis if x not in codigos_cartelas]
+                        nome = jogador.instagram
+                        if not nome:
+                            nome = jogador.nome
                         cartela = Cartela.objects.create(partida=partida,
                                                          codigo=random.choice(codigos_a_sortear),
-                                                         jogador=jogador, nome=jogador.nome)
+                                                         jogador=jogador, nome=nome)
 
                 else:
                     cartelas = Cartela.objects.filter(partida=partida, jogador__isnull=True)
