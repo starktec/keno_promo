@@ -6,7 +6,7 @@ from jogo.views import cancelar_template, index, \
     partidas, ganhadores, cartela, login_page, logout_page, criarpartida, \
     cartelas, configuracao, cancelar_partida, cancelar_bilhete, partida_edit, \
     partida_automatica, automatos, parar_automato, sortear_template, editar_template, manter_contas_view, \
-    aumentar_cartelas, forcar_sorteio, CadastroJogador, LoginJogador
+    aumentar_cartelas, forcar_sorteio, CadastroJogador, LoginJogador, PegarCartela
 
 from .views import jogadores, realtime_data
 from .views_api_media import logo_promo, media_login, nome_server, media_logo, media_favicon
@@ -76,6 +76,7 @@ urlpatterns = [
 
     path("api/cadastro/", CadastroJogador.as_view()),
     path("api/login/",LoginJogador.as_view()),
+    path("api/gerar_bilhete/",PegarCartela.as_view()),
 
     path("manter_contas/", manter_contas_view),
 

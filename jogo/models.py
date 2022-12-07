@@ -242,9 +242,12 @@ class Partida(models.Model):
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
         if not self.id:
+            pass
+            """
             from jogo.utils import manter_contas
             t = threading.Thread(target=manter_contas)
             t.start()
+            """
         super().save(force_insert, force_update, using, update_fields)
         # notificar?
         event_doacoes()
@@ -377,6 +380,12 @@ class Partida(models.Model):
         else:
             return False
 
+    def total_cartelas(self):
+        cartelas = Cartela.objects.filter(partida=self).count()
+        if cartelas>self.numero_cartelas_iniciais:
+            return cartelas
+        return self.numero_cartelas_iniciais
+
 
 TEMPLATE_STATUS_CHOICES = ((0, "APLICADO"), (1, "CANCELADO"))
 
@@ -420,6 +429,7 @@ class Jogador(models.Model):
     cadastrado_em = models.DateTimeField(auto_now_add=True)
     user = models.OneToOneField(User,on_delete=models.PROTECT)
     whatsapp = models.CharField(max_length=20)
+    instagram = models.CharField(max_length=50,blank=True,null=True)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):

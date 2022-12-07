@@ -162,7 +162,7 @@ INFORMAÇÕES DAS PARTIDAS
                                 </td>
                                 <td>
                                     {% if p.data_partida > agora %}
-                                    Atual: {{ p.cartelas.count }}<br >
+                                    Atual: {{ p.cartelas.count }}/{{ p.total_cartelas }}<br >
                                     <a href="/partidas/{{ p.id }}/aumentar/F83A383C0FA81F295D057F8F5ED0BA4610947817/" style="margin-bottom:5px;"
                                        class="btn btn-sm btn-success" onclick="return confirm('Confirma aumento de 500 cartelas?');">
                                         <p>+ 500</p></a>

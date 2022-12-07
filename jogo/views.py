@@ -8,6 +8,7 @@ import csv
 import math
 import logging
 
+from jogo.permissions import EhJogador
 from instagrapi import Client
 from instagrapi.exceptions import ClientLoginRequired, UserNotFound
 from rest_framework import status, serializers
@@ -29,7 +30,7 @@ from jogo.models import Jogador, Partida, Automato, Cartela, Usuario, Configurac
 from jogo.views_social_instagram import CLIENT
 from jogo.websocket_triggers_bilhete import event_bilhete_partida
 
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 import itertools
 from django import forms
@@ -86,7 +87,7 @@ def login_page(request):
                 return redirect('/partidas/')
 
         else:
-            logger.error(error)
+            LOGGER.error(error)
             error = "Usuário ou senha inválidos"
     titulo = ""
     favicon = ""
@@ -468,8 +469,8 @@ def criarpartida(request):
                 partida.save()
 
                 # comprando cartelas
-
-                comprar_cartelas(partida,numero_cartelas_iniciais)
+                if partida.chance_vitoria<Decimal(100.0):
+                    comprar_cartelas(partida,numero_cartelas_iniciais)
 
                 # Agendando sorteio
                 agenda.agendar(partida)
@@ -837,3 +838,84 @@ class LoginJogador(APIView):
 
         raise serializers.ValidationError(detail=format_serializer_message(serializer.errors))
 
+class PegarCartela(APIView):
+    permission_classes = [EhJogador,]
+    def post(self,request):
+        dados = request.data
+        perfil = dados.get("perfil")
+
+        # Encontrar um jogador já cadastrado localmente por perfil
+        token = request.headers['Authorization'].split("Token ")[1]
+        jogador = Jogador.objects.filter(usuario_token=token).first()
+        nome = ""
+
+        # Formatando o dado perfil vindo do front para eliminar a url, @ e /, alem de forçar minusculo
+        if perfil:
+            if perfil.startswith("@"):
+                perfil = perfil[1:]
+            if "/" in perfil:
+                perfil = perfil.split("/www.instagram.com/")[1].split("/")[0]
+            perfil = perfil.lower()
+            jogador.instagram = perfil
+        agora = datetime.datetime.now()
+
+        configuracao = Configuracao.objects.last()
+        # Buscando próxima partida
+        partidas = Partida.objects.filter(data_partida__gt=agora).order_by("data_partida")
+        if partidas:
+            partida = partidas.first()
+            LOGGER.info(f" Sorteio ESCOLHIDO: {partida.id}")
+            if not configuracao.reter_jogadores:
+                for p in partidas:
+                    inicial = p.numero_cartelas_iniciais
+                    atual = Cartela.objects.filter(partida=p, jogador__isnull=False, cancelado=False).count()
+                    if inicial > atual:
+                        partida = p
+                        LOGGER.info(f" Sorteio MUDADO: {partida.id}")
+                        break
+
+            # atualizar o nome do jogador
+            if not jogador.nome or jogador.nome != jogador.usuario:
+                jogador.nome = jogador.usuario
+                jogador.save()
+
+            cartela = Cartela.objects.filter(jogador=jogador, partida=partida).first()
+            if not cartela:
+                if not Cartela.objects.filter(jogador=jogador).exists():
+                    partida.novos_participantes += 1
+                    partida.save()
+
+                if partida.chance_vitoria == Decimal(100.0):
+                    cartelas_quantidade = Cartela.objects.filter(partida=partida).count()
+                    if cartelas_quantidade>=partida.numero_cartelas_iniciais:
+                        mensagem = "Cartelas esgotadas"
+                        LOGGER.info(mensagem)
+                        return Response(data={"detail": mensagem}, status=404)
+                    else:
+                        codigos_possiveis = range(1,partida.numero_cartelas_iniciais)
+                        codigos_cartelas = [x.codigo for x in Cartela.objects.filter(partida=partida)]
+                        codigos_a_sortear = [x for x in codigos_possiveis if x not in codigos_cartelas]
+                        cartela = Cartela.objects.create(partida=partida,
+                                                         codigo=random.choice(codigos_a_sortear),
+                                                         jogador=jogador, nome=jogador.nome)
+
+                else:
+                    cartelas = Cartela.objects.filter(partida=partida, jogador__isnull=True)
+
+                    if cartelas:
+
+                        cartela = random.choice(cartelas)
+                        cartela.jogador = jogador
+                        cartela.nome = jogador.nome
+                        cartela.save()
+                    else:
+                        mensagem = "Cartelas esgotadas"
+                        LOGGER.info(mensagem)
+                        return Response(data={"detail": mensagem}, status=404)
+            return Response(
+                data={"cartela":int(cartela.id), "bilhete": cartela.hash, "sorteio": int(cartela.partida.id)})
+
+        else:
+            mensagem = "Não há sorteios disponíveis no momento"
+            LOGGER.info(mensagem)
+            return Response(data={"detail": mensagem}, status=404)
