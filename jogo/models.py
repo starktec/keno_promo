@@ -100,6 +100,10 @@ class Configuracao(models.Model):
     nome_botao = models.CharField(max_length=200,blank=True,null=True)
     url_botao = models.URLField(blank=True,null=True)
 
+    # link para grupo telegram
+    nome_grupo_telegram =  models.CharField(max_length=200,blank=True,null=True)
+    url_grupo_telegram = models.URLField(blank=True,null=True)
+
     # instagram compatibilidade
     instagram_connection = models.BinaryField(blank=True, null=True)
     perfil_default = models.URLField(blank=True, null=True)
@@ -428,7 +432,7 @@ class Jogador(models.Model):
     seguidores = models.BigIntegerField(default=0)
     cadastrado_em = models.DateTimeField(auto_now_add=True)
     user = models.OneToOneField(User,on_delete=models.PROTECT)
-    whatsapp = models.CharField(max_length=20)
+    whatsapp = models.CharField(max_length=20,blank=True,null=True)
     instagram = models.CharField(max_length=50,blank=True,null=True)
 
     def save(self, force_insert=False, force_update=False, using=None,

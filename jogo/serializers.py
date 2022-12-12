@@ -148,9 +148,9 @@ class CartelasVencedorasSerializer(serializers.ModelSerializer):
 
 class CadastroJogadorSerializer(serializers.Serializer):
     usuario = serializers.CharField(max_length=100)
-    email = serializers.EmailField()
-    whatsapp = serializers.CharField(max_length=20)
-    instagram = serializers.CharField(max_length=50)
+    email = serializers.EmailField(required=False)
+    whatsapp = serializers.CharField(max_length=20,required=False)
+    instagram = serializers.CharField(max_length=50,required=False)
     senha = serializers.CharField(max_length=20)
     confirmar_senha = serializers.CharField(max_length=20)
 
@@ -163,9 +163,9 @@ class CadastroJogadorSerializer(serializers.Serializer):
         instagram = attrs.get("instagram")
         if Jogador.objects.filter(usuario=usuario).exists() or User.objects.filter(username=usuario).exists():
             raise serializers.ValidationError(detail="Login já cadastrado")
-        if Jogador.objects.filter(user__email=email).exists():
+        if email and Jogador.objects.filter(user__email=email).exists():
             raise serializers.ValidationError(detail="E-mail já cadastrado")
-        if Jogador.objects.filter(whatsapp=whatsapp).exists():
+        if whatsapp and Jogador.objects.filter(whatsapp=whatsapp).exists():
             raise serializers.ValidationError(detail="Número de Whatsapp já usado")
         if senha!=confirmar_senha:
             raise serializers.ValidationError(detail="'Senha' está diferente de 'Confirmar Senha'")

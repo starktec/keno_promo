@@ -449,12 +449,18 @@ class ConfiguracaoForm(forms.ModelForm):
     url_botao = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': "form-control form-control-md form-control-outlined" ,'autocomplete': "off"}
     ))
+    nome_grupo_telegram = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'class': "form-control form-control-md form-control-outlined" ,'autocomplete': "off"}
+    ))
+    url_grupo_telegram = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'class': "form-control form-control-md form-control-outlined" ,'autocomplete': "off"}
+    ))
 
     class Meta:
         model = Configuracao
         fields = ['tempo_min_entre_sorteios',
                   'iniciar_sorteio_em',
-                  'logo_dash','logo_login','favicon','nome_server','nome_botao','url_botao','logo_promo']
+                  'logo_dash','logo_login','favicon','nome_server','nome_botao','url_botao','nome_grupo_telegram','url_grupo_telegram','logo_promo']
 
 
 class PartidaEditForm(forms.ModelForm):

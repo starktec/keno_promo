@@ -95,6 +95,19 @@ CONFIGURAÇÃO
                                 </div>
                                 
                                 <div class="col-lg-12 col-md-12 col-sm-12 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_nome_server">Nome do Grupo Telegram</label>
+                                    <div class="form-control-wrap">
+                                        {{ form.nome_grupo_telegram }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_nome_server">URL do Grupo Telegram</label>
+                                    <div class="form-control-wrap">
+                                        {{ form.url_grupo_telegram }}
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-12 col-md-12 col-sm-12 container-input-create input-container-conf">
                                     <label class="form-label" for="id_tempo_validade_bilhete">Avisos importantes</label>
                                     <div class="form-control-wrap">
                                         {{ form.notificacao_server }}
