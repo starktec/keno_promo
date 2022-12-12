@@ -6,7 +6,7 @@ from django.conf import settings
 from instagrapi import Client
 
 from jogo.models import Regra, Partida, Configuracao, TemplatePartida, Cartela, IPTabela, Conta, Publicacao, Automato, \
-    Galeria, TextoPublicacao
+    Galeria, TextoPublicacao, Usuario
 from datetime import date, datetime, timedelta
 
 import datetime
@@ -341,5 +341,6 @@ def format_serializer_message(errors):
             return {"detail": msg}
 
 
-
+def ehUsuarioDash(usuario):
+    return Usuario.objects.filter(usuario=usuario).exists()
 

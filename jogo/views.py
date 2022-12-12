@@ -18,7 +18,7 @@ from rest_framework.views import APIView
 
 from jogo.choices import AcaoTipoChoices, StatusCartelaChoice
 from jogo.serializers import CadastroJogadorSerializer, JogadorSerializer, LoginJogadorSerializer
-from jogo.utils import testa_horario, comprar_cartelas, manter_contas, format_serializer_message
+from jogo.utils import testa_horario, comprar_cartelas, manter_contas, format_serializer_message, ehUsuarioDash
 from jogo.constantes import VALORES_VOZES
 
 from jogo.agendamento import Agenda
@@ -111,13 +111,15 @@ def logout_page(request):
 
 @login_required(login_url="/login/")
 def cancelar_partida(request, partida_id):
-    p = Partida.objects.get(id=partida_id)
-    if not Cartela.objects.filter(partida=p,jogador__isnull=False).exists():
-        p.delete()
-        #event_doacoes()
-    # TODO: WEBSOCKET
-    ##event_tela_partidas(franquias)  ## informa aos websockets de tela que houve modificação na tela
-    return redirect("/")
+    if ehUsuarioDash(request.user):
+        p = Partida.objects.get(id=partida_id)
+        if not Cartela.objects.filter(partida=p,jogador__isnull=False).exists():
+            p.delete()
+            #event_doacoes()
+        # TODO: WEBSOCKET
+        ##event_tela_partidas(franquias)  ## informa aos websockets de tela que houve modificação na tela
+        return redirect("/")
+    return HttpResponse(status=403)
 
 
 
@@ -128,487 +130,496 @@ def index(request):
 
 @login_required(login_url="/login/")
 def partida_automatica(request):
-    usuario = Usuario.objects.filter(usuario=request.user).first()
-    form = NovaPartidaAutomatizada()
-    if request.method == 'POST':
-        form = NovaPartidaAutomatizada(request.POST)
-        if form.is_valid():
-            dia_partida_inicial = form.cleaned_data['dia_partida_inicial']
-            hora_partida_inicial = form.cleaned_data['hora_partida_inicial']
-            data_partida = datetime.datetime.strptime(
-                dia_partida_inicial + " " + hora_partida_inicial, "%d/%m/%Y %H:%M")
-            if data_partida < datetime.datetime.now():
-                form.add_error('dia_partida_inicial', 'data/hora inválido(a)')
-            valor_kuadra_inicial = form.cleaned_data['valor_kuadra_inicial']
-            valor_kina_inicial = form.cleaned_data['valor_kina_inicial']
-            valor_keno_inicial = form.cleaned_data['valor_keno_inicial']
-            tempo_partidas = form.cleaned_data['tempo_partidas']
-            limite_partidas = form.cleaned_data['limite_partidas']
+    if ehUsuarioDash(request.user):
+        usuario = Usuario.objects.filter(usuario=request.user).first()
+        form = NovaPartidaAutomatizada()
+        if request.method == 'POST':
+            form = NovaPartidaAutomatizada(request.POST)
+            if form.is_valid():
+                dia_partida_inicial = form.cleaned_data['dia_partida_inicial']
+                hora_partida_inicial = form.cleaned_data['hora_partida_inicial']
+                data_partida = datetime.datetime.strptime(
+                    dia_partida_inicial + " " + hora_partida_inicial, "%d/%m/%Y %H:%M")
+                if data_partida < datetime.datetime.now():
+                    form.add_error('dia_partida_inicial', 'data/hora inválido(a)')
+                valor_kuadra_inicial = form.cleaned_data['valor_kuadra_inicial']
+                valor_kina_inicial = form.cleaned_data['valor_kina_inicial']
+                valor_keno_inicial = form.cleaned_data['valor_keno_inicial']
+                tempo_partidas = form.cleaned_data['tempo_partidas']
+                limite_partidas = form.cleaned_data['limite_partidas']
 
-            tipo_rodada = form.cleaned_data['tipo_rodada']
+                tipo_rodada = form.cleaned_data['tipo_rodada']
 
-            if form.errors:
-                return render(request, "partida_automatizada.html", {'form': form})
-            with transaction.atomic():
-                automato = Automato.objects.create(
-                    usuario=usuario,
-                    tempo=tempo_partidas,
-                    quantidade_sorteios=limite_partidas)
+                if form.errors:
+                    return render(request, "partida_automatizada.html", {'form': form})
+                with transaction.atomic():
+                    automato = Automato.objects.create(
+                        usuario=usuario,
+                        tempo=tempo_partidas,
+                        quantidade_sorteios=limite_partidas)
 
-                partida_inicial = Partida.objects.create(
-                    regra = Regra.objects.get_or_create(nome="PROMO")[0],
-                    valor_kuadra=valor_kuadra_inicial,
-                    valor_kina=valor_kina_inicial,
-                    valor_keno=valor_keno_inicial,
-                    data_partida=data_partida,
-                    usuario=usuario,
-                    id_automato=automato.id,
-                    partida_automatizada=True,
-                    tipo_rodada=tipo_rodada,
-                )
-                partida_inicial.save()
-                # comprando cartelas
-                configuracao = Configuracao.objects.last()
-                comprar_cartelas(partida_inicial,configuracao.quantidade_cartelas_compradas)
+                    partida_inicial = Partida.objects.create(
+                        regra = Regra.objects.get_or_create(nome="PROMO")[0],
+                        valor_kuadra=valor_kuadra_inicial,
+                        valor_kina=valor_kina_inicial,
+                        valor_keno=valor_keno_inicial,
+                        data_partida=data_partida,
+                        usuario=usuario,
+                        id_automato=automato.id,
+                        partida_automatizada=True,
+                        tipo_rodada=tipo_rodada,
+                    )
+                    partida_inicial.save()
+                    # comprando cartelas
+                    configuracao = Configuracao.objects.last()
+                    comprar_cartelas(partida_inicial,configuracao.quantidade_cartelas_compradas)
 
-                agenda.agendar(partida_inicial)
-            return redirect('/partidas/')
-    return render(request, "partida_automatizada.html", {'form': form})
-
+                    agenda.agendar(partida_inicial)
+                return redirect('/partidas/')
+        return render(request, "partida_automatizada.html", {'form': form})
+    return HttpResponse(status=403)
 
 
 @login_required(login_url="/login/")
 def partidas(request):
-
-    pagina = 0
-    ultima_pagina = 0
-    itens_pagina = 10
-    usuario = request.user.usuario
-    partidas = []
-    data_final = None
-    data_inicial = datetime.date.today()
-    if request.method == "POST":
-        data_inicial = request.POST.get(
-            'outlined-initial-date-picker', datetime.date.today().strftime("%d/%m/%Y"))
-        data_final = request.POST['outlined-final-date-picker']
-        if data_final:
-            data_final = datetime.datetime.strptime(
-                data_final + " 23:59:59", "%d/%m/%Y %H:%M:%S")
-        if data_inicial:
-            data_inicial = datetime.datetime.strptime(data_inicial, "%d/%m/%Y")
+    if ehUsuarioDash(request.user):
+        pagina = 0
+        ultima_pagina = 0
+        itens_pagina = 10
+        usuario = request.user.usuario
+        partidas = []
+        data_final = None
+        data_inicial = datetime.date.today()
+        if request.method == "POST":
+            data_inicial = request.POST.get(
+                'outlined-initial-date-picker', datetime.date.today().strftime("%d/%m/%Y"))
+            data_final = request.POST['outlined-final-date-picker']
+            if data_final:
+                data_final = datetime.datetime.strptime(
+                    data_final + " 23:59:59", "%d/%m/%Y %H:%M:%S")
+            if data_inicial:
+                data_inicial = datetime.datetime.strptime(data_inicial, "%d/%m/%Y")
+            else:
+                data_inicial = datetime.date.today()
+            if not data_final:
+                partidas = Partida.objects.filter(data_partida__gte=data_inicial,)
+            else:
+                partidas = Partida.objects.filter(data_partida__gte=data_inicial,
+                                                  data_partida__lte=data_final,)
         else:
-            data_inicial = datetime.date.today()
-        if not data_final:
-            partidas = Partida.objects.filter(data_partida__gte=data_inicial,)
+            if not partidas:
+                partidas = Partida.objects.filter(data_partida__gte=data_inicial,)
+
+
+        total_dados = partidas.count()
+        if (total_dados != 0 and itens_pagina != 0):
+            ultima_pagina = int(math.ceil(total_dados / itens_pagina))
+        partidas = partidas.order_by('-data_partida')
+        if request.GET.get("pagina"):
+            pagina = int(request.GET["pagina"])
+            numeroF = int(int(pagina) * itens_pagina)
+            numeroI = numeroF - itens_pagina
+            partidas = partidas[numeroI:numeroF]
+
         else:
-            partidas = Partida.objects.filter(data_partida__gte=data_inicial,
-                                              data_partida__lte=data_final,)
-    else:
-        if not partidas:
-            partidas = Partida.objects.filter(data_partida__gte=data_inicial,)
+            pagina = 1
+            partidas = partidas[0:itens_pagina]
+        proxima_pagina = int(pagina) + 1
+        pagina_anterior = int(pagina) - 1
 
+        if ultima_pagina == 0:
+            ultima_pagina = 1
 
-    total_dados = partidas.count()
-    if (total_dados != 0 and itens_pagina != 0):
-        ultima_pagina = int(math.ceil(total_dados / itens_pagina))
-    partidas = partidas.order_by('-data_partida')
-    if request.GET.get("pagina"):
-        pagina = int(request.GET["pagina"])
-        numeroF = int(int(pagina) * itens_pagina)
-        numeroI = numeroF - itens_pagina
-        partidas = partidas[numeroI:numeroF]
+        total_participantes = 0
+        total_sorteios = len(partidas)
+        total_premios = 0
+        agora = datetime.datetime.now()
+        if partidas:
+            for partida in partidas:
+                total_participantes += Cartela.objects.filter(partida=partida, jogador__isnull=False).count()
+                if partida.bolas_sorteadas:
+                    total_premios += partida.premios()
 
-    else:
-        pagina = 1
-        partidas = partidas[0:itens_pagina]
-    proxima_pagina = int(pagina) + 1
-    pagina_anterior = int(pagina) - 1
-
-    if ultima_pagina == 0:
-        ultima_pagina = 1
-
-    total_participantes = 0
-    total_sorteios = len(partidas)
-    total_premios = 0
-    agora = datetime.datetime.now()
-    if partidas:
-        for partida in partidas:
-            total_participantes += Cartela.objects.filter(partida=partida, jogador__isnull=False).count()
-            if partida.bolas_sorteadas:
-                total_premios += partida.premios()
-
-    return render(request, 'partidas.html', {'data_inicial': data_inicial.strftime("%d/%m/%Y"),
-                                             'data_final': data_final.strftime("%d/%m/%Y") if data_final else None,
-                                             'partidas': partidas, 'agora': agora, 'pagina_atual': pagina,
-                                             'ultima_pagina': ultima_pagina, 'proxima_pagina': proxima_pagina,
-                                             'pagina_anterior': pagina_anterior, "total_participantes":total_participantes,
-                                             'total_sorteios':total_sorteios,'total_premios':total_premios
-                                             })
-
+        return render(request, 'partidas.html', {'data_inicial': data_inicial.strftime("%d/%m/%Y"),
+                                                 'data_final': data_final.strftime("%d/%m/%Y") if data_final else None,
+                                                 'partidas': partidas, 'agora': agora, 'pagina_atual': pagina,
+                                                 'ultima_pagina': ultima_pagina, 'proxima_pagina': proxima_pagina,
+                                                 'pagina_anterior': pagina_anterior, "total_participantes":total_participantes,
+                                                 'total_sorteios':total_sorteios,'total_premios':total_premios
+                                                 })
+    return HttpResponse(status=403)
 
 @login_required(login_url="/login/")
 def ganhadores(request):
-    hoje = datetime.date.today()
-    data_inicio = datetime.datetime.combine(hoje, datetime.time.min)
-    data_fim = datetime.datetime.combine(hoje, datetime.time.max)
-    itens_pagina = 10
-    data_liberacao = datetime.datetime.now()
-    vencedores = CartelaVencedora.objects.filter(partida__data_partida__lte=data_liberacao).order_by('-id')
-    vencedores = vencedores.filter(partida__data_partida__gte=data_inicio, partida__data_partida__lte=data_fim)
-    ultima_pagina = 0
-    post = False
-    form = GanhadoresForm()
-    if request.method == "POST":
-        post = True
-        data_form = request.POST.dict()
-        data_form['user'] = request.user
-        form = GanhadoresForm(data_form)
-        vencedores = CartelaVencedora.objects.filter(partida__data_partida__lte=data_liberacao,).order_by('-id')
-        if form.is_valid():
+    if ehUsuarioDash(request.user):
+        hoje = datetime.date.today()
+        data_inicio = datetime.datetime.combine(hoje, datetime.time.min)
+        data_fim = datetime.datetime.combine(hoje, datetime.time.max)
+        itens_pagina = 10
+        data_liberacao = datetime.datetime.now()
+        vencedores = CartelaVencedora.objects.filter(partida__data_partida__lte=data_liberacao).order_by('-id')
+        vencedores = vencedores.filter(partida__data_partida__gte=data_inicio, partida__data_partida__lte=data_fim)
+        ultima_pagina = 0
+        post = False
+        form = GanhadoresForm()
+        if request.method == "POST":
+            post = True
+            data_form = request.POST.dict()
+            data_form['user'] = request.user
+            form = GanhadoresForm(data_form)
+            vencedores = CartelaVencedora.objects.filter(partida__data_partida__lte=data_liberacao,).order_by('-id')
+            if form.is_valid():
 
-            if 'data_inicio' in form.cleaned_data and form.cleaned_data['data_inicio']:
-                data_inicio = datetime.datetime.combine(
-                    datetime.datetime.strptime(form.cleaned_data['data_inicio'], "%d/%m/%Y"),
-                    datetime.time.min
-                )
-                if 'data_fim' not in form.cleaned_data or not form.cleaned_data['data_fim']:
-                    data_fim = datetime.datetime.combine(
-                        data_inicio, datetime.time.max
-                    )
-
-            if 'data_fim' in form.cleaned_data and form.cleaned_data['data_fim']:
-                data_fim = datetime.datetime.combine(
-                    datetime.datetime.strptime(form.cleaned_data['data_fim'], "%d/%m/%Y"),
-                    datetime.time.max
-                )
-                if 'data_inicio' not in form.cleaned_data or not form.cleaned_data['data_inicio']:
+                if 'data_inicio' in form.cleaned_data and form.cleaned_data['data_inicio']:
                     data_inicio = datetime.datetime.combine(
-                        data_fim, datetime.time.min
+                        datetime.datetime.strptime(form.cleaned_data['data_inicio'], "%d/%m/%Y"),
+                        datetime.time.min
                     )
+                    if 'data_fim' not in form.cleaned_data or not form.cleaned_data['data_fim']:
+                        data_fim = datetime.datetime.combine(
+                            data_inicio, datetime.time.max
+                        )
 
-            vencedores = vencedores.filter(partida__data_partida__gte=data_inicio, partida__data_partida__lte=data_fim)
-            if 'partida' in form.cleaned_data and form.cleaned_data['partida']:
-                vencedores = CartelaVencedora.objects.filter(
-                    partida__id=form.cleaned_data['partida'], partida__data_partida__lte=data_liberacao)
+                if 'data_fim' in form.cleaned_data and form.cleaned_data['data_fim']:
+                    data_fim = datetime.datetime.combine(
+                        datetime.datetime.strptime(form.cleaned_data['data_fim'], "%d/%m/%Y"),
+                        datetime.time.max
+                    )
+                    if 'data_inicio' not in form.cleaned_data or not form.cleaned_data['data_inicio']:
+                        data_inicio = datetime.datetime.combine(
+                            data_fim, datetime.time.min
+                        )
 
-    partidas_vencedores = {}
+                vencedores = vencedores.filter(partida__data_partida__gte=data_inicio, partida__data_partida__lte=data_fim)
+                if 'partida' in form.cleaned_data and form.cleaned_data['partida']:
+                    vencedores = CartelaVencedora.objects.filter(
+                        partida__id=form.cleaned_data['partida'], partida__data_partida__lte=data_liberacao)
 
-    kuadra, kina, keno, acumulado = (0, 0, 0, 0)
-    partidas = []
-    for v in vencedores:
-        v:CartelaVencedora
-        if v.partida not in partidas:
-            partidas.append(v.partida)
-            kuadra += v.partida.valor_kuadra
-            kina += v.partida.valor_kina
-            keno += v.partida.valor_keno
-        if v.partida in partidas_vencedores:
-            partidas_vencedores[v.partida].append(v)
+        partidas_vencedores = {}
+
+        kuadra, kina, keno, acumulado = (0, 0, 0, 0)
+        partidas = []
+        for v in vencedores:
+            v:CartelaVencedora
+            if v.partida not in partidas:
+                partidas.append(v.partida)
+                kuadra += v.partida.valor_kuadra
+                kina += v.partida.valor_kina
+                keno += v.partida.valor_keno
+            if v.partida in partidas_vencedores:
+                partidas_vencedores[v.partida].append(v)
+            else:
+                partidas_vencedores[v.partida] = [v]
+
+        total = kuadra + kina + keno + acumulado
+
+        total_dados = len(partidas_vencedores)
+        if (total_dados != 0 and itens_pagina != 0):
+            ultima_pagina = int(math.ceil(total_dados / itens_pagina))
+        if request.GET.get("pagina"):
+            pagina = int(request.GET["pagina"])
+            numeroF = int(int(pagina) * itens_pagina)
+            numeroI = numeroF - itens_pagina
+            partidas_vencedores = dict(itertools.islice(partidas_vencedores.items(), numeroI, numeroF))
+
         else:
-            partidas_vencedores[v.partida] = [v]
+            pagina = 1
+            partidas_vencedores = dict(itertools.islice(partidas_vencedores.items(), itens_pagina))
 
-    total = kuadra + kina + keno + acumulado
+        proxima_pagina = int(pagina) + 1
+        pagina_anterior = int(pagina) - 1
 
-    total_dados = len(partidas_vencedores)
-    if (total_dados != 0 and itens_pagina != 0):
-        ultima_pagina = int(math.ceil(total_dados / itens_pagina))
-    if request.GET.get("pagina"):
-        pagina = int(request.GET["pagina"])
-        numeroF = int(int(pagina) * itens_pagina)
-        numeroI = numeroF - itens_pagina
-        partidas_vencedores = dict(itertools.islice(partidas_vencedores.items(), numeroI, numeroF))
-
-    else:
-        pagina = 1
-        partidas_vencedores = dict(itertools.islice(partidas_vencedores.items(), itens_pagina))
-
-    proxima_pagina = int(pagina) + 1
-    pagina_anterior = int(pagina) - 1
-
-    if ultima_pagina == 0:
-        ultima_pagina = 1
-    return render(request, 'ganhadores.html',
-                  {'partidas': partidas_vencedores, 'pagina_atual': pagina, 'proxima_pagina': proxima_pagina,
-                   'pagina_anterior': pagina_anterior, 'ultima_pagina': ultima_pagina, 'flag': post, 'form': form,
-                   'kuadra': kuadra, 'kina': kina,
-                   'keno': keno, 'acumulado': acumulado, 'total': total,
-                   })
-
+        if ultima_pagina == 0:
+            ultima_pagina = 1
+        return render(request, 'ganhadores.html',
+                      {'partidas': partidas_vencedores, 'pagina_atual': pagina, 'proxima_pagina': proxima_pagina,
+                       'pagina_anterior': pagina_anterior, 'ultima_pagina': ultima_pagina, 'flag': post, 'form': form,
+                       'kuadra': kuadra, 'kina': kina,
+                       'keno': keno, 'acumulado': acumulado, 'total': total,
+                       })
+    return HttpResponse(status=403)
 
 @login_required(login_url="/login/")
 def jogadores(request):
-    form = JogadoresForm()
-    jogadores = Jogador.objects.all()
-    itens_pagina = 100
-    if request.method == "POST":
-        form = JogadoresForm(request.POST)
-        if form.is_valid():
-            if 'data_inicio' in form.cleaned_data and form.cleaned_data['data_inicio']:
-                data_inicio = datetime.datetime.combine(
-                    datetime.datetime.strptime(form.cleaned_data['data_inicio'], "%d/%m/%Y"),
-                    datetime.time.min
-                )
-                jogadores = jogadores.filter(cadastrado_em__gte=data_inicio)
-                if 'data_fim' not in form.cleaned_data or not form.cleaned_data['data_fim']:
+    if ehUsuarioDash(request.user):
+
+        form = JogadoresForm()
+        jogadores = Jogador.objects.all()
+        itens_pagina = 100
+        if request.method == "POST":
+            form = JogadoresForm(request.POST)
+            if form.is_valid():
+                if 'data_inicio' in form.cleaned_data and form.cleaned_data['data_inicio']:
+                    data_inicio = datetime.datetime.combine(
+                        datetime.datetime.strptime(form.cleaned_data['data_inicio'], "%d/%m/%Y"),
+                        datetime.time.min
+                    )
+                    jogadores = jogadores.filter(cadastrado_em__gte=data_inicio)
+                    if 'data_fim' not in form.cleaned_data or not form.cleaned_data['data_fim']:
+                        data_fim = datetime.datetime.combine(
+                            data_inicio, datetime.time.max
+                        )
+                        jogadores = jogadores.filter(cadastrado_em__lte=data_fim)
+
+                if 'data_fim' in form.cleaned_data and form.cleaned_data['data_fim']:
                     data_fim = datetime.datetime.combine(
-                        data_inicio, datetime.time.max
+                        datetime.datetime.strptime(form.cleaned_data['data_fim'], "%d/%m/%Y"),
+                        datetime.time.max
                     )
                     jogadores = jogadores.filter(cadastrado_em__lte=data_fim)
+                    if 'data_inicio' not in form.cleaned_data or not form.cleaned_data['data_inicio']:
+                        data_inicio = datetime.datetime.combine(
+                            data_fim, datetime.time.min
+                        )
+                        jogadores.filter(cadastrado_em_gte=data_inicio)
+                if 'partida' in form.cleaned_data and form.cleaned_data['partida']:
+                    cartelas = Cartela.objects.filter(partida__id=form.cleaned_data['partida'])
+                    jogadores = jogadores.filter(cartela__in=cartelas)
+                if 'nome_jogador' in form.cleaned_data and form.cleaned_data['nome_jogador']:
+                    jogadores = jogadores.filter(nome__icontains=form.cleaned_data['nome_jogador'])
+            else:
+                print(form.errors)
+        total_dados = jogadores.count()
+        ultima_pagina = 1
+        jogadores = jogadores.annotate(num_cartelas = Count('cartela')).order_by('-num_cartelas')
+        if (total_dados != 0 and itens_pagina != 0):
+            ultima_pagina = int(math.ceil(total_dados / itens_pagina))
+        if request.GET.get("pagina"):
+            pagina = int(request.GET["pagina"])
+            numeroF = int(int(pagina) * itens_pagina)
+            numeroI = numeroF - itens_pagina
+            jogadores = jogadores[numeroI:numeroF]
 
-            if 'data_fim' in form.cleaned_data and form.cleaned_data['data_fim']:
-                data_fim = datetime.datetime.combine(
-                    datetime.datetime.strptime(form.cleaned_data['data_fim'], "%d/%m/%Y"),
-                    datetime.time.max
-                )
-                jogadores = jogadores.filter(cadastrado_em__lte=data_fim)
-                if 'data_inicio' not in form.cleaned_data or not form.cleaned_data['data_inicio']:
-                    data_inicio = datetime.datetime.combine(
-                        data_fim, datetime.time.min
-                    )
-                    jogadores.filter(cadastrado_em_gte=data_inicio)
-            if 'partida' in form.cleaned_data and form.cleaned_data['partida']:
-                cartelas = Cartela.objects.filter(partida__id=form.cleaned_data['partida'])
-                jogadores = jogadores.filter(cartela__in=cartelas)
-            if 'nome_jogador' in form.cleaned_data and form.cleaned_data['nome_jogador']:
-                jogadores = jogadores.filter(nome__icontains=form.cleaned_data['nome_jogador'])
         else:
-            print(form.errors)  
-    total_dados = jogadores.count()
-    ultima_pagina = 1
-    jogadores = jogadores.annotate(num_cartelas = Count('cartela')).order_by('-num_cartelas')
-    if (total_dados != 0 and itens_pagina != 0):
-        ultima_pagina = int(math.ceil(total_dados / itens_pagina))
-    if request.GET.get("pagina"):
-        pagina = int(request.GET["pagina"])
-        numeroF = int(int(pagina) * itens_pagina)
-        numeroI = numeroF - itens_pagina
-        jogadores = jogadores[numeroI:numeroF]
+            pagina = 1
+            jogadores = jogadores[0:itens_pagina]
 
-    else:
-        pagina = 1
-        jogadores = jogadores[0:itens_pagina]
-    
-    proxima_pagina = pagina + 1
-    pagina_anterior = pagina - 1
+        proxima_pagina = pagina + 1
+        pagina_anterior = pagina - 1
 
-    return render(request,'jogadores.html',{'jogadores':jogadores,'form':form,'pagina_atual': pagina,'ultima_pagina':ultima_pagina,'proxima_pagina': proxima_pagina,
-                                            'pagina_anterior': pagina_anterior,'pagina_anterior':pagina_anterior,'total_dados':total_dados})
+        return render(request,'jogadores.html',{'jogadores':jogadores,'form':form,'pagina_atual': pagina,'ultima_pagina':ultima_pagina,'proxima_pagina': proxima_pagina,
+                                                'pagina_anterior': pagina_anterior,'pagina_anterior':pagina_anterior,'total_dados':total_dados})
+    return HttpResponse(status=403)
 
 @login_required(login_url="/login/")
 def criarpartida(request):
-    usuario = Usuario.objects.filter(usuario=request.user).first()
-    hoje = date.today()
-    configuracao = Configuracao.objects.last()
+    if ehUsuarioDash(request.user):
+        usuario = Usuario.objects.filter(usuario=request.user).first()
+        hoje = date.today()
+        configuracao = Configuracao.objects.last()
 
-    form = NovaPartidaForm(
-        initial={'dia_partida': hoje,
-                 "numero_cartelas_iniciais":configuracao.quantidade_cartelas_compradas if configuracao else 500})
-    ontem = datetime.datetime.now() - datetime.timedelta(days=1)
-    partidas = Partida.objects.filter(data_partida__gte=ontem)
+        form = NovaPartidaForm(
+            initial={'dia_partida': hoje,
+                     "numero_cartelas_iniciais":configuracao.quantidade_cartelas_compradas if configuracao else 500})
+        ontem = datetime.datetime.now() - datetime.timedelta(days=1)
+        partidas = Partida.objects.filter(data_partida__gte=ontem)
 
-    if request.method == "POST":
-        form = NovaPartidaForm(request.POST)
+        if request.method == "POST":
+            form = NovaPartidaForm(request.POST)
 
-        if form.is_valid():
-            # Definição de Ações
-            regra, regra_criado = Regra.objects.get_or_create(nome="PROMO")
-            acoes_select = request.POST.getlist("acoes_select")
-            acoes_url = request.POST.getlist("acoes_url")
+            if form.is_valid():
+                # Definição de Ações
+                regra, regra_criado = Regra.objects.get_or_create(nome="PROMO")
+                acoes_select = request.POST.getlist("acoes_select")
+                acoes_url = request.POST.getlist("acoes_url")
 
-            if len(acoes_url) == len([x for x in acoes_url if x.startswith("https://www.instagram.com/")]):
+                if len(acoes_url) == len([x for x in acoes_url if x.startswith("https://www.instagram.com/")]):
 
-                dados = list(zip(acoes_select,acoes_url))
+                    dados = list(zip(acoes_select,acoes_url))
 
-                for dado in dados:
-                    url_social = dado[1]
+                    for dado in dados:
+                        url_social = dado[1]
 
-                    perfil_social = PerfilSocial.objects.filter(url = url_social).first()
-                    if not perfil_social:
-                        try:
-                            perfil = url_social.split("www.instagram.com/")[1]
-                            if perfil.endswith("/"):
-                                perfil = perfil[:-1]
-                            perfil_id = ""
-                            configuracao_instagram = ConfiguracaoInstagram.objects.last()
-                            if configuracao_instagram and configuracao_instagram.validacao_ativa:
-                                try:
-                                    api = Client()
-                                    perfil_id = api.user_id_from_username(perfil)
-                                    if perfil_id and "<!DOCTYPE html>" in perfil_id:
-                                        raise ClientLoginRequired
-                                except ClientLoginRequired:
+                        perfil_social = PerfilSocial.objects.filter(url = url_social).first()
+                        if not perfil_social:
+                            try:
+                                perfil = url_social.split("www.instagram.com/")[1]
+                                if perfil.endswith("/"):
+                                    perfil = perfil[:-1]
+                                perfil_id = ""
+                                configuracao_instagram = ConfiguracaoInstagram.objects.last()
+                                if configuracao_instagram and configuracao_instagram.validacao_ativa:
                                     try:
-                                        if CLIENT:
-                                            perfil_id = CLIENT.user_info_by_username_v1(perfil)
-                                            time.sleep(1)
-                                    except UserNotFound:
-                                        raise Exception
-                                    except Exception:
-                                        pass
-                            else:
-                                if configuracao_instagram:
-                                    perfil_id = configuracao_instagram.perfil_id or ""
-                            perfil_social = PerfilSocial.objects.create(
-                                url = url_social, perfil_id = perfil_id
-                            )
-                        except:
-                            raise ValidationError("Perfil não existe")
+                                        api = Client()
+                                        perfil_id = api.user_id_from_username(perfil)
+                                        if perfil_id and "<!DOCTYPE html>" in perfil_id:
+                                            raise ClientLoginRequired
+                                    except ClientLoginRequired:
+                                        try:
+                                            if CLIENT:
+                                                perfil_id = CLIENT.user_info_by_username_v1(perfil)
+                                                time.sleep(1)
+                                        except UserNotFound:
+                                            raise Exception
+                                        except Exception:
+                                            pass
+                                else:
+                                    if configuracao_instagram:
+                                        perfil_id = configuracao_instagram.perfil_id or ""
+                                perfil_social = PerfilSocial.objects.create(
+                                    url = url_social, perfil_id = perfil_id
+                                )
+                            except:
+                                raise ValidationError("Perfil não existe")
 
-                    acao, acao_criado = Acao.objects.get_or_create(
-                        tipo = dado[0],perfil_social=perfil_social, regra = regra
-                    )
+                        acao, acao_criado = Acao.objects.get_or_create(
+                            tipo = dado[0],perfil_social=perfil_social, regra = regra
+                        )
 
-                dia_partida = form.cleaned_data['dia_partida']
-                hora_partida = form.cleaned_data['hora_partida']
-                numero_cartelas_iniciais = form.cleaned_data['numero_cartelas_iniciais']
-                partida = form.save(commit=False)
-                partida.regra = regra
-                partida.data_partida = datetime.datetime.strptime(
-                    dia_partida + " " + hora_partida, "%d/%m/%Y %H:%M")
-                partida.usuario = usuario
-                partida.save()
+                    dia_partida = form.cleaned_data['dia_partida']
+                    hora_partida = form.cleaned_data['hora_partida']
+                    numero_cartelas_iniciais = form.cleaned_data['numero_cartelas_iniciais']
+                    partida = form.save(commit=False)
+                    partida.regra = regra
+                    partida.data_partida = datetime.datetime.strptime(
+                        dia_partida + " " + hora_partida, "%d/%m/%Y %H:%M")
+                    partida.usuario = usuario
+                    partida.save()
 
-                # comprando cartelas
-                if partida.chance_vitoria<Decimal(100.0):
-                    comprar_cartelas(partida,numero_cartelas_iniciais)
+                    # comprando cartelas
+                    if partida.chance_vitoria<Decimal(100.0):
+                        comprar_cartelas(partida,numero_cartelas_iniciais)
 
-                # Agendando sorteio
-                agenda.agendar(partida)
+                    # Agendando sorteio
+                    agenda.agendar(partida)
 
-                return redirect("/partidas/")
-            else:
-                form.add_error(None,"Um ou mais urls não está escrito corretamente")
+                    return redirect("/partidas/")
+                else:
+                    form.add_error(None,"Um ou mais urls não está escrito corretamente")
 
-    valores_disponiveis = VALORES_VOZES
-    acoes_tipo = AcaoTipoChoices.choices
-    perfil_default = configuracao.perfil_default
-    return render(request, 'criarpartida.html',
-                  {'form': form, 'partidas': partidas,"perfil_default":perfil_default,
-                    'valores_disponiveis':valores_disponiveis,
-                   'configuracao': Configuracao.objects.last(),"acoes_tipo":acoes_tipo,
-                   })
-
+        valores_disponiveis = VALORES_VOZES
+        acoes_tipo = AcaoTipoChoices.choices
+        perfil_default = configuracao.perfil_default
+        return render(request, 'criarpartida.html',
+                      {'form': form, 'partidas': partidas,"perfil_default":perfil_default,
+                        'valores_disponiveis':valores_disponiveis,
+                       'configuracao': Configuracao.objects.last(),"acoes_tipo":acoes_tipo,
+                       })
+    return HttpResponse(status=403)
 
 @login_required(login_url="/login/")
 def cartela(request, cartela_id):
-    cartela = Cartela.objects.filter(cancelado=False, id=cartela_id).first()
-
-    return render(request, 'cartelas.html', {'cartela': cartela})
-
+    if ehUsuarioDash(request.user):
+        cartela = Cartela.objects.filter(cancelado=False, id=cartela_id).first()
+        return render(request, 'cartelas.html', {'cartela': cartela})
+    return HttpResponse(status=403)
 
 @login_required(login_url="/login/")
 def partida_edit(request, partida_id):
-    partida:Partida = Partida.objects.filter(id=partida_id).first()
-    configuracao:Configuracao = Configuracao.objects.last()
-    if partida:
-        agora = datetime.datetime.now()
-        if partida.data_partida > agora:
-            form = PartidaEditForm(instance=partida, initial={
-                'dia_partida': partida.data_partida.date,
-                'hora_partida': partida.data_partida.strftime("%H:%M"),
-                'tipo_rodada': partida.tipo_rodada,
-                'nome_sorteio': partida.nome_sorteio,
-                'valor_kuadra': partida.valor_kuadra,
-                'valor_kina': partida.valor_kina,
-                'valor_keno': partida.valor_keno,
-            })
-            if request.method == "POST":
-                form = PartidaEditForm(request.POST, instance=partida)
-                if form.is_valid():
-                    data_partida = form.cleaned_data['dia_partida'] + " " + form.cleaned_data['hora_partida']
-                    novadata = datetime.datetime.strptime(data_partida, "%d/%m/%Y %H:%M")
-                    antigadata = partida.data_partida
-                    partida.data_partida = novadata
-                    partida.tipo_rodada = form.cleaned_data['tipo_rodada']
-                    partida.nome_sorteio = form.cleaned_data['nome_sorteio']
-                    partida.valor_kuadra = form.cleaned_data['valor_kuadra']
-                    partida.valor_kina = form.cleaned_data['valor_kina']
-                    partida.valor_keno = form.cleaned_data['valor_keno']
-                    partida.save()
+    if ehUsuarioDash(request.user):
+        partida:Partida = Partida.objects.filter(id=partida_id).first()
+        configuracao:Configuracao = Configuracao.objects.last()
+        if partida:
+            agora = datetime.datetime.now()
+            if partida.data_partida > agora:
+                form = PartidaEditForm(instance=partida, initial={
+                    'dia_partida': partida.data_partida.date,
+                    'hora_partida': partida.data_partida.strftime("%H:%M"),
+                    'tipo_rodada': partida.tipo_rodada,
+                    'nome_sorteio': partida.nome_sorteio,
+                    'valor_kuadra': partida.valor_kuadra,
+                    'valor_kina': partida.valor_kina,
+                    'valor_keno': partida.valor_keno,
+                })
+                if request.method == "POST":
+                    form = PartidaEditForm(request.POST, instance=partida)
+                    if form.is_valid():
+                        data_partida = form.cleaned_data['dia_partida'] + " " + form.cleaned_data['hora_partida']
+                        novadata = datetime.datetime.strptime(data_partida, "%d/%m/%Y %H:%M")
+                        antigadata = partida.data_partida
+                        partida.data_partida = novadata
+                        partida.tipo_rodada = form.cleaned_data['tipo_rodada']
+                        partida.nome_sorteio = form.cleaned_data['nome_sorteio']
+                        partida.valor_kuadra = form.cleaned_data['valor_kuadra']
+                        partida.valor_kina = form.cleaned_data['valor_kina']
+                        partida.valor_keno = form.cleaned_data['valor_keno']
+                        partida.save()
 
-                    # NOVO AGENDAMENTO
-                    if not antigadata == novadata:
-                        agenda.agendar(partida)
+                        # NOVO AGENDAMENTO
+                        if not antigadata == novadata:
+                            agenda.agendar(partida)
 
-                    event_bilhete_partida(partida.id)
-                    return redirect("/partidas/")
+                        event_bilhete_partida(partida.id)
+                        return redirect("/partidas/")
 
-            yesterday = datetime.datetime.now() - datetime.timedelta(days=1)
-            partidas = Partida.objects.filter(data_partida__gte=yesterday)
-            # TODO: #event_tela_partidas(franquias)
-            return render(request, 'partida_edit.html',
-                          {'form': form, 'partidas': partidas, 'configuracao': Configuracao.objects.last()})
+                yesterday = datetime.datetime.now() - datetime.timedelta(days=1)
+                partidas = Partida.objects.filter(data_partida__gte=yesterday)
+                # TODO: #event_tela_partidas(franquias)
+                return render(request, 'partida_edit.html',
+                              {'form': form, 'partidas': partidas, 'configuracao': Configuracao.objects.last()})
 
-
+    return HttpResponse(status=403)
 
 @login_required(login_url="/login/")
 def cartelas(request):
-    ultima_pagina = 0
-    page_number = 0
-    ordenacao = False
-    cartelas = Cartela.objects.all().order_by('-id')
-    if request.method == "POST":
-        form = CartelasFilterForm(request.POST)
-        if form.is_valid():
-            if 'partida' in form.cleaned_data and form.cleaned_data['partida']:
-                cartelas = cartelas.filter(
-                    partida=form.cleaned_data['partida'])
-            if 'hash' in form.cleaned_data and form.cleaned_data['hash']:
-                hash = form.cleaned_data['hash']
-                cartelas = cartelas.filter(hash=hash)
-            if 'codigo' in form.cleaned_data and form.cleaned_data['codigo']:
-                codigo = form.cleaned_data['codigo']
-                cartelas = cartelas.filter(codigo=codigo)
-            if 'resgatada' in form.cleaned_data and form.cleaned_data['resgatada']:
-                status = form.cleaned_data['resgatada']
-                if int(status)  == StatusCartelaChoice.RESGATADA:
-                    cartelas = cartelas.filter(jogador__isnull=False)
-                else:
-                    cartelas = cartelas.filter(jogador__isnull=True)
-    else:
-        hoje = datetime.date.today()
-        ordenacao = True
-        form = CartelasFilterForm()
-        page_number = request.GET.get('pagina')
+    if ehUsuarioDash(request.user):
+        ultima_pagina = 0
+        page_number = 0
+        ordenacao = False
+        cartelas = Cartela.objects.all().order_by('-id')
+        if request.method == "POST":
+            form = CartelasFilterForm(request.POST)
+            if form.is_valid():
+                if 'partida' in form.cleaned_data and form.cleaned_data['partida']:
+                    cartelas = cartelas.filter(
+                        partida=form.cleaned_data['partida'])
+                if 'hash' in form.cleaned_data and form.cleaned_data['hash']:
+                    hash = form.cleaned_data['hash']
+                    cartelas = cartelas.filter(hash=hash)
+                if 'codigo' in form.cleaned_data and form.cleaned_data['codigo']:
+                    codigo = form.cleaned_data['codigo']
+                    cartelas = cartelas.filter(codigo=codigo)
+                if 'resgatada' in form.cleaned_data and form.cleaned_data['resgatada']:
+                    status = form.cleaned_data['resgatada']
+                    if int(status)  == StatusCartelaChoice.RESGATADA:
+                        cartelas = cartelas.filter(jogador__isnull=False)
+                    else:
+                        cartelas = cartelas.filter(jogador__isnull=True)
+        else:
+            hoje = datetime.date.today()
+            ordenacao = True
+            form = CartelasFilterForm()
+            page_number = request.GET.get('pagina')
+            if not page_number:
+                page_number = 1
+
+        itens_pagina = 10
+        total_dados = cartelas.count()
+        ultima_pagina = math.ceil(total_dados / itens_pagina)
+        flag = False
         if not page_number:
-            page_number = 1
-
-    itens_pagina = 10
-    total_dados = cartelas.count()
-    ultima_pagina = math.ceil(total_dados / itens_pagina)
-    flag = False
-    if not page_number:
-        page_number = request.GET["pagina"]
-        if page_number:
-            numeroF = int(int(page_number) * itens_pagina)
-            numeroI = numeroF - itens_pagina
-            cartelas = cartelas.all().order_by('-id')[numeroI:numeroF]
+            page_number = request.GET["pagina"]
+            if page_number:
+                numeroF = int(int(page_number) * itens_pagina)
+                numeroI = numeroF - itens_pagina
+                cartelas = cartelas.all().order_by('-id')[numeroI:numeroF]
+            else:
+                cartelas = cartelas.all().order_by('-id')[0:30]
         else:
-            cartelas = cartelas.all().order_by('-id')[0:30]
-    else:
-        if page_number:
-            flag = True
-            numeroF = int(int(page_number) * itens_pagina)
-            numeroI = numeroF - itens_pagina
-            cartelas = cartelas.all().order_by('-id')[numeroI:numeroF]
-        else:
-            cartelas = cartelas.all().order_by('-id')[0:30]
+            if page_number:
+                flag = True
+                numeroF = int(int(page_number) * itens_pagina)
+                numeroI = numeroF - itens_pagina
+                cartelas = cartelas.all().order_by('-id')[numeroI:numeroF]
+            else:
+                cartelas = cartelas.all().order_by('-id')[0:30]
 
-    sorteios_count = Partida.objects.filter(cartelas__in = cartelas).order_by('-id').distinct('id').count()
-    hoje = datetime.datetime.now()
-    if ultima_pagina == 0:
-        ultima_pagina = 1
-    return render(request, 'cartelas_lote.html', {'cartelas': cartelas, 'form': form, "flag": flag,
-                                                  'sorteios': sorteios_count,
-                                                  'cartelas_num': total_dados,
-                                                  "pagina_atual": int(page_number),
-                                                  "proxima_pagina": int(page_number) + 1,
-                                                  "pagina_anterior": int(page_number) - 1,
-                                                  "ultima_pagina": ultima_pagina, "ordenacao": ordenacao, "hoje": hoje,
-                                                  })
-
+        sorteios_count = Partida.objects.filter(cartelas__in = cartelas).order_by('-id').distinct('id').count()
+        hoje = datetime.datetime.now()
+        if ultima_pagina == 0:
+            ultima_pagina = 1
+        return render(request, 'cartelas_lote.html', {'cartelas': cartelas, 'form': form, "flag": flag,
+                                                      'sorteios': sorteios_count,
+                                                      'cartelas_num': total_dados,
+                                                      "pagina_atual": int(page_number),
+                                                      "proxima_pagina": int(page_number) + 1,
+                                                      "pagina_anterior": int(page_number) - 1,
+                                                      "ultima_pagina": ultima_pagina, "ordenacao": ordenacao, "hoje": hoje,
+                                                      })
+    return HttpResponse(status=403)
 
 class TrocarSenhaForm(forms.Form):
+
     senha = forms.CharField(widget=forms.PasswordInput(
         attrs={'class': "form-control form-control-lg form-control-outlined"}
     ))
@@ -626,34 +637,36 @@ class TrocarSenhaForm(forms.Form):
 
 @login_required(login_url="/login/")
 def configuracao(request):
-    c = Configuracao.objects.last()
-    if request.method == "POST":
-        form = ConfiguracaoForm(request.POST, request.FILES, instance=c)
-        if form.is_valid():
-            form.save()
+    if ehUsuarioDash(request.user):
+        c = Configuracao.objects.last()
+        if request.method == "POST":
+            form = ConfiguracaoForm(request.POST, request.FILES, instance=c)
+            if form.is_valid():
+                form.save()
+            else:
+                print(form.errors)
         else:
-            print(form.errors)
-    else:
-        form = ConfiguracaoForm(instance=c)
-    return render(request, 'configuracao.html', {'form': form, 'configuracao': c})
-
+            form = ConfiguracaoForm(instance=c)
+        return render(request, 'configuracao.html', {'form': form, 'configuracao': c})
+    return HttpResponse(status=403)
 
 @login_required(login_url="/login/")
 def cancelar_bilhete(request, hash):
-    usuario = Usuario.objects.filter(usuario=request.user, ativo=True, perfis__lte=2).first()
-    if usuario:
-        c = Cartela.objects.filter(cancelado=False, hash=hash).first()
-        if c:
-            agora = datetime.datetime.now()
-            if agora < c.partida.data_partida:
-                c.cancelar(usuario)
+    if ehUsuarioDash(request.user):
+        usuario = Usuario.objects.filter(usuario=request.user, ativo=True, perfis__lte=2).first()
+        if usuario:
+            c = Cartela.objects.filter(cancelado=False, hash=hash).first()
+            if c:
+                agora = datetime.datetime.now()
+                if agora < c.partida.data_partida:
+                    c.cancelar(usuario)
+                else:
+                    return HttpResponse(status=403)
             else:
                 return HttpResponse(status=403)
         else:
-            return HttpResponse(status=403)
-    else:
-        return HttpResponse(status=401)
-
+            return HttpResponse(status=401)
+    return HttpResponse(status=403)
 
 
 @login_required(login_url="/login/")
@@ -772,54 +785,59 @@ def templates(request):
     return render(request, 'template_partidas.html', {'partidas': templates, 'agora': agora})
 
 
-@login_required
-def realtime_data(request):    
-    return render(request, 'realtime_data.html')
+@login_required()
+def realtime_data(request):
+    if ehUsuarioDash(request.user):
+        return render(request, 'realtime_data.html')
+    return HttpResponse(status=403)
 
 def manter_contas_view(request):
     manter_contas()
     return HttpResponse(status=200,content="<h1>pronto</h1>")
 
 
-@login_required
+@login_required()
 def aumentar_cartelas(request,partida_id,quantidade):
-    if partida_id and quantidade:
-        agora = datetime.datetime.now()
-        partida = Partida.objects.filter(id=partida_id,data_partida__gt=agora).first()
-        if partida:
-            codificacao = {
-                "F83A383C0FA81F295D057F8F5ED0BA4610947817":500,
-                "E3CBBA8883FE746C6E35783C9404B4BC0C7EE9EB":1000,
-            }
-            if quantidade in codificacao.keys():
-                faixas = [(1000,10000),(10001,20000)]
-                quantidade_atual = partida.cartelas.count()
-                codigos = [int(x.codigo) for x in Cartela.objects.filter(partida=partida)]
-                faixa_usar = faixas[0]
-                if quantidade_atual + codificacao[quantidade] > 8000: # faixa 1
-                    faixa_usar = faixas[1]
-                lista_possiveis = [x for x in range(faixa_usar[0],faixa_usar[1]) if x not in codigos]
+    if ehUsuarioDash(request.user):
+        if partida_id and quantidade:
+            agora = datetime.datetime.now()
+            partida = Partida.objects.filter(id=partida_id,data_partida__gt=agora).first()
+            if partida:
+                codificacao = {
+                    "F83A383C0FA81F295D057F8F5ED0BA4610947817":500,
+                    "E3CBBA8883FE746C6E35783C9404B4BC0C7EE9EB":1000,
+                }
+                if quantidade in codificacao.keys():
+                    faixas = [(1000,10000),(10001,20000)]
+                    quantidade_atual = partida.cartelas.count()
+                    codigos = [int(x.codigo) for x in Cartela.objects.filter(partida=partida)]
+                    faixa_usar = faixas[0]
+                    if quantidade_atual + codificacao[quantidade] > 8000: # faixa 1
+                        faixa_usar = faixas[1]
+                    lista_possiveis = [x for x in range(faixa_usar[0],faixa_usar[1]) if x not in codigos]
 
-                for lista in random.sample(lista_possiveis, k=codificacao[quantidade]):
-                    Cartela.objects.create(partida=partida,codigo=str(lista))
+                    for lista in random.sample(lista_possiveis, k=codificacao[quantidade]):
+                        Cartela.objects.create(partida=partida,codigo=str(lista))
 
-    return redirect("/partidas/")
+        return redirect("/partidas/")
+    return HttpResponse(status=403)
 
 @login_required()
 def forcar_sorteio(request, partida_id):
-    partida = Partida.objects.filter(id=partida_id).first()
-    agora = datetime.datetime.now()
-    if partida and not partida.sorteio and partida.data_partida + timedelta(seconds=20) < agora:
-        partida.em_sorteio = False
-        partida.save()
-        CartelaVencedora.objects.filter(cartela__partida=partida).delete()
-        agendamento = Agendamento.objects.filter(partida=partida).first()
-        if agendamento:
-            agendamento.delete()
-        agenda.sortear_agendado(partida,reload=False)
+    if ehUsuarioDash(request.user):
+        partida = Partida.objects.filter(id=partida_id).first()
+        agora = datetime.datetime.now()
+        if partida and not partida.sorteio and partida.data_partida + timedelta(seconds=20) < agora:
+            partida.em_sorteio = False
+            partida.save()
+            CartelaVencedora.objects.filter(cartela__partida=partida).delete()
+            agendamento = Agendamento.objects.filter(partida=partida).first()
+            if agendamento:
+                agendamento.delete()
+            agenda.sortear_agendado(partida,reload=False)
 
-    return redirect("/partidas/")
-
+        return redirect("/partidas/")
+    return HttpResponse(status=403)
 
 # Views para cadastro e login do jogador
 class CadastroJogador(APIView):
@@ -934,22 +952,26 @@ class PegarCartela(APIView):
 
 @login_required()
 def status_jogador(request, jogador_id, status):
-    if status == 0 or status == 1:
-        if Usuario.objects.filter(usuario=request.user):
-            jogador = Jogador.objects.filter(id=jogador_id).first()
-            if jogador:
-                user = jogador.user
-                user.is_active = bool(status)
-                user.save()
-    return redirect("/jogadores/")
+    if ehUsuarioDash(request.user):
+        if status == 0 or status == 1:
+            if Usuario.objects.filter(usuario=request.user):
+                jogador = Jogador.objects.filter(id=jogador_id).first()
+                if jogador:
+                    user = jogador.user
+                    user.is_active = bool(status)
+                    user.save()
+        return redirect("/jogadores/")
+    return HttpResponse(status=403)
 
 @login_required()
 def mudar_senha_jogador(request, jogador_id):
-    if Usuario.objects.filter(usuario=request.user) and request.method == "POST":
-        jogador = Jogador.objects.filter(id=jogador_id).first()
-        if jogador:
-            senha = request.POST.get("senha")
-            user = jogador.user
-            user.set_password(senha)
-            user.save()
-    return redirect("/jogadores/")
+    if ehUsuarioDash(request.user):
+        if Usuario.objects.filter(usuario=request.user) and request.method == "POST":
+            jogador = Jogador.objects.filter(id=jogador_id).first()
+            if jogador:
+                senha = request.POST.get("senha")
+                user = jogador.user
+                user.set_password(senha)
+                user.save()
+        return redirect("/jogadores/")
+    return HttpResponse(status=403)
