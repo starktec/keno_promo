@@ -134,8 +134,15 @@ def index_social(request):
             seguir = seguir[:-1]
     url_botao = configuracao.url_botao or ""
     nome_botao = configuracao.nome_botao or ""
+    nome_grupo_telegram = configuracao.nome_grupo_telegram or ""
+    url_grupo_telegram = configuracao.url_grupo_telegram or ""
 
-    return JsonResponse(data={"seguir_url":seguir_url,"seguir":seguir,'url_botao':url_botao,'nome_botao':nome_botao}, status=200)
+    return JsonResponse(
+        data={
+            "seguir_url":seguir_url,"seguir":seguir,'url_botao':url_botao,'nome_botao':nome_botao,
+            "nome_grupo_telegram":nome_grupo_telegram,"url_grupo_telegram":url_grupo_telegram
+        }, status=200
+    )
 
 
 @api_view(['POST'])
