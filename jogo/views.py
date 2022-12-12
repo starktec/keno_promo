@@ -824,14 +824,17 @@ def forcar_sorteio(request, partida_id):
 # Views para cadastro e login do jogador
 class CadastroJogador(APIView):
     def post(self,request):
+        #LOGGER.info(request.data)
         serializer = CadastroJogadorSerializer(data=request.data)
         if serializer.is_valid():
             jogador = serializer.save()
             return Response(data=JogadorSerializer(jogador).data, status=status.HTTP_201_CREATED)
+        LOGGER.info(format_serializer_message(serializer.errors))
         raise serializers.ValidationError(detail=format_serializer_message(serializer.errors))
 
 class LoginJogador(APIView):
     def post(self,request):
+        #LOGGER.info(f"LOGIN: {request.data}")
         serializer = LoginJogadorSerializer(data=request.data)
         if serializer.is_valid():
             usuario = request.data.get("usuario")
@@ -844,7 +847,8 @@ class PegarCartela(APIView):
     permission_classes = [EhJogador,]
     def post(self,request):
         dados = request.data
-        perfil = dados.get("perfil")
+        #LOGGER.info(f"PEGAR CARTELA: {dados}")
+        #perfil = dados.get("perfil")
 
         # Encontrar um jogador já cadastrado localmente por perfil
         token = request.headers['Authorization'].split("Token ")[1]
@@ -852,6 +856,7 @@ class PegarCartela(APIView):
         nome = ""
 
         # Formatando o dado perfil vindo do front para eliminar a url, @ e /, alem de forçar minusculo
+        '''
         if not jogador.instagram and perfil:
             if perfil.startswith("@"):
                 perfil = perfil[1:]
@@ -860,6 +865,7 @@ class PegarCartela(APIView):
             perfil = perfil.lower()
             jogador.instagram = perfil
             jogador.save()
+        '''
         agora = datetime.datetime.now()
 
         configuracao = Configuracao.objects.last()

@@ -149,8 +149,8 @@ class CartelasVencedorasSerializer(serializers.ModelSerializer):
 class CadastroJogadorSerializer(serializers.Serializer):
     usuario = serializers.CharField(max_length=100)
     email = serializers.EmailField(required=False)
-    whatsapp = serializers.CharField(max_length=20,required=False)
-    instagram = serializers.CharField(max_length=50,required=False)
+    whatsapp = serializers.CharField(max_length=20,required=False, allow_blank=True)
+    instagram = serializers.CharField(max_length=50,required=False, allow_blank=True)
     senha = serializers.CharField(max_length=20)
     confirmar_senha = serializers.CharField(max_length=20)
 
