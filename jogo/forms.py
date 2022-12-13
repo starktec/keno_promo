@@ -437,6 +437,10 @@ class ConfiguracaoForm(forms.ModelForm):
         attrs={'class': "custom-file-input", 'onChange':"document.getElementById('logo_dash').src = window.URL.createObjectURL(this.files[0])"}))
     logo_promo = forms.ImageField(required=False, widget=forms.FileInput(
         attrs={'class': "custom-file-input", 'onChange':"document.getElementById('logo_promo').src = window.URL.createObjectURL(this.files[0])"}))
+    fundo_front = forms.ImageField(required=False, widget=forms.FileInput(
+        attrs={'class': "custom-file-input",
+               'onChange': "document.getElementById('fundo_front').src = window.URL.createObjectURL(this.files[0])"}))
+
     favicon = forms.ImageField(required=False, widget=forms.FileInput(
         attrs={'class': "custom-file-input", 'onChange':"document.getElementById('favicon').src = window.URL.createObjectURL(this.files[0])"}))
 
@@ -460,7 +464,8 @@ class ConfiguracaoForm(forms.ModelForm):
         model = Configuracao
         fields = ['tempo_min_entre_sorteios',
                   'iniciar_sorteio_em',
-                  'logo_dash','logo_login','favicon','nome_server','nome_botao','url_botao','nome_grupo_telegram','url_grupo_telegram','logo_promo']
+                  'logo_dash','logo_login','favicon','nome_server','nome_botao','url_botao',
+                  'nome_grupo_telegram','url_grupo_telegram','logo_promo',"fundo_front"]
 
 
 class PartidaEditForm(forms.ModelForm):

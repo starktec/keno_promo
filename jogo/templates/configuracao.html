@@ -205,6 +205,30 @@ CONFIGURAÇÃO
                                         </div>
                                     </div>
                                 </div>
+
+                                <div class="col-md-6 box-card-input">
+                                    <div class="row col-md-12 card-input padding-top-botton">
+                                        {% if configuracao.fundo_front %}
+                                        <div class="col-4 col-lg-4 col-sm-4 container-img-conf">
+                                            <img id="fundo_front" src="{{ configuracao.fundo_front.url }}">
+                                        </div>
+                                        {% else %}
+                                        <div class="col-4 col-lg-4 col-sm-4 container-img-conf">
+                                            <img id="fundo_front" src="">
+                                        </div>
+                                        {% endif %}
+                                        <div class="row col-8 col-lg-8 col-sm-8 padding-zero conatiner-img-input">
+                                            <h4 class="conf-img-title col-12">Fundo Frontend(png-550x570)</h4>
+                                            <div class="input-group mb-3">
+                                                <div class="custom-file">
+                                                    {{ form.fundo_front }}
+                                                    <label class="custom-file-label" for="id_fundo_front" data-browse="Selecionar"></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <!--
                                 <div class="col-md-6 box-card-input">
                                     <div class="row col-md-12 card-input padding-top-botton">

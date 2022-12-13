@@ -12,6 +12,17 @@ def media_logo(request):
     response = HttpResponse(content_type='image/png')
     img.save(response, 'png')
     return response
+
+def media_fundo(request):
+    configuracao = Configuracao.objects.last()
+    if configuracao.fundo_front:
+        img = Image.open('.'+ configuracao.fundo_front.url, mode='r')
+
+
+        response = HttpResponse(content_type='image/png')
+        img.save(response, 'png')
+        return response
+    return HttpResponse(status=200)
        
 
 def media_favicon(request):

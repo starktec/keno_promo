@@ -64,6 +64,7 @@ class Configuracao(models.Model):
     logo_dash = models.ImageField(upload_to=configuracao_images_path, blank=True, null=True)
     favicon = models.FileField(upload_to=configuracao_images_path, blank=True, null=True)
     logo_promo = models.FileField(upload_to=configuracao_images_path, blank=True, null=True)
+    fundo_front = models.FileField(upload_to=configuracao_images_path, blank=True, null=True)
     nome_server = models.CharField(max_length=100, blank=True, null=True)
     token_server = models.CharField(max_length=100, blank=True, null=True)
 

@@ -9,7 +9,7 @@ from jogo.views import cancelar_template, index, \
     aumentar_cartelas, forcar_sorteio, CadastroJogador, LoginJogador, PegarCartela, status_jogador, mudar_senha_jogador
 
 from .views import jogadores, realtime_data
-from .views_api_media import logo_promo, media_login, nome_server, media_logo, media_favicon
+from .views_api_media import logo_promo, media_login, nome_server, media_logo, media_favicon, media_fundo
 from .views_api_online import dados_bilhete, proximos_kol, data_hora_servidor, ultimos_ganhadores_kol
 from .views_api_tela import resultado_sorteio, proximos, proximos_especiais, historico, status, ultimos_ganhadores
 from .views_social_instagram import index_social, gerar_bilhete
@@ -66,7 +66,8 @@ urlpatterns = [
             path('favicon/',media_favicon),
             path('login/',media_login),
             path('nome/',nome_server),
-            path('logo_promo/',logo_promo)
+            path('logo_promo/',logo_promo),
+            path('fundo/',media_fundo)
         ]
     )),
 
