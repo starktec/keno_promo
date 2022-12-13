@@ -162,6 +162,7 @@ class CadastroJogadorSerializer(serializers.Serializer):
         senha = attrs.get("senha")
         confirmar_senha = attrs.get("confirmar_senha")
         instagram = attrs.get("instagram")
+        usuario = usuario.lower()
         if Jogador.objects.filter(usuario__iexact=usuario).exists() or User.objects.filter(username__iexact=usuario).exists():
             raise serializers.ValidationError(detail="Login já cadastrado")
         usuario_avaliado = re.findall("[a-z0-9\.\_]+",usuario)
