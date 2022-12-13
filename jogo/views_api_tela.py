@@ -31,27 +31,31 @@ def resultado_sorteio(request, local_id, sorteio_id):
     logger.info(f"{request.META.get('PATH_INFO')} - {request.META.get('HTTP_X_FORWARDED_FOR')}")
     if 'Authorization' in request.headers and "Token" in request.headers['Authorization']:
         token = request.headers['Authorization'].split("Token ")[1]
-        jogador = Jogador.objects.filter(usuario_token=token).first()
-        if jogador and Cartela.objects.filter(
+        configuracao = Configuracao.objects.last()
+        jogador = ""
+        if token == configuracao.token_server:
+            jogador = "TV"
+        else:
+            jogador = Jogador.objects.filter(usuario_token=token).first()
+            if not jogador or not Cartela.objects.filter(
                 partida=Partida.objects.filter(id=sorteio_id).first(),jogador=jogador):
+                logger.warning(f" - Jogador Não cadastrado")
+                return JsonResponse(data={'details': 'Jogador Não cadastrado'}, safe=True, status=401)
             logger.info(f" - Jogador {jogador}")
 
-            if request.method == 'GET':
-                partida:Partida = Partida.objects.filter(id=sorteio_id).first()
-                if partida:
-                    cartela = Cartela.objects.filter(partida=partida, jogador=jogador).first()
-                    if cartela:
-                        partida.cartelas_receberam_sorteio.add(cartela)
-                        partida.save()
-                        serializer = PartidaSerializer(instance=Partida.objects.filter(id=sorteio_id).first())
-                        logger.info(f" - {jogador} Enviando sorteio {partida.id}")
-                        return JsonResponse(serializer.data, safe=False)
-                logger.warning(f" - {jogador} - Partida {sorteio_id} não existe ou o jogador {jogador.nome} não tem cartela para esse sorteio")
-                return HttpResponse(status=403)
+        if request.method == 'GET':
+            partida:Partida = Partida.objects.filter(id=sorteio_id).first()
+            if partida:
+                cartela = Cartela.objects.filter(partida=partida, jogador=jogador).first()
+                if cartela:
+                    partida.cartelas_receberam_sorteio.add(cartela)
+                    partida.save()
+                    serializer = PartidaSerializer(instance=Partida.objects.filter(id=sorteio_id).first())
+                    logger.info(f" - {jogador} Enviando sorteio {partida.id}")
+                    return JsonResponse(serializer.data, safe=False)
+            logger.warning(f" - {jogador} - Partida {sorteio_id} não existe")
+            return HttpResponse(status=403)
 
-        else:
-            logger.warning(f" - Jogador Não cadastrado")
-            return JsonResponse(data={'details':'Jogador Não cadastrado'},safe=True,status=401)
     else:
         logger.warning(" - Não autorizado")
         return HttpResponse(status=401)
