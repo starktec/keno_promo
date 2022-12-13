@@ -922,7 +922,7 @@ class PegarCartela(APIView):
                         codigos_possiveis = range(1,partida.numero_cartelas_iniciais)
                         codigos_cartelas = [x.codigo for x in Cartela.objects.filter(partida=partida)]
                         codigos_a_sortear = [x for x in codigos_possiveis if x not in codigos_cartelas]
-                        nome = jogador.instagram
+                        nome = jogador.usuario
                         if not nome:
                             nome = jogador.nome
                         cartela = Cartela.objects.create(partida=partida,

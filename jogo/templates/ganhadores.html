@@ -153,9 +153,7 @@ GANHADORES
                                         <p>
                                             {{ v.cartela }} (
                                                 {% if v.cartela.jogador %}
-                                                    <a href="https://www.instagram.com/{{ v.cartela.jogador.usuario }}/" target="_blank">
-                                                        @{{ v.cartela.jogador.usuario }}
-                                                    </a>
+                                                    {{ v.cartela.jogador.id }} - {{ v.cartela.jogador.usuario }}
                                                 {% else %}
                                                     {{ v.cartela.nome }}
                                                 {% endif %}
@@ -179,9 +177,7 @@ GANHADORES
                                         <p>
                                             {{ v.cartela }} (
                                                 {% if v.cartela.jogador %}
-                                                    <a href="https://www.instagram.com/{{ v.cartela.jogador.usuario }}/" target="_blank">
-                                                        @{{ v.cartela.jogador.usuario }}
-                                                    </a>
+                                                    {{ v.cartela.jogador.id }} - {{ v.cartela.jogador.usuario }}
                                                 {% else %}
                                                     {{ v.cartela.nome }}
                                                 {% endif %}
@@ -206,9 +202,7 @@ GANHADORES
                                         <p>
                                             {{ v.cartela }} (
                                                 {% if v.cartela.jogador %}
-                                                    <a href="https://www.instagram.com/{{ v.cartela.jogador.usuario }}/" target="_blank">
-                                                        @{{ v.cartela.jogador.usuario }}
-                                                    </a>
+                                                    {{ v.cartela.jogador.id }} - {{ v.cartela.jogador.usuario }}
                                                 {% else %}
                                                     {{ v.cartela.nome }}
                                                 {% endif %}
