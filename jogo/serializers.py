@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 
 from jogo.models import CartelaVencedora, Partida, Cartela, Configuracao, Jogador
-
+import re
 
 class CartelaSerializer(serializers.ModelSerializer):
     codigo = serializers.IntegerField(source='id')
@@ -146,6 +146,7 @@ class CartelasVencedorasSerializer(serializers.ModelSerializer):
         model = CartelaVencedora
         fields = ['numero_cartela','premio',"nome"]
 
+NONO_DIGITO = [81, 82, 83, 84, 85, 86, 87, 88, 89, 31, 32, 33, 34, 35, 37, 38, 71, 73, 74, 75, 77, 79]
 class CadastroJogadorSerializer(serializers.Serializer):
     usuario = serializers.CharField(max_length=100)
     email = serializers.EmailField(required=False)
@@ -161,12 +162,33 @@ class CadastroJogadorSerializer(serializers.Serializer):
         senha = attrs.get("senha")
         confirmar_senha = attrs.get("confirmar_senha")
         instagram = attrs.get("instagram")
-        if Jogador.objects.filter(usuario=usuario).exists() or User.objects.filter(username=usuario).exists():
+        if Jogador.objects.filter(usuario__iexact=usuario).exists() or User.objects.filter(username__iexact=usuario).exists():
             raise serializers.ValidationError(detail="Login já cadastrado")
+        usuario_avaliado = re.findall("[a-z0-9\.\_]+",usuario)
+        if usuario_avaliado and len(usuario_avaliado) == 1:
+            if len(usuario_avaliado) != len(usuario):
+                raise serializers.ValidationError(
+                    detail="Apelido Inválido. Use apenas letras minúsuculas, números, pontos ou sublinhados"
+                )
+        else:
+            raise serializers.ValidationError(
+                detail="Apelido Inválido. Use apenas letras minúsuculas, números, pontos ou sublinhados"
+            )
         if email and Jogador.objects.filter(user__email=email).exists():
             raise serializers.ValidationError(detail="E-mail já cadastrado")
-        if whatsapp and Jogador.objects.filter(whatsapp=whatsapp).exists():
-            raise serializers.ValidationError(detail="Número de Whatsapp já usado")
+        if whatsapp:
+            if not whatsapp.isdigit() or len(whatsapp)>11:
+                raise serializers.ValidationError(detail="Insira um número válido")
+            if len(whatsapp)<10:
+                raise serializers.ValidationError(detail="Insira um número completo com DDD")
+            if Jogador.objects.filter(whatsapp=whatsapp).exists():
+                raise serializers.ValidationError(detail="Número de Whatsapp já usado")
+            ddd = int(whatsapp[:2])
+            onze_digitos = ddd in NONO_DIGITO
+            if onze_digitos and len(whatsapp)<11:
+                raise serializers.ValidationError(detail="Insira um número válido")
+            if Jogador.objects.filter(whatsapp=whatsapp).exists():
+                raise serializers.ValidationError(detail="Número de Whatsapp já usado")
         if senha!=confirmar_senha:
             raise serializers.ValidationError(detail="'Senha' está diferente de 'Confirmar Senha'")
         if instagram:
@@ -180,8 +202,7 @@ class CadastroJogadorSerializer(serializers.Serializer):
                 raise serializers.ValidationError(detail="Perfil do instagram já cadastrado")
 
             attrs['instagram'] = instagram
-        if not whatsapp.isdigit():
-            raise serializers.ValidationError(detail="Número do whatsapp deve ser apenas NÚMEROS")
+
         return attrs
 
     def create(self, validated_data):
@@ -208,13 +229,13 @@ class LoginJogadorSerializer(serializers.Serializer):
     def validate(self, attrs):
         usuario = attrs.get("usuario")
         senha = attrs.get("senha")
-        confirmar_senha = attrs.get("confirmar_senha")
-
-        if not Jogador.objects.filter(usuario=usuario).exists() or not User.objects.filter(username=usuario).exists():
-            raise serializers.ValidationError(detail="Jogador não encontrado")
-
+        jogador = Jogador.objects.filter(usuario__iexact=usuario).first()
+        if not jogador:
+            raise serializers.ValidationError(detail="apelido ou senha inválidos")
+        if jogador.usuario != usuario:
+            raise serializers.ValidationError(detail=f"Jogador não encontrado. Você quis dizer '{jogador.usuario}'?")
         user = authenticate(username=usuario, password=senha)
         if not user or not user.is_active:
-            raise serializers.ValidationError(detail="Usuário ou senha inválidos")
+            raise serializers.ValidationError(detail="apelido ou senha inválidos")
 
         return attrs
