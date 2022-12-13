@@ -166,7 +166,7 @@ class CadastroJogadorSerializer(serializers.Serializer):
             raise serializers.ValidationError(detail="Login já cadastrado")
         usuario_avaliado = re.findall("[a-z0-9\.\_]+",usuario)
         if usuario_avaliado and len(usuario_avaliado) == 1:
-            if len(usuario_avaliado) != len(usuario):
+            if len(usuario_avaliado[0]) != len(usuario):
                 raise serializers.ValidationError(
                     detail="Apelido Inválido. Use apenas letras minúsuculas, números, pontos ou sublinhados"
                 )
