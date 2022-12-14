@@ -137,9 +137,9 @@ JOGADORES
                                                             {% for partida in partidas %}
                                                                 <div class="content-bolas-sorteadas">
                                                                 {% if partida in jogador.sorteios_participou %}
-                                                                    <p class="bolas-sorteadas">{{ partida.id }}</p>
+                                                                    <p class="bolas-sorteadas">{{ partida }}</p>
                                                                 {% else %}
-                                                                    <p class="bolas-nao-sorteadas">{{ partida.id }}</p>
+                                                                    <p class="bolas-nao-sorteadas">{{ partida }}</p>
                                                                 {% endif %}
                                                                 </div>
                                                             {% endfor %}
