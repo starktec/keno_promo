@@ -926,7 +926,7 @@ class PegarCartela(APIView):
                         with transaction.atomic():
                             codigos_possiveis = range(1,partida.numero_cartelas_iniciais)
                             codigos_cartelas = [x.codigo for x in cartelas_partida]
-                            codigos_a_sortear = [x for x in codigos_possiveis if x not in codigos_cartelas]
+                            codigos_a_sortear = [str(x) for x in codigos_possiveis if str(x) not in codigos_cartelas]
 
                             cartela = Cartela.objects.create(partida=partida,
                                                              codigo=random.choice(codigos_a_sortear),

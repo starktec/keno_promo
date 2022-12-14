@@ -548,9 +548,10 @@ class Cartela(models.Model):
             self.linha2 = ",".join([str(x) for x in linhas[1]])
             self.linha3 = ",".join([str(x) for x in linhas[2]])
 
+            """
             if not self.codigo:
                 self.codigo = str(self.gerar_codigo())
-
+            """
         super().save(force_insert, force_update, using, update_fields)
         event_doacoes()
 
