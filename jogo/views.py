@@ -919,15 +919,18 @@ class PegarCartela(APIView):
                         LOGGER.info(mensagem)
                         return Response(data={"detail": mensagem}, status=404)
                     else:
-                        codigos_possiveis = range(1,partida.numero_cartelas_iniciais)
-                        codigos_cartelas = [x.codigo for x in Cartela.objects.filter(partida=partida)]
-                        codigos_a_sortear = [x for x in codigos_possiveis if x not in codigos_cartelas]
                         nome = jogador.usuario
                         if not nome:
                             nome = jogador.nome
-                        cartela = Cartela.objects.create(partida=partida,
-                                                         codigo=random.choice(codigos_a_sortear),
-                                                         jogador=jogador, nome=nome)
+                        cartelas_partida = Cartela.objects.select_for_update().filter(partida=partida)
+                        with transaction.atomic():
+                            codigos_possiveis = range(1,partida.numero_cartelas_iniciais)
+                            codigos_cartelas = [x.codigo for x in cartelas_partida]
+                            codigos_a_sortear = [x for x in codigos_possiveis if x not in codigos_cartelas]
+
+                            cartela = Cartela.objects.create(partida=partida,
+                                                             codigo=random.choice(codigos_a_sortear),
+                                                             jogador=jogador, nome=nome)
 
                 else:
                     cartelas = Cartela.objects.filter(partida=partida, jogador__isnull=True)
