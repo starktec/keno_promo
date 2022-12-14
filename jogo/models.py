@@ -450,8 +450,8 @@ class Jogador(models.Model):
     def sorteios_participou(self):
         from jogo.models import Cartela,Partida
         cartelas = Cartela.objects.filter(jogador=self)
-        partidas = Partida.objects.filter(cartelas__in = cartelas).order_by('id').distinct('id')
-        return [x.id for x in partidas]
+        partidas = Partida.objects.filter(cartelas__in = cartelas).order_by('id').distinct('id').values_list("id")
+        return [x[0] for x in partidas]
 
     def sorteios_participou_count(self):
         return len(self.sorteios_participou())
