@@ -136,7 +136,6 @@ JOGADORES
                                                         <div class="row itens-infomation-franquias">
                                                         {% with participou=jogador.sorteios_participou %}
                                                             {% for partida in partidas %}
-                                                                {{ participou }}
                                                                 <div class="content-bolas-sorteadas">
                                                                 {% if partida in participou %}
                                                                     <p class="bolas-sorteadas">{{ partida }}</p>
