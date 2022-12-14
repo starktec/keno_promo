@@ -345,7 +345,7 @@ def jogadores(request):
 
         form = JogadoresForm()
         jogadores = Jogador.objects.all()
-        itens_pagina = 100
+        itens_pagina = 50
         if request.method == "POST":
             form = JogadoresForm(request.POST)
             if form.is_valid():
@@ -396,9 +396,10 @@ def jogadores(request):
 
         proxima_pagina = pagina + 1
         pagina_anterior = pagina - 1
-
+        partidas = [x.id for x in Partida.objects.all().order_by("id")]
         return render(request,'jogadores.html',{'jogadores':jogadores,'form':form,'pagina_atual': pagina,'ultima_pagina':ultima_pagina,'proxima_pagina': proxima_pagina,
-                                                'pagina_anterior': pagina_anterior,'pagina_anterior':pagina_anterior,'total_dados':total_dados})
+                                                'pagina_anterior': pagina_anterior,'pagina_anterior':pagina_anterior,'total_dados':total_dados,
+                                                "partidas":partidas})
     return HttpResponse(status=403)
 
 @login_required(login_url="/login/")

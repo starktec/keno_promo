@@ -5,7 +5,8 @@ import logging
 import json
 from django.db.models.aggregates import Sum
 
-from jogo.models import Cartela, Jogador, Partida
+from jogo.models import Cartela, Jogador, Partida, Configuracao
+
 logger = logging.getLogger(__name__)
 
 GROUPS = []
@@ -30,12 +31,19 @@ class DadosTempoRealConsumer(AsyncWebsocketConsumer):
     def doacoes(self):
         try:
             dados = []
-            novos_jogadores_min = Cartela.objects.filter(comprado_em__gt =(datetime.datetime.now() - datetime.timedelta(minutes=1)),
-                                        comprado_em__lt = datetime.datetime.now()).count()
+            agora = datetime.datetime.now()
+
+            novos_jogadores_min = Cartela.objects.filter(
+                comprado_em__gt =(agora - datetime.timedelta(minutes=1)),
+                comprado_em__lt = agora
+            ).count()
+
             for p in Partida.objects.filter(
-                    data_partida__gt=datetime.datetime.now(),bolas_sorteadas__isnull = True
+                    data_partida__gt=agora,bolas_sorteadas__isnull = True
             ).order_by("data_partida"):
                 cartelas_count = Cartela.objects.filter(jogador__isnull=False,partida=p).count()
+                if not cartelas_count:
+                    break
                 
                 partida = {
                     "partida":p.id,

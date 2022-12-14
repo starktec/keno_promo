@@ -134,10 +134,14 @@ JOGADORES
                                                             <em class="icon ni ni-cross"></em>
                                                         </a>
                                                         <div class="row itens-infomation-franquias">
-                                                            {% for partida in jogador.sorteios_participou %}
-                                                            <div class="content-bolas-sorteadas">
-                                                                <p class="bolas-sorteadas">{{ partida.id }}</p>
-                                                            </div>
+                                                            {% for partida in partidas %}
+                                                                <div class="content-bolas-sorteadas">
+                                                                {% if partida in jogador.sorteios_participou %}
+                                                                    <p class="bolas-sorteadas">{{ partida.id }}</p>
+                                                                {% else %}
+                                                                    <p class="bolas-nao-sorteadas">{{ partida.id }}</p>
+                                                                {% endif %}
+                                                                </div>
                                                             {% endfor %}
                                                         </div>
                                                     </div>
