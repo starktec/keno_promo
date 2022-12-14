@@ -399,7 +399,7 @@ def jogadores(request):
         partidas = [x.id for x in Partida.objects.all().order_by("id")]
         return render(request,'jogadores.html',{'jogadores':jogadores,'form':form,'pagina_atual': pagina,'ultima_pagina':ultima_pagina,'proxima_pagina': proxima_pagina,
                                                 'pagina_anterior': pagina_anterior,'pagina_anterior':pagina_anterior,'total_dados':total_dados,
-                                                "partidas":partidas})
+                                                "partidas":partidas[-50:]})
     return HttpResponse(status=403)
 
 @login_required(login_url="/login/")
