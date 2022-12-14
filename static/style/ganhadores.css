@@ -22,6 +22,25 @@
     align-items: center;
 
     background-color: transparent;
+    color: #137806;
+
+    border: solid 6px #137806;
+    /* box-shadow: #0D1C4D 0px 0px 0px 4px; */
+
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.bolas-nao-sorteadas{
+    width: 35px;
+    height: 35px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background-color: transparent;
     color: #0D1C4D;
 
     border: solid 6px #0D1C4D;
