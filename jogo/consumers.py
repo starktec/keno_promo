@@ -30,7 +30,7 @@ class DadosTempoRealConsumer(AsyncWebsocketConsumer):
     def doacoes(self):
         try:
             dados = []
-            novos_jogadores_min = Jogador.objects.filter(cadastrado_em__gt =(datetime.datetime.now() - datetime.timedelta(minutes=1)),
+            novos_jogadores_min = Cartela.objects.filter(cadastrado_em__gt =(datetime.datetime.now() - datetime.timedelta(minutes=1)),
                                         cadastrado_em__lt = datetime.datetime.now()).count()
             for p in Partida.objects.filter(
                     data_partida__gt=datetime.datetime.now(),bolas_sorteadas__isnull = True
