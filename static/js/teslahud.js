@@ -116,7 +116,7 @@ let dev = false;
             ctx.fillText(speed, 250, 220);
 
             ctx.font = "15px MuseoSans_900-webfont";
-            ctx.fillText("@pm", 250, 235);
+            ctx.fillText("bpm", 250, 235);
 
             if (gear == 0 && speed > 0) {
                 ctx.fillStyle = "#999";
