@@ -1,5 +1,6 @@
 import base64
 import pickle
+import string
 
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
@@ -20,6 +21,7 @@ from django.contrib.auth.models import User
 import threading
 
 # Create your models here.
+from django.utils.crypto import get_random_string
 from django_resized import ResizedImageField
 
 from jogo import local_settings
@@ -436,16 +438,21 @@ class Jogador(models.Model):
     whatsapp = models.CharField(max_length=20,blank=True,null=True)
     instagram = models.CharField(max_length=50,blank=True,null=True)
     indicado_por = models.ForeignKey("Jogador",blank=True,null=True,on_delete=models.PROTECT)
+    codigo = models.CharField(max_length=6,blank=True,null=True)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
+        if not self.nome:
+            self.nome = self.usuario
         if not self.id:
             jogador = Jogador.objects.filter(usuario_id__isnull=False,usuario_id=self.usuario_id).first()
             if jogador:
                 return jogador
             self.usuario_token = base64.b64encode(self.usuario.encode("ascii")).decode("ascii")
-        if not self.nome:
-            self.nome = self.usuario
+            self.codigo = get_random_string(length=6,allowed_chars=string.digits)
+            while Jogador.objects.filter(codigo=self.codigo).exists():
+                self.codigo = get_random_string(length=6, allowed_chars=string.digits)
+
         super().save(force_insert,force_update,using,update_fields)
 
     def sorteios_participou(self):

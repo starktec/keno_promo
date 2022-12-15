@@ -2,9 +2,11 @@ from datetime import datetime, timedelta
 
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
+from django.db import transaction
 from rest_framework import serializers
 
-from jogo.models import CartelaVencedora, Partida, Cartela, Configuracao, Jogador
+from jogo.choices import AcaoBonus
+from jogo.models import CartelaVencedora, Partida, Cartela, Configuracao, Jogador, CreditoBonus, RegraBonus
 import re
 
 class CartelaSerializer(serializers.ModelSerializer):
@@ -154,6 +156,7 @@ class CadastroJogadorSerializer(serializers.Serializer):
     instagram = serializers.CharField(max_length=50,required=False, allow_blank=True)
     senha = serializers.CharField(max_length=20)
     confirmar_senha = serializers.CharField(max_length=20)
+    codigo = serializers.CharField(max_length=6, min_length=6)
 
     def validate(self, attrs):
         usuario = attrs.get("usuario")
@@ -162,6 +165,8 @@ class CadastroJogadorSerializer(serializers.Serializer):
         senha = attrs.get("senha")
         confirmar_senha = attrs.get("confirmar_senha")
         instagram = attrs.get("instagram")
+        codigo = attrs.get("codigo")
+
         usuario = usuario.lower()
         if Jogador.objects.filter(usuario__iexact=usuario).exists() or User.objects.filter(username__iexact=usuario).exists():
             raise serializers.ValidationError(detail="Login já cadastrado")
@@ -210,6 +215,12 @@ class CadastroJogadorSerializer(serializers.Serializer):
 
             attrs['instagram'] = instagram
 
+        if codigo:
+            if not codigo.isdigit():
+                raise serializers.ValidationError(detail="Código inválido")
+            if not Jogador.objetcs.filter(codigo=codigo).exists():
+                raise serializers.ValidationError(detail="Código não existe")
+
         return attrs
 
     def create(self, validated_data):
@@ -218,10 +229,26 @@ class CadastroJogadorSerializer(serializers.Serializer):
         whatsapp = validated_data.get("whatsapp")
         instagram = validated_data.get("instagram")
         senha = validated_data.get("senha")
+        codigo = validated_data.get("codigo")
         user = User.objects.create_user(username=usuario,email=email,password=senha)
         jogador = Jogador.objects.create(
             usuario=usuario,whatsapp=whatsapp,user=user,instagram=instagram
         )
+
+        if codigo:
+            with transaction.atomic():
+                indicador = Jogador.objects.get(codigo=codigo)
+                jogador.indicado_por = indicador
+                jogador.save()
+
+                regra = RegraBonus.objects.filter(acao=AcaoBonus.CADASTRO).fitst()
+                if not regra:
+                    regra = RegraBonus.objects.create(acao=AcaoBonus.CADASTRO, valor=1)
+                CreditoBonus.objects.create(
+                    regra=regra, valor=regra.valor,
+                    jogador=indicador,indicado=jogador
+                )
+
         return jogador
 
 class JogadorSerializer(serializers.ModelSerializer):

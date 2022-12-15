@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.utils.html import format_html
 
 from jogo.models import Usuario, Configuracao, Jogador, CartelaVencedora, Cartela, Partida, Acao, Regra, Conta, \
-    IPTabela, Publicacao, Galeria, TextoPublicacao, ConfiguracaoInstagram, PerfilSocial
+    IPTabela, Publicacao, Galeria, TextoPublicacao, ConfiguracaoInstagram, PerfilSocial, CreditoBonus, RegraBonus
 
 admin.site.register(PerfilSocial)
 admin.site.register(Usuario)
@@ -40,3 +40,5 @@ class ContaAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Conta, ContaAdmin)
+admin.site.register(CreditoBonus)
+admin.site.register(RegraBonus)

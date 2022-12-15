@@ -3,18 +3,15 @@ from datetime import datetime
 
 from django.apps import AppConfig
 from django.db import transaction, connections
-from django.db.backends.signals import connection_created
 
 import logging
 logger = logging.getLogger(__name__)
-
-
 
 class JogoConfig(AppConfig):
     name = 'jogo'
     processou = False
 
-        
+
     def ready(self):
         if set(
                 ['jogo_partida','jogo_templatepartida','jogo_configuracao']
@@ -27,6 +24,8 @@ class JogoConfig(AppConfig):
                 dado = output.split("\n")[0].split()[2]
                 if dado:
                     from jogo.models import Configuracao
+                    if not Configuracao.objects.count():
+                        Configuracao.objects.create()
                     configuracao = Configuracao.objects.exclude(versao=dado).first()
                     if configuracao:
                         configuracao.versao = dado
