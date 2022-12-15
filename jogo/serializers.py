@@ -199,6 +199,12 @@ class CadastroJogadorSerializer(serializers.Serializer):
                 instagram = instagram.split("/www.instagram.com/")[1].split("/")[0]
             instagram = instagram.lower()
 
+            instagram_avaliado = re.findall("[a-z0-9\.\_]+",instagram)
+            if not instagram_avaliado or instagram_avaliado[0]!=instagram:
+                raise serializers.ValidationError(
+                    detail="Instagram inválido"
+                )
+
             if Jogador.objects.filter(instagram=instagram).exists():
                 raise serializers.ValidationError(detail="Perfil do instagram já cadastrado")
 
