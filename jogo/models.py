@@ -23,7 +23,7 @@ import threading
 from django_resized import ResizedImageField
 
 from jogo import local_settings
-from jogo.choices import AcaoTipoChoices
+from jogo.choices import AcaoTipoChoices, AcaoBonus
 from jogo.constantes import NOME_PESSOAS
 from jogo.websocket_triggers import event_doacoes
 
@@ -435,6 +435,7 @@ class Jogador(models.Model):
     user = models.OneToOneField(User,on_delete=models.PROTECT)
     whatsapp = models.CharField(max_length=20,blank=True,null=True)
     instagram = models.CharField(max_length=50,blank=True,null=True)
+    indicado_por = models.ForeignKey("Jogador",blank=True,null=True,on_delete=models.PROTECT)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
@@ -455,6 +456,13 @@ class Jogador(models.Model):
 
     def sorteios_participou_count(self):
         return len(self.sorteios_participou())
+
+    def creditos(self):
+        valor = 0
+        credito = CreditoBonus.objects.filter(jogador=self,resgatado_em__isnull=True).aggregate(Sum("valor"))
+        if credito:
+            return credito.get("valor",0)
+        return valor
          
 
 class Cartela(models.Model):
@@ -707,3 +715,22 @@ class Publicacao(models.Model):
 
     def __str__(self):
         return f"Publicação {self.id} da conta {self.conta.username}"
+
+
+class RegraBonus(models.Model):
+    acao = models.CharField(max_length=1,choices=AcaoBonus.choices, unique=True)
+    valor = models.PositiveSmallIntegerField()
+
+    def __str__(self):
+        return self.get_acao_display()
+
+class CreditoBonus(models.Model):
+    regra = models.ForeignKey(RegraBonus, on_delete=models.PROTECT)
+    valor = models.PositiveSmallIntegerField()
+    jogador = models.ForeignKey(Jogador,on_delete=models.PROTECT,related_name="credito_jogador")
+    indicado = models.ForeignKey(Jogador,on_delete=models.PROTECT,related_name="credito_indicado")
+    gerado_em = models.DateTimeField(auto_now_add=True)
+    resgatado_em = models.DateTimeField(blank=True,null=True)
+
+    def __str__(self):
+        return f"{self.id} - ({self.regra}) {self.jogador}"

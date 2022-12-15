@@ -227,7 +227,7 @@ class CadastroJogadorSerializer(serializers.Serializer):
 class JogadorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Jogador
-        fields = ["id","usuario","instagram"]
+        fields = ["id","usuario","instagram","creditos"]
 
 class LoginJogadorSerializer(serializers.Serializer):
     usuario = serializers.CharField(max_length=100)

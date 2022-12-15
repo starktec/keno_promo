@@ -11,6 +11,10 @@ class StatusCartelaChoice(IntegerChoices):
     NAORESGATADA = 2,"Não-resgatada"
 
 
+class AcaoBonus(TextChoices):
+    CADASTRO = "C", "Cadastros"
+    PARTICIPACAO = "P", "Participação em Sorteios"
+
 UF_CHOICES = (
     ('AC', 'Acre'),
     ('AL', 'Alagoas'),
