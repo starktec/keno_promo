@@ -4,6 +4,7 @@ from asgiref.sync import sync_to_async
 import logging
 import json
 from django.db.models.aggregates import Sum
+from serializers import PartidaProximaSerializer, PartidaProximaEspecialSerializer
 
 from jogo.models import Cartela, Jogador, Partida, Configuracao
 
