@@ -543,7 +543,11 @@ class Cartela(models.Model):
              update_fields=None):
         numeros = []
         if not self.id:
-            self.hash = secrets.token_hex(15)
+            if not self.hash:
+                self.hash = get_random_string(15)
+                while Cartela.objects.filter(hash=self.hash).exists():
+                    self.hash = get_random_string(15)
+
             if not self.nome:
                 self.nome = random.choice(NOME_PESSOAS)
 
