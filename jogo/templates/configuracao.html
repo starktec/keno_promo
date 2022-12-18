@@ -23,6 +23,7 @@ CONFIGURAÇÃO
                                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
                                       <button class="nav-link active-tabs tabs-margin" id="jogo-conf" data-bs-toggle="tab" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Configuração Jogo</button>
                                       <button class="nav-link deactivate-tabs tabs-margin" id="server-conf" data-bs-toggle="tab" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Configuração Visual</button>
+                                      <button class="nav-link deactivate-tabs tabs-margin" id="regras-e-politicas" data-bs-toggle="tab" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Configuração Regras e Politicas</button>
                                     </div>
                                 </nav>
                             </div>
@@ -259,6 +260,14 @@ CONFIGURAÇÃO
                                 </div>
                                 -->
                             </div>
+                            <div class="row container-regras-e-politicas-conf">
+                                <div class="col-lg-12 col-md-12 col-sm-12 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_regras">Regras</label>
+                                    <div class="form-control-wrap">
+                                        {{ form.regras }}
+                                    </div>
+                                </div>
+                            </div>
                             <div class="col-12 row justify-content-end container-btn-create-estabelecimento">
                                 <div class="col-12 text-right container-input-create container-salve-conf">
                                      <div class="form-group">
@@ -280,10 +289,15 @@ CONFIGURAÇÃO
     
     const jogo = $('#jogo-conf');
     const server = $('#server-conf');
+    const regras = $('#regras-e-politicas')
 
     const jogoContainer = $('.container-jogo-conf');
     const serverContainer = $('.container-server-conf');
+    const regrasContainer = $('.container-regras-e-politicas-conf');
 
+    regras.removeClass('active-tabs');
+    regras.addClass('deactivate-tabs');
+    regrasContainer.css('display','none');
     $(jogo).click(function () {
         jogo.removeClass('deactivate-tabs');
         jogo.addClass('active-tabs');
@@ -292,6 +306,10 @@ CONFIGURAÇÃO
         server.removeClass('active-tabs');
         server.addClass('deactivate-tabs');
         serverContainer.css('display','none');
+
+        regras.removeClass('active-tabs');
+        regras.addClass('deactivate-tabs');
+        regrasContainer.css('display','none');
     })
 
     $(server).click(function () {
@@ -302,8 +320,31 @@ CONFIGURAÇÃO
         jogo.removeClass('active-tabs');
         jogo.addClass('deactivate-tabs');
         jogoContainer.css('display','none');
+
+        regras.removeClass('active-tabs');
+        regras.addClass('deactivate-tabs');
+        regrasContainer.css('display','none');
+    })
+    $(regras).click(function () {
+        regras.removeClass('deactivate-tabs');
+        regras.addClass('active-tabs');
+        regrasContainer.css('display','flex');
+
+        jogo.removeClass('active-tabs');
+        jogo.addClass('deactivate-tabs');
+        jogoContainer.css('display','none');
+
+        server.removeClass('active-tabs');
+        server.addClass('deactivate-tabs');
+        serverContainer.css('display','none');
     })
 
+</script>
+<script src='static/tinymce/tinymce.min.js'></script>
+<script>
+    tinyMCE.init({
+        mode: "textareas",
+    });
 </script>
 
 {% endblock %}

@@ -10,7 +10,7 @@ from jogo.views import cancelar_template, index, \
 
 from .views import jogadores, realtime_data
 from .views_api_media import logo_promo, media_login, nome_server, media_logo, media_favicon, media_fundo
-from .views_api_online import dados_bilhete, proximos_kol, data_hora_servidor, ultimos_ganhadores_kol
+from .views_api_online import dados_bilhete, get_regras_kol, proximos_kol, data_hora_servidor, ultimos_ganhadores_kol
 from .views_api_tela import resultado_sorteio, proximos, proximos_especiais, historico, status, ultimos_ganhadores
 from .views_social_instagram import index_social, gerar_bilhete
 
@@ -56,6 +56,7 @@ urlpatterns = [
             path('data_hora/', data_hora_servidor),
             path('ultimos_ganhadores/', ultimos_ganhadores_kol),
             path('ultimos_ganhadores/<int:sorteio_id>/', ultimos_ganhadores_kol),
+            path('regras/',get_regras_kol)
         ]
 
     )),

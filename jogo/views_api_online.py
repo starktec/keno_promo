@@ -134,3 +134,8 @@ def ultimos_ganhadores_kol(request,sorteio_id = None):
     return JsonResponse(data={"sorteios":dados}, status=200, safe=False)
 
 
+@require_http_methods(["GET"])
+def get_regras_kol(request):
+    configuracao = Configuracao.objects.last()
+    return JsonResponse(data={"regras":configuracao.regras})
+    

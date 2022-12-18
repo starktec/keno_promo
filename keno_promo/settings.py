@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'channels',
     'corsheaders',
     #'easyaudit',
+    'tinymce',
     'jogo',
     'ddtrace.contrib.django',
 ]

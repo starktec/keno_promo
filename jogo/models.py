@@ -116,6 +116,9 @@ class Configuracao(models.Model):
 
     reter_jogadores = models.BooleanField(default=True)
 
+    # regras e politica
+    regras = models.TextField(default="")
+
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
         if not self.id:

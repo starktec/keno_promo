@@ -1,14 +1,19 @@
 from django.contrib import admin
-
+from django.db import models
 # Register your models here.
 from django.utils.html import format_html
+from tinymce.widgets import TinyMCE
 
 from jogo.models import Usuario, Configuracao, Jogador, CartelaVencedora, Cartela, Partida, Acao, Regra, Conta, \
     IPTabela, Publicacao, Galeria, TextoPublicacao, ConfiguracaoInstagram, PerfilSocial, CreditoBonus, RegraBonus
 
 admin.site.register(PerfilSocial)
 admin.site.register(Usuario)
-admin.site.register(Configuracao)
+class ConfiguracaoAdmin(admin.ModelAdmin):
+    formfield_overrides = {
+        models.TextField: {"widget": TinyMCE},
+    }
+admin.site.register(Configuracao,ConfiguracaoAdmin)
 admin.site.register(ConfiguracaoInstagram)
 admin.site.register(Partida)
 admin.site.register(Cartela)
