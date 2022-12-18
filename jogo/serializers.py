@@ -156,7 +156,7 @@ class CadastroJogadorSerializer(serializers.Serializer):
     instagram = serializers.CharField(max_length=50,required=False, allow_blank=True)
     senha = serializers.CharField(max_length=20)
     confirmar_senha = serializers.CharField(max_length=20)
-    codigo = serializers.CharField(max_length=6, min_length=6)
+    codigo = serializers.CharField(max_length=6, min_length=6,required=False, allow_blank=True)
 
     def validate(self, attrs):
         usuario = attrs.get("usuario")
