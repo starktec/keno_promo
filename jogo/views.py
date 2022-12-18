@@ -484,6 +484,7 @@ def criarpartida(request):
 
                     # Agendando sorteio
                     agenda.agendar(partida)
+                    event_tela_partidas()
 
                     return redirect("/partidas/")
                 else:
