@@ -4,9 +4,9 @@ from asgiref.sync import sync_to_async
 import logging
 import json
 from django.db.models.aggregates import Sum
-from serializers import PartidaProximaSerializer, PartidaProximaEspecialSerializer
+from jogo.serializers import PartidaProximaSerializer, PartidaProximaEspecialSerializer
 
-from jogo.models import Cartela, Jogador, Partida, Configuracao
+from jogo.models import Cartela, Jogador, Partida, Configuracao, CartelaVencedora
 
 logger = logging.getLogger(__name__)
 
