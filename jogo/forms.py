@@ -8,6 +8,7 @@ from jogo.consts import NamesValidations
 from jogo.models import TemplatePartida, Usuario, Partida, PARTIDA_TIPOS_CHOICES, \
     Configuracao, TEMPO_CHOICES, TEMPO_LIBERAR_CHOICES, TEMPO_MINIMO_ANTECIPADO
 from jogo.utils import testa_horario
+from tinymce.widgets import TinyMCE
 
 
 class NovaPartidaAutomatizada(forms.Form):
@@ -459,13 +460,16 @@ class ConfiguracaoForm(forms.ModelForm):
     url_grupo_telegram = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': "form-control form-control-md form-control-outlined" ,'autocomplete': "off"}
     ))
+    regras = forms.CharField(required=False, widget=TinyMCE(
+        attrs={'class': "form-control form-control-md form-control-outlined" ,'autocomplete': "off",'cols': 80, 'rows': 30}
+    ))
 
     class Meta:
         model = Configuracao
         fields = ['tempo_min_entre_sorteios',
                   'iniciar_sorteio_em',
                   'logo_dash','logo_login','favicon','nome_server','nome_botao','url_botao',
-                  'nome_grupo_telegram','url_grupo_telegram','logo_promo',"fundo_front"]
+                  'nome_grupo_telegram','url_grupo_telegram','logo_promo',"fundo_front","regras"]
 
 
 class PartidaEditForm(forms.ModelForm):
