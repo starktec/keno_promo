@@ -119,6 +119,8 @@ class Configuracao(models.Model):
     # regras e politica
     regras = models.TextField(default="")
 
+    politicas_de_privacidade = models.TextField(default="")
+    
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
         if not self.id:
