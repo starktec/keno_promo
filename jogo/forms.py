@@ -463,13 +463,16 @@ class ConfiguracaoForm(forms.ModelForm):
     regras = forms.CharField(required=False, widget=TinyMCE(
         attrs={'class': "form-control form-control-md form-control-outlined" ,'autocomplete': "off",'cols': 80, 'rows': 30}
     ))
+    politicas_de_privacidade = forms.CharField(required=False, widget=TinyMCE(
+        attrs={'class': "form-control form-control-md form-control-outlined" ,'autocomplete': "off",'cols': 80, 'rows': 30}
+    ))
 
     class Meta:
         model = Configuracao
         fields = ['tempo_min_entre_sorteios',
                   'iniciar_sorteio_em',
                   'logo_dash','logo_login','favicon','nome_server','nome_botao','url_botao',
-                  'nome_grupo_telegram','url_grupo_telegram','logo_promo',"fundo_front","regras"]
+                  'nome_grupo_telegram','url_grupo_telegram','logo_promo',"fundo_front","regras","politicas_de_privacidade"]
 
 
 class PartidaEditForm(forms.ModelForm):
