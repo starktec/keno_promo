@@ -58,9 +58,9 @@ class ConexaoTelaConsumer(AsyncJsonWebsocketConsumer):
                 d = {
                     'sorteio': int(v.partida.id),
                     'cartela': int(v.cartela.codigo),
-                    'nome': str(v.cartela.pdv.estabelecimento),
+                    'nome': str(v.cartela.nome),
                     'premio': float(v.valor_premio),
-                    'tipo': int(v.premio) if not v.ganhou_acumulado else 4
+                    'tipo': int(v.premio)
                 }
                 vencedores.append(d)
             return {'type': 'vencedores', 'vencedores': vencedores}
