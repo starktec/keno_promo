@@ -81,9 +81,13 @@ class ConexaoTelaConsumer(AsyncJsonWebsocketConsumer):
 
         await self.send_json({'code': 200, 'message': 'Conexao estabelecida!', 'error_message': '', 'data': {}})
         proximos_sorteios = await self.proximos_sorteios()
+        logger.info(f" - {proximos_sorteios}")
         proximos_especiais = await self.proximos_especiais()
+        logger.info(f" - {proximos_especiais}")
         proximos_se_especiais = await self.proximos_s_especiais()
+        logger.info(f" - {proximos_se_especiais}")
         ultimos_ganhadores = await self.ultimos_ganhadores()
+        logger.info(f" - {ultimos_ganhadores}")
         await self.send_json(proximos_sorteios)
         await self.send_json(proximos_especiais)
         await self.send_json(proximos_se_especiais)
