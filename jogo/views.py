@@ -26,8 +26,9 @@ from jogo.forms import CartelasFilterForm, JogadoresForm, NovaPartidaAutomatizad
     ConfiguracaoForm, TemplateEditForm
 from jogo.models import Jogador, Partida, Automato, Cartela, Usuario, Configuracao, CartelaVencedora, TemplatePartida, \
     Regra, \
-    Acao, PerfilSocial, ConfiguracaoInstagram, Agendamento
+    Acao, PerfilSocial, ConfiguracaoInstagram, Agendamento, CreditoBonus
 from jogo.views_social_instagram import CLIENT
+from jogo.websocket_triggers import event_tela_partidas
 from jogo.websocket_triggers_bilhete import event_bilhete_partida
 
 LOGGER = logging.getLogger(__name__)
@@ -540,6 +541,7 @@ def partida_edit(request, partida_id):
                         if not antigadata == novadata:
                             agenda.agendar(partida)
 
+                        event_tela_partidas()
                         event_bilhete_partida(partida.id)
                         return redirect("/partidas/")
 
@@ -907,15 +909,25 @@ class PegarCartela(APIView):
                 jogador.nome = jogador.usuario
                 jogador.save()
 
-            cartela = Cartela.objects.filter(jogador=jogador, partida=partida).first()
+            # Gerando a cartela
+            cartela_existente = True
+
+            cartela = Cartela.objects.filter(jogador=jogador, partida=partida)
             if not cartela:
+                cartela_existente = False
+                # Para o caso de não ter cartela desse jogador no próximo sorteio
+
+                # Verificar se é o primeiro sorteio desse jogador
                 if not Cartela.objects.filter(jogador=jogador).exists():
                     partida.novos_participantes += 1
                     partida.save()
 
+                # Verificando se o jogador tem crédito de bonus para descontar
+                bonus = CreditoBonus.objects.filter(jogador=jogador,resgatado_em__isnull=False).order_by("id").first()
+                credito = bonus.valor
                 if partida.chance_vitoria == Decimal(100.0):
                     cartelas_quantidade = Cartela.objects.filter(partida=partida).count()
-                    if cartelas_quantidade>=partida.numero_cartelas_iniciais:
+                    if cartelas_quantidade>partida.numero_cartelas_iniciais:
                         mensagem = "Cartelas esgotadas"
                         LOGGER.info(mensagem)
                         return Response(data={"detail": mensagem}, status=404)
@@ -929,11 +941,14 @@ class PegarCartela(APIView):
                             codigos_cartelas = [x.codigo for x in cartelas_partida]
                             codigos_a_sortear = [str(x) for x in codigos_possiveis if str(x) not in codigos_cartelas]
 
-                            cartela = Cartela.objects.create(partida=partida,
+                            if Cartela.objects.filter(jogador=jogador, partida=partida).exists():
+                                cartela_existente = True
+                            else:
+                                cartela = Cartela.objects.create(partida=partida,
                                                              codigo=random.choice(codigos_a_sortear),
                                                              jogador=jogador, nome=nome)
 
-                else:
+                if cartela_existente:
                     cartelas = Cartela.objects.filter(partida=partida, jogador__isnull=True)
 
                     if cartelas:
@@ -947,7 +962,7 @@ class PegarCartela(APIView):
                         LOGGER.info(mensagem)
                         return Response(data={"detail": mensagem}, status=404)
             return Response(
-                data={"cartela":int(cartela.id), "bilhete": cartela.hash, "sorteio": int(cartela.partida.id)})
+                data={"cartela":[int(c.id) for c in cartela], "bilhete": cartela.hash, "sorteio": int(cartela.first().partida.id)})
 
         else:
             mensagem = "Não há sorteios disponíveis no momento"

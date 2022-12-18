@@ -10,6 +10,7 @@ from backports import zoneinfo
 
 from jogo.constantes import NOME_PESSOAS
 from jogo.consultas_banco import cartelas_sql_teste
+from jogo.websocket_triggers import event_doacoes, event_tela_sorteio
 
 from jogo.websocket_triggers_bilhete import event_bilhete_sorteio
 
@@ -369,6 +370,8 @@ class Agenda():
 
                         self.log("Disparando eventos WebSocket")
 
+                        event_doacoes()
+                        event_tela_sorteio(partida.id)
                         event_bilhete_sorteio(partida.id)
                         """
                         if partida.partida_automatizada and partida.id_automato:
