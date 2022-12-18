@@ -924,8 +924,10 @@ class PegarCartela(APIView):
                     partida.save()
 
                 # Verificando se o jogador tem crédito de bonus para descontar
+                credito_bonus = 0
                 bonus = CreditoBonus.objects.filter(jogador=jogador,resgatado_em__isnull=False).order_by("id").first()
-                credito = bonus.valor
+                if bonus:
+                    credito_bonus = bonus.valor
                 if partida.chance_vitoria == Decimal(100.0):
                     cartelas_quantidade = Cartela.objects.filter(partida=partida).count()
                     if cartelas_quantidade>partida.numero_cartelas_iniciais:
