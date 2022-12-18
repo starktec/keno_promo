@@ -47,22 +47,25 @@ class ConexaoTelaConsumer(AsyncJsonWebsocketConsumer):
 
     @sync_to_async
     def ultimos_ganhadores(self):
-        vencedores = []
-        configuracao = Configuracao.objects.last()
-        data_liberacao = datetime.datetime.now() - datetime.timedelta(
-            minutes=configuracao.liberar_resultado_sorteio_em)
-        for v in CartelaVencedora.objects.filter(
-                partida__data_partida__lte=data_liberacao
-        ).order_by('-id')[:6]:
-            d = {
-                'sorteio': int(v.partida.id),
-                'cartela': int(v.cartela.codigo),
-                'nome': str(v.cartela.pdv.estabelecimento),
-                'premio': float(v.valor_premio),
-                'tipo': int(v.premio) if not v.ganhou_acumulado else 4
-            }
-            vencedores.append(d)
-        return {'type': 'vencedores', 'vencedores': vencedores}
+        try:
+            vencedores = []
+            configuracao = Configuracao.objects.last()
+            data_liberacao = datetime.datetime.now() - datetime.timedelta(
+                minutes=configuracao.liberar_resultado_sorteio_em)
+            for v in CartelaVencedora.objects.filter(
+                    partida__data_partida__lte=data_liberacao
+            ).order_by('-id')[:6]:
+                d = {
+                    'sorteio': int(v.partida.id),
+                    'cartela': int(v.cartela.codigo),
+                    'nome': str(v.cartela.pdv.estabelecimento),
+                    'premio': float(v.valor_premio),
+                    'tipo': int(v.premio) if not v.ganhou_acumulado else 4
+                }
+                vencedores.append(d)
+            return {'type': 'vencedores', 'vencedores': vencedores}
+        except Exception as e:
+            logger.exception(e)
 
 
     async def connect(self):
