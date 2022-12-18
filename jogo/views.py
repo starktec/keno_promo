@@ -964,6 +964,8 @@ class PegarCartela(APIView):
                         mensagem = "Cartelas esgotadas"
                         LOGGER.info(mensagem)
                         return Response(data={"detail": mensagem}, status=404)
+            else:
+                cartela = cartela.first()
             return Response(
                 data={"cartela":[int(c.id) for c in cartela], "bilhete": cartela.hash, "sorteio": int(cartela.first().partida.id)})
 
