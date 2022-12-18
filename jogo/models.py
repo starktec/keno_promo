@@ -62,6 +62,7 @@ class Configuracao(models.Model):
     tempo_min_entre_sorteios_E = models.PositiveSmallIntegerField(default=30)
     tempo_min_entre_sorteios_SE = models.PositiveSmallIntegerField(default=30)
     iniciar_sorteio_em = models.PositiveSmallIntegerField(default=15)
+    liberar_resultado_sorteio_em = models.PositiveSmallIntegerField(default=5)
     logo_login = models.ImageField(upload_to=configuracao_images_path, blank=True, null=True)
     logo_dash = models.ImageField(upload_to=configuracao_images_path, blank=True, null=True)
     favicon = models.FileField(upload_to=configuracao_images_path, blank=True, null=True)
