@@ -15,7 +15,7 @@ from datetime import timedelta, datetime, date, time
 from django.db.models import Sum, Q
 
 from django.conf import settings
-from django.db import models
+from django.db import models, transaction
 from django.contrib.auth.models import User
 
 import threading
@@ -216,6 +216,9 @@ class Acao(models.Model):
         return self.get_tipo_display() + " " + str(self.perfil_social)
 
 
+def default_codigos_cartelas():
+    return []
+
 class Partida(models.Model):
     # NOVO CAMPO
     regra = models.ForeignKey(Regra, on_delete=models.PROTECT)
@@ -251,6 +254,7 @@ class Partida(models.Model):
     # NOVOS CAMPOS
     chance_vitoria = models.DecimalField(default=100.0, decimal_places=2,max_digits=5)
     numero_cartelas_iniciais = models.PositiveSmallIntegerField(default=500)
+    codigos_cartelas = ArrayField(models.PositiveIntegerField(), default=default_codigos_cartelas)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
@@ -265,6 +269,18 @@ class Partida(models.Model):
         # notificar?
         event_doacoes()
 
+    @staticmethod
+    def reservar_codigo(cls, partida_id):
+        sorteado = None
+        partida = Partida.objects.select_for_update().filter(id=partida_id).first()
+        with transaction.atomic():
+            codigos_reservados = partida.codigos_cartelas
+            codigos_possiveis = range(1, partida.numero_cartelas_iniciais)
+            codigos_a_sortear = [x for x in codigos_possiveis if x not in codigos_reservados]
+            sorteado = random.choice(codigos_a_sortear)
+            partida.codigos_cartelas.add(sorteado)
+            partida.save()
+        return sorteado
 
     def cartelas_compradas(self):
         return self.num_cartelas

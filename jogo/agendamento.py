@@ -6,7 +6,7 @@ import time
 import traceback
 from decimal import Decimal
 
-from backports import zoneinfo
+#from backports import zoneinfo
 
 from jogo.constantes import NOME_PESSOAS
 from jogo.consultas_banco import cartelas_sql_teste
@@ -25,7 +25,7 @@ from jogo.utils import partida_automatizada, testa_horario, comprar_cartelas
 
 FILE = settings.BASE_DIR + "/logs/log_agendamento.txt"
 
-RECIFE = zoneinfo.ZoneInfo("America/Recife")
+#RECIFE = zoneinfo.ZoneInfo("America/Recife")
 
 
 class Agenda():
@@ -35,7 +35,8 @@ class Agenda():
     def log(self,msg):
         arquivo = open(FILE,'a+')
         try:
-            agora = datetime.datetime.now(tz=RECIFE).strftime("%d/%m/%Y %H:%M:%S.%f")
+            #agora = datetime.datetime.now(tz=RECIFE).strftime("%d/%m/%Y %H:%M:%S.%f")
+            agora = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S.%f")
             arquivo.write(agora + " - "+ msg+"\n")
         except:
             pass
@@ -98,7 +99,8 @@ class Agenda():
                          "vencedor_kuadra","vencedor_kina","vencedor_keno")
                 if partida and cartelas and not partida.em_sorteio and not partida.bolas_sorteadas:
 
-                    partida.data_inicio = datetime.datetime.now(tz=RECIFE)
+                    #partida.data_inicio = datetime.datetime.now(tz=RECIFE)
+                    partida.data_inicio = datetime.datetime.now()
                     partida.em_sorteio = True
                     partida.save()
 
@@ -305,7 +307,8 @@ class Agenda():
                         self.log("Setando os valores de Numero de cartelas")
                         partida.bolas_sorteadas = ",".join(bolas_sorteadas)
                         partida.em_sorteio = False
-                        partida.data_fim = datetime.datetime.now(tz=RECIFE)
+                        #partida.data_fim = datetime.datetime.now(tz=RECIFE)
+                        partida.data_fim = datetime.datetime.now()
                         partida.cartelas_participantes = ",".join([str(x) for x in cartelas_participantes])
 
                         partida.num_cartelas = len(cartelas)
@@ -434,7 +437,8 @@ class Agenda():
         template = TemplatePartida.objects.get(id = template.id)
         try:
             with transaction.atomic():
-                if template.data_partida.replace(tzinfo=RECIFE) >= datetime.datetime.now(tz=RECIFE) + datetime.timedelta(minutes=5) and not template.play and not template.cancelado:
+                #if template.data_partida.replace(tzinfo=RECIFE) >= datetime.datetime.now(tz=RECIFE) + datetime.timedelta(minutes=5) and not template.play and not template.cancelado:
+                if template.data_partida.replace() >= datetime.datetime.now() + datetime.timedelta(minutes=5) and not template.play and not template.cancelado:
                     self.log(f"Rodando o template agendado: {template.id} horario + {template.data_partida}")
                     tempo = Automato.objects.get(id=template.id_automato).tempo
                     template.data_partida = testa_horario(template.data_partida,False,tempo)

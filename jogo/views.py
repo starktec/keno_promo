@@ -913,60 +913,71 @@ class PegarCartela(APIView):
             # Gerando a cartela
             cartela_existente = True
 
-            cartela = Cartela.objects.filter(jogador=jogador, partida=partida)
-            if not cartela:
-                cartela_existente = False
-                # Para o caso de não ter cartela desse jogador no próximo sorteio
+            cartelas = Cartela.objects.filter(jogador=jogador, partida=partida)
+            if not cartelas: # Jogador não tem cartela para esse sorteio
+                with transaction.atomic():
+                    cartela_existente = False
+                    # Para o caso de não ter cartela desse jogador no próximo sorteio
 
-                # Verificar se é o primeiro sorteio desse jogador
-                if not Cartela.objects.filter(jogador=jogador).exists():
-                    partida.novos_participantes += 1
-                    partida.save()
+                    # Verificar se é o primeiro sorteio desse jogador
+                    if not Cartela.objects.filter(jogador=jogador).exists():
+                        partida.novos_participantes += 1
+                        partida.save()
 
-                # Verificando se o jogador tem crédito de bonus para descontar
-                credito_bonus = 0
-                bonus = CreditoBonus.objects.filter(jogador=jogador,resgatado_em__isnull=False).order_by("id").first()
-                if bonus:
-                    credito_bonus = bonus.valor
-                if partida.chance_vitoria == Decimal(100.0):
-                    cartelas_quantidade = Cartela.objects.filter(partida=partida).count()
-                    if cartelas_quantidade>partida.numero_cartelas_iniciais:
-                        mensagem = "Cartelas esgotadas"
-                        LOGGER.info(mensagem)
-                        return Response(data={"detail": mensagem}, status=404)
+                    # Verificando se o jogador tem crédito de bonus para descontar
+                    credito_bonus = 0
+                    bonus = CreditoBonus.objects.select_for_update().filter(jogador=jogador,resgatado_em__isnull=False).order_by("id").first()
+                    if bonus:
+                        credito_bonus = bonus.valor
+                    if partida.chance_vitoria == Decimal(100.0):
+                        cartelas_quantidade = Cartela.objects.filter(partida=partida).count()
+                        if cartelas_quantidade>partida.numero_cartelas_iniciais:
+                            mensagem = "Cartelas esgotadas"
+                            LOGGER.info(mensagem)
+                            return Response(data={"detail": mensagem}, status=404)
+                        else:
+                            nome = jogador.usuario
+                            if not nome:
+                                nome = jogador.nome
+
+                            if not Cartela.objects.filter(jogador=jogador, partida=partida).exists():
+                                quantidade_cartelas = 1 + credito_bonus
+                                hash = ""
+                                for i in range(quantidade_cartelas):
+                                    cartela = Cartela.objects.create(partida=partida,
+                                                                 codigo=Partida.reservar_codigo(partida.id),
+                                                                 jogador=jogador, nome=nome, hash=hash)
+                                    if not hash:
+                                        hash = cartela.hash
+                                bonus.resgatado_em = datetime.datetime.now()
+                                bonus.save()
+
+                            cartelas = Cartela.objects.filter(jogador=jogador, partida=partida)
+
+
                     else:
-                        nome = jogador.usuario
-                        if not nome:
-                            nome = jogador.nome
-                        cartelas_partida = Cartela.objects.select_for_update().filter(partida=partida)
-                        with transaction.atomic():
-                            codigos_possiveis = range(1,partida.numero_cartelas_iniciais)
-                            codigos_cartelas = [x.codigo for x in cartelas_partida]
-                            codigos_a_sortear = [str(x) for x in codigos_possiveis if str(x) not in codigos_cartelas]
+                        cartelas = Cartela.objects.filter(partida=partida, jogador__isnull=True)
 
-                            if Cartela.objects.filter(jogador=jogador, partida=partida).exists():
-                                cartela_existente = True
-                            else:
-                                cartela = Cartela.objects.create(partida=partida,
-                                                             codigo=random.choice(codigos_a_sortear),
-                                                             jogador=jogador, nome=nome)
-
-                if cartela_existente:
-                    cartelas = Cartela.objects.filter(partida=partida, jogador__isnull=True)
-
-                    if cartelas:
-
-                        cartela = random.choice(cartelas)
-                        cartela.jogador = jogador
-                        cartela.nome = jogador.nome
-                        cartela.save()
-                    else:
-                        mensagem = "Cartelas esgotadas"
-                        LOGGER.info(mensagem)
-                        return Response(data={"detail": mensagem}, status=404)
+                        if cartelas:
+                            cartelas_escolhidas = random.sample(cartelas)[:(1+credito_bonus)]
+                            hash = ""
+                            for cartela_escolhida in cartelas_escolhidas:
+                                cartela_escolhida.jogador = jogador
+                                cartela_escolhida.nome = jogador.nome
+                                cartela_escolhida.hash = hash
+                                cartela_escolhida.save()
+                                if not hash:
+                                    hash = cartela_escolhida.hash
+                            bonus.resgatado_em = datetime.datetime.now()
+                            bonus.save()
+                            cartelas = cartelas_escolhidas
+                        else:
+                            mensagem = "Cartelas esgotadas"
+                            LOGGER.info(mensagem)
+                            return Response(data={"detail": mensagem}, status=404)
 
             return Response(
-                data={"cartela":[int(c.id) for c in cartela], "bilhete": cartela.first().hash, "sorteio": int(cartela.first().partida.id)})
+                data={"cartela":[int(c.id) for c in cartelas], "bilhete": cartelas.first().hash, "sorteio": int(cartelas.first().partida.id)})
 
         else:
             mensagem = "Não há sorteios disponíveis no momento"
