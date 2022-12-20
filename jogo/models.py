@@ -29,7 +29,7 @@ from jogo.choices import AcaoTipoChoices, AcaoBonus
 from jogo.constantes import NOME_PESSOAS
 from jogo.consts import TipoRedeSocial
 from jogo.websocket_triggers import event_doacoes
-
+from colorfield.fields import ColorField
 
 def configuracao_images_path(instance, filename):
     return 'configuracao/{0}'.format(filename)
@@ -754,23 +754,23 @@ class CreditoBonus(models.Model):
         return f"{self.id} - ({self.regra}) {self.jogador}"
 
 class ConfiguracaoAplicacao(models.Model):
-    backgroundColor = models.CharField(max_length=7, blank=True, null=True)
-    footerColor = models.CharField(max_length=7, blank=True, null=True)
-    borderPageColor = models.CharField(max_length=7, blank=True, null=True)
-    buttonNormalBackground = models.CharField(max_length=7, blank=True, null=True)
-    buttonNormalBorder = models.CharField(max_length=7, blank=True, null=True)
-    buttonNormalText = models.CharField(max_length=7, blank=True, null=True)
-    buttonContrastBackground = models.CharField(max_length=7, blank=True, null=True)
-    buttonContrastBorder = models.CharField(max_length=7, blank=True, null=True)
-    buttonContrastText = models.CharField(max_length=7, blank=True, null=True)
-    socialcolorsBackground = models.CharField(max_length=7, blank=True, null=True)
-    socialcolorIcons = models.CharField(max_length=7, blank=True, null=True)
-    socialcolorHover = models.CharField(max_length=7, blank=True, null=True)
-    inputBackground = models.CharField(max_length=7, blank=True, null=True)
-    inputBorder = models.CharField(max_length=7, blank=True, null=True)
-    inputText = models.CharField(max_length=7, blank=True, null=True)
-    defaultcolorText = models.CharField(max_length=7, blank=True, null=True)
-    defaultcolorUnderline = models.CharField(max_length=7, blank=True, null=True)
+    backgroundColor = ColorField(blank=True, null=True)
+    footerColor = ColorField(blank=True, null=True)
+    borderPageColor = ColorField(blank=True, null=True)
+    buttonNormalBackground = ColorField(blank=True, null=True)
+    buttonNormalBorder = ColorField(blank=True, null=True)
+    buttonNormalText = ColorField(blank=True, null=True)
+    buttonContrastBackground = ColorField(blank=True, null=True)
+    buttonContrastBorder = ColorField(blank=True, null=True)
+    buttonContrastText = ColorField(blank=True, null=True)
+    socialcolorsBackground = ColorField(blank=True, null=True)
+    socialcolorIcons = ColorField(blank=True, null=True)
+    socialcolorHover = ColorField(blank=True, null=True)
+    inputBackground = ColorField(blank=True, null=True)
+    inputBorder = ColorField(blank=True, null=True)
+    inputText = ColorField(blank=True, null=True)
+    defaultcolorText = ColorField(blank=True, null=True)
+    defaultcolorUnderline = ColorField(blank=True, null=True)
 
 class BotaoAplicacao(models.Model):
 

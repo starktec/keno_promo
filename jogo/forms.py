@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from jogo.choices import StatusCartelaChoice
 
 from jogo.consts import NamesValidations
-from jogo.models import TemplatePartida, Usuario, Partida, PARTIDA_TIPOS_CHOICES, \
+from jogo.models import ConfiguracaoAplicacao, TemplatePartida, Usuario, Partida, PARTIDA_TIPOS_CHOICES, \
     Configuracao, TEMPO_CHOICES, TEMPO_LIBERAR_CHOICES, TEMPO_MINIMO_ANTECIPADO
 from jogo.utils import testa_horario
 from tinymce.widgets import TinyMCE
@@ -474,6 +474,12 @@ class ConfiguracaoForm(forms.ModelForm):
                   'logo_dash','logo_login','favicon','nome_server','nome_botao','url_botao',
                   'nome_grupo_telegram','url_grupo_telegram','logo_promo',"fundo_front","regras","politicas_de_privacidade"]
 
+
+class ConfiguracaoVisualForm(forms.ModelForm):
+    class Meta:
+        model= ConfiguracaoAplicacao
+        fields = "__all__"
+        
 
 class PartidaEditForm(forms.ModelForm):
     dia_partida = forms.CharField(widget=forms.DateInput(
