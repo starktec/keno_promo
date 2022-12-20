@@ -285,7 +285,7 @@ class ConfiguracaoAplicacaoSerializer(serializers.ModelSerializer):
 class BotaoAplicacaoSerializer(serializers.ModelSerializer):
     class Meta:
         model = BotaoAplicacao
-        exclude = ["id"]
+        exclude = ["id", "order"]
 
 class BotaoMidiaSocialSerializer(serializers.ModelSerializer):
     class Meta:

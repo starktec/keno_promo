@@ -766,15 +766,16 @@ class ConfiguracaoAplicacao(models.Model):
     socialcolorsBackground = models.CharField(max_length=7, blank=True, null=True)
     socialcolorIcons = models.CharField(max_length=7, blank=True, null=True)
     socialcolorHover = models.CharField(max_length=7, blank=True, null=True)
-
-
-class BotaoAplicacao(models.Model):
     inputBackground = models.CharField(max_length=7, blank=True, null=True)
     inputBorder = models.CharField(max_length=7, blank=True, null=True)
     inputText = models.CharField(max_length=7, blank=True, null=True)
-    inputLink = models.URLField(blank=True,null=True)
     defaultcolorText = models.CharField(max_length=7, blank=True, null=True)
     defaultcolorUnderline = models.CharField(max_length=7, blank=True, null=True)
+
+class BotaoAplicacao(models.Model):
+
+    buttonLink = models.URLField(blank=True,null=True)
+    buttonText = models.CharField(max_length=50,blank=True,null=True)
     isContrast = models.BooleanField(default=False)
     order = models.PositiveSmallIntegerField(default=1, unique=True)
 
