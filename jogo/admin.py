@@ -5,7 +5,8 @@ from django.utils.html import format_html
 from tinymce.widgets import TinyMCE
 
 from jogo.models import Usuario, Configuracao, Jogador, CartelaVencedora, Cartela, Partida, Acao, Regra, Conta, \
-    IPTabela, Publicacao, Galeria, TextoPublicacao, ConfiguracaoInstagram, PerfilSocial, CreditoBonus, RegraBonus
+    IPTabela, Publicacao, Galeria, TextoPublicacao, ConfiguracaoInstagram, PerfilSocial, CreditoBonus, RegraBonus, \
+    ConfiguracaoAplicacao, BotaoAplicacao, BotaoMidiaSocial
 
 admin.site.register(PerfilSocial)
 admin.site.register(Usuario)
@@ -15,6 +16,9 @@ class ConfiguracaoAdmin(admin.ModelAdmin):
     }
 admin.site.register(Configuracao,ConfiguracaoAdmin)
 admin.site.register(ConfiguracaoInstagram)
+admin.site.register(ConfiguracaoAplicacao)
+admin.site.register(BotaoAplicacao)
+admin.site.register(BotaoMidiaSocial)
 admin.site.register(Partida)
 admin.site.register(Cartela)
 admin.site.register(CartelaVencedora)

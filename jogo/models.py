@@ -27,6 +27,7 @@ from django_resized import ResizedImageField
 from jogo import local_settings
 from jogo.choices import AcaoTipoChoices, AcaoBonus
 from jogo.constantes import NOME_PESSOAS
+from jogo.consts import TipoRedeSocial
 from jogo.websocket_triggers import event_doacoes
 
 
@@ -751,3 +752,35 @@ class CreditoBonus(models.Model):
 
     def __str__(self):
         return f"{self.id} - ({self.regra}) {self.jogador}"
+
+class ConfiguracaoAplicacao(models.Model):
+    backgroundColor = models.CharField(max_length=7, blank=True, null=True)
+    footerColor = models.CharField(max_length=7, blank=True, null=True)
+    borderPageColor = models.CharField(max_length=7, blank=True, null=True)
+    buttonNormalBackground = models.CharField(max_length=7, blank=True, null=True)
+    buttonNormalBorder = models.CharField(max_length=7, blank=True, null=True)
+    buttonNormalText = models.CharField(max_length=7, blank=True, null=True)
+    buttonContrastBackground = models.CharField(max_length=7, blank=True, null=True)
+    buttonContrastBorder = models.CharField(max_length=7, blank=True, null=True)
+    buttonContrastText = models.CharField(max_length=7, blank=True, null=True)
+    socialcolorsBackground = models.CharField(max_length=7, blank=True, null=True)
+    socialcolorIcons = models.CharField(max_length=7, blank=True, null=True)
+    socialcolorHover = models.CharField(max_length=7, blank=True, null=True)
+
+
+class BotaoAplicacao(models.Model):
+    inputBackground = models.CharField(max_length=7, blank=True, null=True)
+    inputBorder = models.CharField(max_length=7, blank=True, null=True)
+    inputText = models.CharField(max_length=7, blank=True, null=True)
+    inputLink = models.URLField(blank=True,null=True)
+    defaultcolorText = models.CharField(max_length=7, blank=True, null=True)
+    defaultcolorUnderline = models.CharField(max_length=7, blank=True, null=True)
+    isContrast = models.BooleanField(default=False)
+    order = models.PositiveSmallIntegerField(default=1, unique=True)
+
+    class Meta:
+        ordering = ["order"]
+
+class BotaoMidiaSocial(models.Model):
+    tipo = models.CharField(max_length=20,choices=TipoRedeSocial.choices,unique=True)
+    link = models.URLField(blank=True,null=True)

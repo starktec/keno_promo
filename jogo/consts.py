@@ -28,7 +28,15 @@ class TipoSolicitacaoRecolhe(TextChoices):
     def dict_choices(cls) -> dict:
         return dict(cls.choices) 
 
-# nome fantasia = numero + letra -> tudo maiusculo 
+
+class TipoRedeSocial(TextChoices):
+    INSTAGRAM = "Instagram","instagram"
+    FACEBOOK = "Facebook","facebook"
+    TWITTER = "Twitter","twitter"
+    YOUTUBE = "Youtube","youtube"
+    TIKTOK = "TikTok","tikTok"
+
+# nome fantasia = numero + letra -> tudo maiusculo
 
 
 class NamesValidations():

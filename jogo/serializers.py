@@ -6,7 +6,8 @@ from django.db import transaction
 from rest_framework import serializers
 
 from jogo.choices import AcaoBonus
-from jogo.models import CartelaVencedora, Partida, Cartela, Configuracao, Jogador, CreditoBonus, RegraBonus
+from jogo.models import CartelaVencedora, Partida, Cartela, Configuracao, Jogador, CreditoBonus, RegraBonus, \
+    ConfiguracaoAplicacao, BotaoAplicacao, BotaoMidiaSocial
 import re
 
 class CartelaSerializer(serializers.ModelSerializer):
@@ -273,3 +274,33 @@ class LoginJogadorSerializer(serializers.Serializer):
             raise serializers.ValidationError(detail="apelido ou senha inválidos")
 
         return attrs
+
+
+
+class ConfiguracaoAplicacaoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ConfiguracaoAplicacao
+        exclude = ["id"]
+
+class BotaoAplicacaoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BotaoAplicacao
+        exclude = ["id"]
+
+class BotaoMidiaSocialSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BotaoMidiaSocial
+        exclude = ["id"]
+
+class ConfiguracoesAplicacaoSerializer(serializers.Serializer):
+    configuracao_aplicacao = ConfiguracaoAplicacaoSerializer(read_only=True)
+    botoes_aplicacao = BotaoAplicacaoSerializer(read_only=True,many=True)
+    midias_sociais = BotaoMidiaSocialSerializer(read_only=True,many=True)
+
+    def validate(self, attrs):
+        attrs["configuracao_aplicacao"] = ConfiguracaoAplicacaoSerializer(instance=ConfiguracaoAplicacao.objects.last(),read_only=True).data
+        attrs["botoes_aplicacao"] = BotaoAplicacaoSerializer(BotaoAplicacao.objects.all(),many=True).data
+        attrs["midias_sociais"] = BotaoMidiaSocialSerializer(BotaoMidiaSocial.objects.all(),many=True).data
+
+        return attrs
+
