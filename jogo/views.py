@@ -22,9 +22,9 @@ from jogo.utils import testa_horario, comprar_cartelas, manter_contas, format_se
 from jogo.constantes import VALORES_VOZES
 
 from jogo.agendamento import Agenda
-from jogo.forms import CartelasFilterForm, JogadoresForm, NovaPartidaAutomatizada, PartidaEditForm, GanhadoresForm, NovaPartidaForm, UsuarioAddForm, \
+from jogo.forms import CartelasFilterForm, ConfiguracaoVisualForm, JogadoresForm, NovaPartidaAutomatizada, PartidaEditForm, GanhadoresForm, NovaPartidaForm, UsuarioAddForm, \
     ConfiguracaoForm, TemplateEditForm
-from jogo.models import Jogador, Partida, Automato, Cartela, Usuario, Configuracao, CartelaVencedora, TemplatePartida, \
+from jogo.models import ConfiguracaoAplicacao, Jogador, Partida, Automato, Cartela, Usuario, Configuracao, CartelaVencedora, TemplatePartida, \
     Regra, \
     Acao, PerfilSocial, ConfiguracaoInstagram, Agendamento, CreditoBonus
 from jogo.views_social_instagram import CLIENT
@@ -869,3 +869,20 @@ def mudar_senha_jogador(request, jogador_id):
                 user.save()
         return redirect("/jogadores/")
     return HttpResponse(status=403)
+
+
+@login_required
+def configuracao_visual(request):
+    if ehUsuarioDash(request.user):
+        instance = ConfiguracaoAplicacao.objects.last()
+        if request.method == "POST":
+            form = ConfiguracaoVisualForm(request.POST, request.FILES, instance=instance)
+            if form.is_valid():
+                form.save()
+            else:
+                print(form.errors)
+        else:
+            form = ConfiguracaoVisualForm(instance=instance)
+        return render(request, 'configuracao_visual.html', {'form': form, 'instance': instance})
+    return HttpResponse(status=403)
+    

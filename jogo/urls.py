@@ -8,7 +8,7 @@ from jogo.views import cancelar_template, index, \
     partida_automatica, automatos, parar_automato, sortear_template, editar_template, manter_contas_view, \
     aumentar_cartelas, forcar_sorteio,status_jogador, mudar_senha_jogador
 
-from .views import jogadores, realtime_data
+from .views import configuracao_visual, jogadores, realtime_data
 from .views_api_media import logo_promo, media_login, nome_server, media_logo, media_favicon, media_fundo
 from .views_api_online import dados_bilhete, get_politicas_de_privacidade_kol, get_regras_kol, proximos_kol, data_hora_servidor, ultimos_ganhadores_kol
 from .views_api_tela import resultado_sorteio, proximos, proximos_especiais, historico, status, ultimos_ganhadores
@@ -25,6 +25,7 @@ urlpatterns = [
     path('ganhadores/', ganhadores),
     path('jogadores/', jogadores),
     path('cartelas/', cartelas),
+    path('configuracao-visual/', configuracao_visual),
     path('configuracao/', configuracao),
 
     path('cancelar_partida/<int:partida_id>/',cancelar_partida),

@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'tinymce',
     'jogo',
     'ddtrace.contrib.django',
+    'colorfield'
 ]
 
 MIDDLEWARE = [

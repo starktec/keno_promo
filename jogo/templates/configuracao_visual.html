@@ -1,0 +1,144 @@
+{% extends "nav-bar.html" %}
+{% block titulo %}
+Configuracao Visual
+{% endblock %}
+{% block nav-bar %}
+{{ form.media }}
+<div class="row justify-content-center">
+            <div class="row col-lg-12 col-md-12 col-sm-12 justify-content-center padding-zero">
+                <div class="col-md-12">
+                    <div class="row card card-tabs col-md-12 padding-zero">
+                        <form class="col-12 row justify-content-start form-group" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                            {% if form.non_fields_errors %}
+                            <div class="errors-box container-error container-center">
+                              {{ form.non_fields_errors }}
+                            </div>
+                        {% endif %}
+                            {% if form.fields_errors %}
+                            <div class="errors-box container-error container-center">
+                              {{ form.fields_errors }}
+                            </div>
+                        {% endif %}
+                            <div class="row container-jogo-conf">
+                                <div class="col-lg-6 col-md-6 col-sm-12 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_backgroundColor">Cor de Fundo</label>
+                                    <div class="form-control-wrap">
+                                        {{ form.backgroundColor }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_footerColor">Cor de rodapé</label>
+                                    <div class="form-control-wrap">
+                                        {{ form.footerColor }}
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6 col-md-6 col-sm-12 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_borderPageColor">Cor da borda da página</label>
+                                    <div class="form-control-wrap">
+                                        {{ form.borderPageColor }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_borderPageColor">Cor da borda da página</label>
+                                    <div class="form-control-wrap">
+                                        {{ form.borderPageColor }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_buttonNormalBackground">Cor de fundo do botão normal</label>
+                                    <div class="form-control-wrap">
+                                        {{ form.buttonNormalBackground }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_buttonNormalBorder">Cor de borda do botão normal</label>
+                                    <div class="form-control-wrap">
+                                        {{ form.buttonNormalBorder }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_buttonNormalText">Cor do texto do botão normal</label>
+                                    <div class="form-control-wrap">
+                                        {{ form.buttonNormalText }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_buttonContrastBackground">Cor de fundo do botão em contraste</label>
+                                    <div class="form-control-wrap">
+                                        {{ form.buttonContrastBackground }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_buttonContrastBackground">Cor do texto do botão em contraste</label>
+                                    <div class="form-control-wrap">
+                                        {{ form.buttonContrastText }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_socialcolorsBackground">Cor de fundo social</label>
+                                    <div class="form-control-wrap">
+                                        {{ form.socialcolorsBackground }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_socialcolorIcons">Cor dos ícones sociais</label>
+                                    <div class="form-control-wrap">
+                                        {{ form.socialcolorIcons }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_socialcolorHover">Cor de Flutuação social</label>
+                                    <div class="form-control-wrap">
+                                        {{ form.socialcolorHover }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_inputBackground">Cor de fundo do input</label>
+                                    <div class="form-control-wrap">
+                                        {{ form.inputBackground }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_inputBorder">Cor da borda do input</label>
+                                    <div class="form-control-wrap">
+                                        {{ form.inputBorder }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_inputText">Cor do texto do input</label>
+                                    <div class="form-control-wrap">
+                                        {{ form.inputText }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_defaultcolorText">Cor padrão de texto</label>
+                                    <div class="form-control-wrap">
+                                        {{ form.defaultcolorText }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_defaultcolorUnderline">Cor padrão de sublinhado/label>
+                                    <div class="form-control-wrap">
+                                        {{ form.defaultcolorUnderline }}
+                                    </div>
+                                </div>
+
+                            
+                            </div>
+                            <div class="col-12 row justify-content-end container-btn-create-estabelecimento">
+                                <div class="col-12 text-right container-input-create container-salve-conf">
+                                     <div class="form-group">
+                                        <div class="form-control-wrap">
+                                            <button class="btn btn-success btn-create-secondary">Salvar</button>
+                                        </div>
+                                     </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+{% endblock %}
