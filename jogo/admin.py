@@ -6,7 +6,7 @@ from tinymce.widgets import TinyMCE
 
 from jogo.models import Usuario, Configuracao, Jogador, CartelaVencedora, Cartela, Partida, Acao, Regra, Conta, \
     IPTabela, Publicacao, Galeria, TextoPublicacao, ConfiguracaoInstagram, PerfilSocial, CreditoBonus, RegraBonus, \
-    ConfiguracaoAplicacao, BotaoAplicacao, BotaoMidiaSocial, Parceiro
+    ConfiguracaoAplicacao, BotaoAplicacao, BotaoMidiaSocial, Parceiro, RequisicaoPremioAplicacao
 
 admin.site.register(PerfilSocial)
 admin.site.register(Usuario)
@@ -20,6 +20,7 @@ admin.site.register(ConfiguracaoAplicacao)
 admin.site.register(BotaoAplicacao)
 admin.site.register(BotaoMidiaSocial)
 admin.site.register(Parceiro)
+admin.site.register(RequisicaoPremioAplicacao)
 admin.site.register(Partida)
 admin.site.register(Cartela)
 admin.site.register(CartelaVencedora)
