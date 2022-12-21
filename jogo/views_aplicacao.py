@@ -11,7 +11,7 @@ from rest_framework.views import APIView
 from jogo.models import Cartela, Partida, Configuracao, CreditoBonus, Jogador, ConfiguracaoAplicacao
 from jogo.permissions import EhJogador
 from jogo.serializers import JogadorSerializer, LoginJogadorSerializer, CadastroJogadorSerializer, \
-    ConfiguracoesAplicacaoSerializer, ConfiguracaoAplicacaoSerializer
+    ConfiguracoesAplicacaoSerializer, ConfiguracaoAplicacaoSerializer, RequisicaoPremioAplicacaoSerializer
 from jogo.utils import format_serializer_message
 
 import logging
@@ -152,3 +152,8 @@ class ConfiguracaoAplicacaoView(APIView):
         if configuracao_serializer.is_valid():
             return Response(data=configuracao_serializer.validated_data,status=status.HTTP_200_OK)
         return Response(data=configuracao_serializer.errors)
+
+class RequisicaoPremioAplicacaoView(APIView):
+    def get(self, request):
+        requisicao_premio_serializer = RequisicaoPremioAplicacaoSerializer(read_only=True)
+        return Response(data=requisicao_premio_serializer.data,status=status.HTTP_200_OK)

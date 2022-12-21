@@ -774,6 +774,12 @@ class ConfiguracaoAplicacao(models.Model):
     footerText = models.CharField(max_length=255, blank=True, null=True)
     footerImage = models.ImageField(blank=True, null=True, upload_to=configuracao_images_path)
 
+class RequisicaoPremioAplicacao(models.Model):
+    texto_segue = models.CharField(max_length=255)
+    link_segue = models.URLField()
+    texto_nao_segue = models.CharField(max_length=255)
+    link_nao_segue = models.URLField()
+
 class BotaoAplicacao(models.Model):
 
     buttonLink = models.URLField(blank=True,null=True)

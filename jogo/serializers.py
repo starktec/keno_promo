@@ -8,7 +8,7 @@ from rest_framework import serializers
 from jogo.choices import AcaoBonus
 from jogo.consts import SOCIAL_MEDIA_IMAGES
 from jogo.models import CartelaVencedora, Partida, Cartela, Configuracao, Jogador, CreditoBonus, RegraBonus, \
-    ConfiguracaoAplicacao, BotaoAplicacao, BotaoMidiaSocial, Parceiro
+    ConfiguracaoAplicacao, BotaoAplicacao, BotaoMidiaSocial, Parceiro, RequisicaoPremioAplicacao
 import re
 
 class CartelaSerializer(serializers.ModelSerializer):
@@ -326,4 +326,9 @@ class ConfiguracoesAplicacaoSerializer(serializers.Serializer):
         attrs["patrocinadores"] = ParceiroSerializer(Parceiro.objects.filter(ativo=True),many=True).data
 
         return attrs
+
+class RequisicaoPremioAplicacaoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RequisicaoPremioAplicacao
+        exclude = ["id"]
 
