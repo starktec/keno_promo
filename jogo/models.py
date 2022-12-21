@@ -771,6 +771,8 @@ class ConfiguracaoAplicacao(models.Model):
     inputText = models.CharField(max_length=7, blank=True, null=True)
     defaultcolorText = models.CharField(max_length=7, blank=True, null=True)
     defaultcolorUnderline = models.CharField(max_length=7, blank=True, null=True)
+    footerText = models.CharField(max_length=255, blank=True, null=True)
+    footerImage = models.ImageField(blank=True,null=True, upload_to=configuracao_images_path)
 
 class BotaoAplicacao(models.Model):
 
@@ -785,3 +787,13 @@ class BotaoAplicacao(models.Model):
 class BotaoMidiaSocial(models.Model):
     tipo = models.CharField(max_length=20,choices=TipoRedeSocial.choices,unique=True)
     link = models.URLField(blank=True,null=True)
+    logo = models.ImageField(blank=True,null=True, upload_to=configuracao_images_path)
+    ativo = models.BooleanField(default=True)
+
+class Parceiro(models.Model):
+    name = models.CharField(max_length=200)
+    logo = models.ImageField(upload_to=configuracao_images_path)
+    ativo = models.BooleanField(default=True)
+
+    def __int__(self):
+        return self.name

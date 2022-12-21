@@ -34,11 +34,19 @@ class TipoRedeSocial(TextChoices):
     FACEBOOK = "Facebook","facebook"
     TWITTER = "Twitter","twitter"
     YOUTUBE = "Youtube","youtube"
-    TIKTOK = "TikTok","tikTok"
+    TIKTOK = "TikTok","tikTok",
+    TELEGRAM = "Telegram","telegram",
+
+SOCIAL_MEDIA_IMAGES = {
+    TipoRedeSocial.INSTAGRAM: "/static/social_media/instagram.svg",
+    TipoRedeSocial.FACEBOOK: "/static/social_media/facebook.svg",
+    TipoRedeSocial.TWITTER: "/static/social_media/twitter.svg",
+    TipoRedeSocial.YOUTUBE: "/static/social_media/youtube.svg",
+    TipoRedeSocial.TIKTOK: "/static/social_media/tiktok.svg",
+    TipoRedeSocial.TELEGRAM: "/static/social_media/telegram.svg",
+}
 
 # nome fantasia = numero + letra -> tudo maiusculo
-
-
 class NamesValidations():
     allowed_characters = digits + ascii_letters + whitespace
     allowed_characters_w = digits + ascii_letters

@@ -6,8 +6,9 @@ from django.db import transaction
 from rest_framework import serializers
 
 from jogo.choices import AcaoBonus
+from jogo.consts import SOCIAL_MEDIA_IMAGES
 from jogo.models import CartelaVencedora, Partida, Cartela, Configuracao, Jogador, CreditoBonus, RegraBonus, \
-    ConfiguracaoAplicacao, BotaoAplicacao, BotaoMidiaSocial
+    ConfiguracaoAplicacao, BotaoAplicacao, BotaoMidiaSocial, Parceiro
 import re
 
 class CartelaSerializer(serializers.ModelSerializer):
@@ -278,6 +279,14 @@ class LoginJogadorSerializer(serializers.Serializer):
 
 
 class ConfiguracaoAplicacaoSerializer(serializers.ModelSerializer):
+    footerImage = serializers.SerializerMethodField()
+
+    def get_footerImage(self,configuracao):
+        if configuracao.footerImage:
+            return configuracao.footerImage.url
+        else:
+            return ""
+
     class Meta:
         model = ConfiguracaoAplicacao
         exclude = ["id"]
@@ -288,19 +297,33 @@ class BotaoAplicacaoSerializer(serializers.ModelSerializer):
         exclude = ["id", "order"]
 
 class BotaoMidiaSocialSerializer(serializers.ModelSerializer):
+    logo = serializers.SerializerMethodField()
+
+    def get_logo(self, botao):
+        if botao.logo:
+            return botao.logo.url
+        else:
+            return SOCIAL_MEDIA_IMAGES[botao.tipo]
     class Meta:
         model = BotaoMidiaSocial
-        exclude = ["id"]
+        exclude = ["id","ativo"]
+
+class ParceiroSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Parceiro
+        exclude = ["id","ativo"]
 
 class ConfiguracoesAplicacaoSerializer(serializers.Serializer):
     configuracao_aplicacao = ConfiguracaoAplicacaoSerializer(read_only=True)
     botoes_aplicacao = BotaoAplicacaoSerializer(read_only=True,many=True)
     midias_sociais = BotaoMidiaSocialSerializer(read_only=True,many=True)
+    patrocinadores = ParceiroSerializer(read_only=True,many=True)
 
     def validate(self, attrs):
         attrs["configuracao_aplicacao"] = ConfiguracaoAplicacaoSerializer(instance=ConfiguracaoAplicacao.objects.last(),read_only=True).data
         attrs["botoes_aplicacao"] = BotaoAplicacaoSerializer(BotaoAplicacao.objects.all(),many=True).data
-        attrs["midias_sociais"] = BotaoMidiaSocialSerializer(BotaoMidiaSocial.objects.all(),many=True).data
+        attrs["midias_sociais"] = BotaoMidiaSocialSerializer(BotaoMidiaSocial.objects.filter(ativo=True),many=True).data
+        attrs["patrocinadores"] = ParceiroSerializer(Parceiro.objects.filter(ativo=True),many=True).data
 
         return attrs
 
