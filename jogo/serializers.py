@@ -6,7 +6,7 @@ from django.db import transaction
 from rest_framework import serializers
 
 from jogo.choices import AcaoBonus
-from jogo.consts import SOCIAL_MEDIA_IMAGES
+from jogo.consts import SOCIAL_MEDIA_IMAGES, LocalBotaoChoices
 from jogo.models import CartelaVencedora, Partida, Cartela, Configuracao, Jogador, CreditoBonus, RegraBonus, \
     ConfiguracaoAplicacao, BotaoAplicacao, BotaoMidiaSocial, Parceiro, RequisicaoPremioAplicacao
 import re
@@ -294,7 +294,7 @@ class ConfiguracaoAplicacaoSerializer(serializers.ModelSerializer):
 class BotaoAplicacaoSerializer(serializers.ModelSerializer):
     class Meta:
         model = BotaoAplicacao
-        exclude = ["id", "order"]
+        exclude = ["id", "order","local"]
 
 class BotaoMidiaSocialSerializer(serializers.ModelSerializer):
     logo = serializers.SerializerMethodField()
@@ -315,13 +315,15 @@ class ParceiroSerializer(serializers.ModelSerializer):
 
 class ConfiguracoesAplicacaoSerializer(serializers.Serializer):
     configuracao_aplicacao = ConfiguracaoAplicacaoSerializer(read_only=True)
-    botoes_aplicacao = BotaoAplicacaoSerializer(read_only=True,many=True)
+    botoes_login = BotaoAplicacaoSerializer(read_only=True,many=True)
+    botoes_logado = BotaoAplicacaoSerializer(read_only=True,many=True)
     midias_sociais = BotaoMidiaSocialSerializer(read_only=True,many=True)
     patrocinadores = ParceiroSerializer(read_only=True,many=True)
 
     def validate(self, attrs):
         attrs["configuracao_aplicacao"] = ConfiguracaoAplicacaoSerializer(instance=ConfiguracaoAplicacao.objects.last(),read_only=True).data
-        attrs["botoes_aplicacao"] = BotaoAplicacaoSerializer(BotaoAplicacao.objects.all(),many=True).data
+        attrs["botoes_login"] = BotaoAplicacaoSerializer(BotaoAplicacao.objects.filter(local=LocalBotaoChoices.LOGIN),many=True).data
+        attrs["botoes_logado"] = BotaoAplicacaoSerializer(BotaoAplicacao.objects.filter(local=LocalBotaoChoices.LOGADO),many=True).data
         attrs["midias_sociais"] = BotaoMidiaSocialSerializer(BotaoMidiaSocial.objects.filter(ativo=True),many=True).data
         attrs["patrocinadores"] = ParceiroSerializer(Parceiro.objects.filter(ativo=True),many=True).data
 

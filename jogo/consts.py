@@ -1,4 +1,4 @@
-from django.db.models import TextChoices
+from django.db.models import TextChoices, IntegerChoices
 from string import digits,ascii_letters,whitespace
 
 
@@ -38,13 +38,17 @@ class TipoRedeSocial(TextChoices):
     TELEGRAM = "Telegram","telegram",
 
 SOCIAL_MEDIA_IMAGES = {
-    TipoRedeSocial.INSTAGRAM: "/static/social_media/instagram.svg",
+    TipoRedeSocial.INSTAGRAM: "/static/social_media/instagram.png",
     TipoRedeSocial.FACEBOOK: "/static/social_media/facebook.svg",
     TipoRedeSocial.TWITTER: "/static/social_media/twitter.svg",
     TipoRedeSocial.YOUTUBE: "/static/social_media/youtube.svg",
     TipoRedeSocial.TIKTOK: "/static/social_media/tiktok.svg",
     TipoRedeSocial.TELEGRAM: "/static/social_media/telegram.svg",
 }
+
+class LocalBotaoChoices(IntegerChoices):
+    LOGIN = 1,"Login"
+    LOGADO = 2,"Logado"
 
 # nome fantasia = numero + letra -> tudo maiusculo
 class NamesValidations():

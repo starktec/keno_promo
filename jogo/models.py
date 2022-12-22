@@ -27,7 +27,7 @@ from django_resized import ResizedImageField
 from jogo import local_settings
 from jogo.choices import AcaoTipoChoices, AcaoBonus
 from jogo.constantes import NOME_PESSOAS
-from jogo.consts import TipoRedeSocial
+from jogo.consts import TipoRedeSocial, LocalBotaoChoices
 from jogo.websocket_triggers import event_doacoes
 from colorfield.fields import ColorField
 
@@ -785,7 +785,8 @@ class BotaoAplicacao(models.Model):
     buttonLink = models.URLField(blank=True,null=True)
     buttonText = models.CharField(max_length=50,blank=True,null=True)
     isContrast = models.BooleanField(default=False)
-    order = models.PositiveSmallIntegerField(default=1, unique=True)
+    order = models.PositiveSmallIntegerField(default=1)
+    local = models.PositiveSmallIntegerField(default=1,choices=LocalBotaoChoices.choices)
 
     class Meta:
         ordering = ["order"]
