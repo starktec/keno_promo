@@ -124,6 +124,7 @@ PAGAMENTO
                                     {{ jogador.whatsapp }}
                                 </a>
                             </td>
+                            <form method="post">{% csrf_token %}
                             {% for dado in dados %}
                             <td scope="row">
                                 {% if dado %}
@@ -135,7 +136,10 @@ PAGAMENTO
                                             <td>Sorteio: {{ cartela.cartela.partida.id }}</td>
 
                                             <td>Valor:R$ {{ cartela.valor_premio }} (
-                                                {% if cartela.premio == 1 %}KU{% elif cartela.premio == 2 %}KI{% else %}KE{% endif %})</td>
+                                                {% if cartela.premio == 1 %}KU{% elif cartela.premio == 2 %}KI{% else %}KE{% endif %} )</td>
+                                            {% if not cartela.recibo %}
+                                            <td><input type="checkbox" id="{{ cartela.id }}"</td>
+                                            {% endif %}
                                         </tr>
                                     </table>
                                     {% endfor %}
@@ -143,15 +147,10 @@ PAGAMENTO
                                 {% endif %}
                             </td>
                             {% endfor %}
+                            <input type="submit" value="enviar" >                                 
+                            </form>
 
-                            <td>
-                                <form id="form{{ jogador.id }}" method="post" action="/jogador/{{ jogador.id }}/senha/">
-                                    {% csrf_token %}
-                                    Nova: <input type="text" name="senha" size="10"/>
-                                    <input type="submit" value="enviar" >
-                                </form>
 
-                            </td>
                         </tr>
                     {% endwith %}
                     {% endfor %}
