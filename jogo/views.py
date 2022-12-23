@@ -24,9 +24,10 @@ from jogo.constantes import VALORES_VOZES
 from jogo.agendamento import Agenda
 from jogo.forms import CartelasFilterForm, ConfiguracaoVisualForm, JogadoresForm, NovaPartidaAutomatizada, PartidaEditForm, GanhadoresForm, NovaPartidaForm, UsuarioAddForm, \
     ConfiguracaoForm, TemplateEditForm
-from jogo.models import ConfiguracaoAplicacao, Jogador, Partida, Automato, Cartela, Usuario, Configuracao, CartelaVencedora, TemplatePartida, \
+from jogo.models import ConfiguracaoAplicacao, Jogador, Partida, Automato, Cartela, Usuario, Configuracao, \
+    CartelaVencedora, TemplatePartida, \
     Regra, \
-    Acao, PerfilSocial, ConfiguracaoInstagram, Agendamento, CreditoBonus
+    Acao, PerfilSocial, ConfiguracaoInstagram, Agendamento, CreditoBonus, ReciboPagamento
 from jogo.views_social_instagram import CLIENT
 from jogo.websocket_triggers import event_tela_partidas
 from jogo.websocket_triggers_bilhete import event_bilhete_partida
@@ -448,10 +449,13 @@ def pagamento(request):
         ultima_pagina = 1
 
         jogadores = {}
+        recibos = []
         for vencedor in vencedores:
             if not vencedor.cartela.jogador in jogadores.keys():
                 jogadores[vencedor.cartela.jogador]= {"pagas":[],"apagar":[]}
             if vencedor.recibo:
+                if vencedor.recibo not in recibos:
+                    recibos.append(vencedor.recibo)
                 if jogadores[vencedor.cartela.jogador]["pagas"]:
                     jogadores[vencedor.cartela.jogador]["pagas"].append(vencedor)
                 else:
@@ -461,6 +465,8 @@ def pagamento(request):
                     jogadores[vencedor.cartela.jogador]["apagar"].append(vencedor)
                 else:
                     jogadores[vencedor.cartela.jogador]["apagar"]=[vencedor]
+
+        jogadores["recibos"] = recibos
 
         if (total_dados != 0 and itens_pagina != 0):
             ultima_pagina = int(math.ceil(total_dados / itens_pagina))
@@ -477,7 +483,7 @@ def pagamento(request):
         proxima_pagina = pagina + 1
         pagina_anterior = pagina - 1
         partidas = [x.id for x in Partida.objects.all().order_by("id")]
-        return render(request,'pagamento.html',{'jogadore':jogadores,'form':form,'pagina_atual': pagina,'ultima_pagina':ultima_pagina,'proxima_pagina': proxima_pagina,
+        return render(request,'pagamento.html',{'jogadores':jogadores,'form':form,'pagina_atual': pagina,'ultima_pagina':ultima_pagina,'proxima_pagina': proxima_pagina,
                                                 'pagina_anterior': pagina_anterior,'pagina_anterior':pagina_anterior,'total_dados':total_dados,
                                                 "partidas":partidas[-50:]})
     return HttpResponse(status=403)
