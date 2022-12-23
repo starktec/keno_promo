@@ -48,7 +48,7 @@ class PegarCartela(APIView):
         # Encontrar um jogador já cadastrado localmente por perfil
         token = request.headers['Authorization'].split("Token ")[1]
 
-       
+
         jogador = Jogador.objects.filter(usuario_token=token).first()
         nome = ""
 
@@ -122,7 +122,7 @@ class PegarCartela(APIView):
                             if Cartela.objects.filter(jogador=jogador, partida=partida).exists():
                                 cartela_existente = True
                             else:
-                                cartela = Cartela.objects.create(partida=partida,
+                                cartelas = Cartela.objects.create(partida=partida,
                                                              codigo=random.choice(codigos_a_sortear),
                                                              jogador=jogador, nome=nome)
 
