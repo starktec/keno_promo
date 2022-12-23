@@ -38,7 +38,7 @@ def dados_bilhete(request,hash):
             if vencedora:
                 if configuracao.contato_cartela:
                     msg = "Oi.%20Acabei%20de%20ganhar%20um%20sorteio%20no%20Recebabonus.%20"
-                    link_vencedor = f"https://web.whatsapp.com/send?phone={configuracao.contato_cartela}&text={msg}"
+                    link_vencedor = f"https://wa.me?phone={configuracao.contato_cartela}&text={msg}"
                     complemento = []
                     if configuracao.incluir_sorteio:
                         complemento.append(f"sorteio:{cartela.partida.id}")
@@ -50,7 +50,7 @@ def dados_bilhete(request,hash):
                         complemento.append(f"valor:{vencedora.valor_premio}")
 
                     if complemento:
-                        link_vencedor += ",".join(complemento)
+                        link_vencedor += ", ".join(complemento)
 
             dados = {
                 "hash":cartela.hash,
