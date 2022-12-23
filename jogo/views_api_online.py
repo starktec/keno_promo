@@ -45,7 +45,7 @@ def dados_bilhete(request,hash):
                 if configuracao.incluir_apelido:
                     complemento.append(f"apelido:{cartela.jogador.usuario}")
                 if configuracao.incluir_valor:
-                    complemento.append(f"valor:{CartelaVencedora.objects.filter(cartela=cartela).fitst().valor_premio}")
+                    complemento.append(f"valor:{CartelaVencedora.objects.filter(cartela=cartela).first().valor_premio}")
 
                 if complemento:
                     link_vencedor += ",".join(complemento)
