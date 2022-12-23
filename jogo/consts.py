@@ -36,6 +36,7 @@ class TipoRedeSocial(TextChoices):
     YOUTUBE = "Youtube","youtube"
     TIKTOK = "TikTok","tikTok",
     TELEGRAM = "Telegram","telegram",
+    TWITCH = "Twitch", "twitch"
 
 SOCIAL_MEDIA_IMAGES = {
     TipoRedeSocial.INSTAGRAM: "/static/social_media/instagram.png",
@@ -44,6 +45,8 @@ SOCIAL_MEDIA_IMAGES = {
     TipoRedeSocial.YOUTUBE: "/static/social_media/youtube.svg",
     TipoRedeSocial.TIKTOK: "/static/social_media/tiktok.svg",
     TipoRedeSocial.TELEGRAM: "/static/social_media/telegram.svg",
+    TipoRedeSocial.TWITCH: "",
+
 }
 
 class LocalBotaoChoices(IntegerChoices):
