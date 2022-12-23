@@ -408,6 +408,19 @@ def jogadores(request):
 @login_required(login_url="/login/")
 def pagamento(request):
     if ehUsuarioDash(request.user):
+        if request.method == "GET" and request.GET.get("csrfmiddlewaretoken"):
+            list_ids = [x for x in request.GET.keys() if x.isdigit()]
+            cartelas_vencedoras = CartelaVencedora.objects.filter(id__in=list_ids, recibo__isnull=True)
+            if cartelas_vencedoras:
+                usuario = Usuario.objects.get(usuario=request.user)
+                valor_total = Decimal(round(sum([item.valor for item in cartelas_vencedoras]),2))
+                recibo = ReciboPagamento.objects.create(valor_total=valor_total, confirmado_por=usuario)
+                for cv in cartelas_vencedoras:
+                    cv.recibo = recibo
+                    cv.save()
+                return redirect("/pagamento/")
+
+
         form = JogadoresForm()
         vencedores = CartelaVencedora.objects.all()
         itens_pagina = 50
