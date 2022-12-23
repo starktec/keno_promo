@@ -454,8 +454,7 @@ def pagamento(request):
             if not vencedor.cartela.jogador in jogadores.keys():
                 jogadores[vencedor.cartela.jogador]= {"pagas":[],"apagar":[]}
             if vencedor.recibo:
-                if vencedor.recibo not in recibos:
-                    recibos.append(vencedor.recibo)
+
                 if jogadores[vencedor.cartela.jogador]["pagas"]:
                     jogadores[vencedor.cartela.jogador]["pagas"].append(vencedor)
                 else:
@@ -466,7 +465,6 @@ def pagamento(request):
                 else:
                     jogadores[vencedor.cartela.jogador]["apagar"]=[vencedor]
 
-        jogadores["recibos"] = recibos
 
         if (total_dados != 0 and itens_pagina != 0):
             ultima_pagina = int(math.ceil(total_dados / itens_pagina))
