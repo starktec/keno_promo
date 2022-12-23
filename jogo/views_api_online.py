@@ -39,13 +39,13 @@ def dados_bilhete(request,hash):
                 link_vencedor = f"https://web.whatsapp.com/send?phone={configuracao.contato_cartela}&text={msg}"
                 complemento = []
                 if configuracao.incluir_sorteio:
-                    complemento.add(f"sorteio:{cartela.partida.id}")
+                    complemento.append(f"sorteio:{cartela.partida.id}")
                 if configuracao.incluir_codigo:
-                    complemento.add(f"codigo:{cartela.codigo}")
+                    complemento.append(f"codigo:{cartela.codigo}")
                 if configuracao.incluir_apelido:
-                    complemento.add(f"apelido:{cartela.jogador.usuario}")
+                    complemento.append(f"apelido:{cartela.jogador.usuario}")
                 if configuracao.incluir_valor:
-                    complemento.add(f"valor:{CartelaVencedora.objects.filter(cartela=cartela).fitst().valor_premio}")
+                    complemento.append(f"valor:{CartelaVencedora.objects.filter(cartela=cartela).fitst().valor_premio}")
 
                 if complemento:
                     link_vencedor += ",".join(complemento)
