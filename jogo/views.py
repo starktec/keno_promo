@@ -413,7 +413,7 @@ def pagamento(request):
             cartelas_vencedoras = CartelaVencedora.objects.filter(id__in=list_ids, recibo__isnull=True)
             if cartelas_vencedoras:
                 usuario = Usuario.objects.get(usuario=request.user)
-                valor_total = Decimal(round(sum([item.valor for item in cartelas_vencedoras]),2))
+                valor_total = Decimal(round(sum([item.valor_premio for item in cartelas_vencedoras]),2))
                 recibo = ReciboPagamento.objects.create(valor_total=valor_total, confirmado_por=usuario)
                 for cv in cartelas_vencedoras:
                     cv.recibo = recibo
