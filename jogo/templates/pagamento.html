@@ -108,8 +108,7 @@ PAGAMENTO
                     </thead>
                     <tbody class="text-center tbody-content">
                     {% for jogador,cartelas in jogadores.items %}
-                    {% with pagas=cartelas.values.0 %}
-                    {% with apagar=cartelas.values.1 %}
+                    {% with dados=cartelas.values %}
                         <tr>
                             <td scope="row">{{ jogador.id }}</td>
                             <td scope="row">{{ jogador.nome }}</td>
@@ -125,11 +124,12 @@ PAGAMENTO
                                     {{ jogador.whatsapp }}
                                 </a>
                             </td>
+                            {% for dado in dados %}
                             <td scope="row">
-                                {% if pagas %}
-                                {{ pagas|length }}
+                                {% if dado %}
+                                {{ dado|length }}
                                 <table>
-                                    {% for cartela in pagas %}
+                                    {% for cartela in dado %}
                                     <tr>
                                         <td>Codigo</td><td>: {{ cartela.cartela.codigo</td>
                                     </tr>
@@ -146,9 +146,8 @@ PAGAMENTO
                                 </table>
                                 {% endif %}
                             </td>
-                            <td></td>
-                            <td>
-                            </td>
+                            {% endfor %}
+
                             <td>
                                 <form id="form{{ jogador.id }}" method="post" action="/jogador/{{ jogador.id }}/senha/">
                                     {% csrf_token %}
@@ -158,7 +157,6 @@ PAGAMENTO
 
                             </td>
                         </tr>
-                    {% endwith %}
                     {% endwith %}
                     {% endfor %}
 
