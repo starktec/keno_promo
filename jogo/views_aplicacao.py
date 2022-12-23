@@ -47,8 +47,9 @@ class PegarCartela(APIView):
 
         # Encontrar um jogador já cadastrado localmente por perfil
         token = request.headers['Authorization'].split("Token ")[1]
-        jogador = Jogador.objects.select_for_update().filter(usuario_token=token).first()
+        
         with transaction.atomic():
+            jogador = Jogador.objects.select_for_update().filter(usuario_token=token).first()
             nome = ""
 
             # Formatando o dado perfil vindo do front para eliminar a url, @ e /, alem de forçar minusculo
