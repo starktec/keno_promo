@@ -86,8 +86,8 @@ class PegarCartela(APIView):
             # Gerando a cartela
             cartela_existente = True
 
-            cartela = Cartela.objects.filter(jogador=jogador, partida=partida)
-            if not cartela:
+            cartelas = Cartela.objects.filter(jogador=jogador, partida=partida)
+            if not cartelas:
                 cartela_existente = False
                 # Para o caso de não ter cartela desse jogador no próximo sorteio
 
@@ -125,21 +125,22 @@ class PegarCartela(APIView):
                                                              jogador=jogador, nome=nome)
 
                 if cartela_existente:
-                    cartelas = Cartela.objects.filter(partida=partida, jogador__isnull=True)
+                    cartelas_livres = Cartela.objects.filter(partida=partida, jogador__isnull=True)
 
-                    if cartelas:
+                    if cartelas_livres:
 
-                        cartela = random.choice(cartelas)
+                        cartela = random.choice(cartelas_livres)
                         cartela.jogador = jogador
                         cartela.nome = jogador.nome
                         cartela.save()
+                        cartelas = [cartela]
                     else:
                         mensagem = "Cartelas esgotadas"
                         LOGGER.info(mensagem)
                         return Response(data={"detail": mensagem}, status=404)
 
             return Response(
-                data={"cartela":[int(c.id) for c in cartela], "bilhete": cartela.first().hash, "sorteio": int(cartela.first().partida.id)})
+                data={"cartela":[int(c.id) for c in cartelas], "bilhete": cartelas[0].hash, "sorteio": int(cartelas[0].partida.id)})
 
         else:
             mensagem = "Não há sorteios disponíveis no momento"

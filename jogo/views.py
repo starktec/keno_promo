@@ -879,8 +879,7 @@ def configuracao_visual(request):
             form = ConfiguracaoVisualForm(request.POST, request.FILES, instance=instance)
             if form.is_valid():
                 form.save()
-            else:
-                print(form.errors)
+                return redirect("/partidas/")
         else:
             form = ConfiguracaoVisualForm(instance=instance)
         return render(request, 'configuracao_visual.html', {'form': form, 'instance': instance})

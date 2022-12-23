@@ -31,6 +31,25 @@ def dados_bilhete(request,hash):
             }
             cartelas.append(dado)
             cartela:Cartela = cartela
+
+            configuracao = Configuracao.objects.last()
+            link_vencedor = ""
+            if configuracao.contato_cartela:
+                msg = "Oi.%20Acabei%20de%20ganhar%20um%20sorteio%20no%20Recebabonus.%20"
+                link_vencedor = f"https://web.whatsapp.com/send?phone={configuracao.contato_cartela}&text={msg}"
+                complemento = []
+                if configuracao.incluir_sorteio:
+                    complemento.add(f"sorteio:{cartela.partida.id}")
+                if configuracao.incluir_codigo:
+                    complemento.add(f"codigo:{cartela.codigo}")
+                if configuracao.incluir_apelido:
+                    complemento.add(f"apelido:{cartela.jogador.usuario}")
+                if configuracao.incluir_valor:
+                    complemento.add(f"valor:{CartelaVencedora.objects.filter(cartela=cartela).fitst().valor_premio}")
+
+                if complemento:
+                    link_vencedor += ",".join(complemento)
+
             dados = {
                 "hash":cartela.hash,
                 "sorteio":PartidaProximaSerializer(cartela.partida).data,
@@ -38,6 +57,7 @@ def dados_bilhete(request,hash):
                 "comprado_em":cartela.comprado_em,
                 "ganhou":CartelaVencedora.objects.filter(cartela=cartela).exists(),
                 "cartelas":cartelas,
+                "link_vencedor":link_vencedor,
             }
             return JsonResponse(data=dados, status=200, safe=False)
         else:

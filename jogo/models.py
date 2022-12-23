@@ -121,7 +121,13 @@ class Configuracao(models.Model):
     regras = models.TextField(default="")
 
     politicas_de_privacidade = models.TextField(default="")
-    
+
+    contato_cartela = models.CharField(max_length=20,blank=True,null=True)
+    incluir_codigo = models.BooleanField(default=True)
+    incluir_sorteio = models.BooleanField(default=True)
+    incluir_valor = models.BooleanField(default=True)
+    incluir_apelido = models.BooleanField(default=True)
+
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
         if not self.id:

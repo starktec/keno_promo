@@ -260,6 +260,10 @@
   color: #364a63;
 }
 
+.card-background{
+    background-color: #cccccc !important;
+}
+
 @media (max-width: 576px) {
   .container-img-conf {
     padding: 0 !important;

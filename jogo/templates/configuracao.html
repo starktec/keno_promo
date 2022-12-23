@@ -61,12 +61,36 @@ CONFIGURAÇÃO
                                         {{ form.liberar_resultado_sorteio_em }}
                                     </div>
                                 </div>
-                                <!--<div class="col-lg-6 col-md-6 col-sm-12 container-input-create input-container-conf">
-                                    <label class="form-label" for="id_velo_sorteio">Velocidade do Sorteio Online</label>
+                                <div class="col-lg-6 col-md-6 col-sm-6 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_codigo_cartela">Número do contato para cartelas vencedoras</label>
                                     <div class="form-control-wrap">
-                                        {{ form.velocidade_replay_online }}
+                                        {{ form.contato_cartela }}
                                     </div>
-                                </div>-->
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_incluir_codigo">Incluir código da cartela no link</label>
+                                    <div class="form-control-wrap">
+                                        {{ form.incluir_codigo }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_incluir_sorteio">Incluir número do sorteio da cartela no link</label>
+                                    <div class="form-control-wrap">
+                                        {{ form.incluir_sorteio }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_nome_server">Incluir valor do premio da cartela no link</label>
+                                    <div class="form-control-wrap">
+                                        {{ form.incluir_valor }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_nome_server">Incluir apelido do jogador no link</label>
+                                    <div class="form-control-wrap">
+                                        {{ form.incluir_apelido }}
+                                    </div>
+                                </div>
                             </div>
                             <div class="row container-server-conf">
                                 <!-- <div class="row justify-content-center col-lg-12 col-sm-12 container-input-create">

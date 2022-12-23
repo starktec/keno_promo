@@ -6,7 +6,7 @@ from jogo.choices import StatusCartelaChoice
 
 from jogo.consts import NamesValidations
 from jogo.models import ConfiguracaoAplicacao, TemplatePartida, Usuario, Partida, PARTIDA_TIPOS_CHOICES, \
-    Configuracao, TEMPO_CHOICES, TEMPO_LIBERAR_CHOICES, TEMPO_MINIMO_ANTECIPADO
+    Configuracao, TEMPO_CHOICES, TEMPO_LIBERAR_CHOICES, TEMPO_MINIMO_ANTECIPADO, BotaoAplicacao
 from jogo.utils import testa_horario
 from tinymce.widgets import TinyMCE
 
@@ -467,18 +467,28 @@ class ConfiguracaoForm(forms.ModelForm):
         attrs={'class': "form-control form-control-md form-control-outlined" ,'autocomplete': "off",'cols': 80, 'rows': 30}
     ))
 
+    contato_cartela = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'class': "form-control form-control-md form-control-outlined" ,'autocomplete': "off"}
+    ))
+
     class Meta:
         model = Configuracao
         fields = ['tempo_min_entre_sorteios',
                   'iniciar_sorteio_em',
                   'logo_dash','logo_login','favicon','nome_server','nome_botao','url_botao',
-                  'nome_grupo_telegram','url_grupo_telegram','logo_promo',"fundo_front","regras","politicas_de_privacidade"]
+                  'nome_grupo_telegram','url_grupo_telegram','logo_promo',"fundo_front","regras","politicas_de_privacidade",
+                  "contato_cartela","incluir_codigo","incluir_sorteio","incluir_valor","incluir_apelido"]
 
 
 class ConfiguracaoVisualForm(forms.ModelForm):
     class Meta:
         model= ConfiguracaoAplicacao
         fields = "__all__"
+
+class ConfiguracaoVisualBotoesForm(forms.ModelForm):
+    class Meta:
+        model = BotaoAplicacao
+        exclude = ["local"]
         
 
 class PartidaEditForm(forms.ModelForm):
