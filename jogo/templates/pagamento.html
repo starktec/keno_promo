@@ -1,6 +1,6 @@
 {% extends "index.html" %}
 {% block titulo %}
-JOGADORES
+PAGAMENTO
 {% endblock %}
 {% block nav-bar %}
 
@@ -108,6 +108,8 @@ JOGADORES
                     </thead>
                     <tbody class="text-center tbody-content">
                     {% for jogador,cartelas in jogadores.items %}
+                    {% with pagas=cartelas.values.0 %}
+                    {% with apagar=cartelas.values.1 %}
                         <tr>
                             <td scope="row">{{ jogador.id }}</td>
                             <td scope="row">{{ jogador.nome }}</td>
@@ -124,10 +126,10 @@ JOGADORES
                                 </a>
                             </td>
                             <td scope="row">
-                                {% if cartelas.0 %}
-                                {{ cartelas.0|length }}
+                                {% if pagas %}
+                                {{ pagas|length }}
                                 <table>
-                                    {% for cartela in cartelas.0 %}
+                                    {% for cartela in pagas %}
                                     <tr>
                                         <td>Codigo</td><td>: {{ cartela.cartela.codigo</td>
                                     </tr>
@@ -156,6 +158,8 @@ JOGADORES
 
                             </td>
                         </tr>
+                    {% endwith %}
+                    {% endwith %}
                     {% endfor %}
 
                     </tbody>
