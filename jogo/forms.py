@@ -474,13 +474,17 @@ class ConfiguracaoForm(forms.ModelForm):
         attrs={'class': "form-control form-control-md form-control-outlined" ,'autocomplete': "off"}
     ))
 
+    mensagem_whatsapp= forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'class': "form-control form-control-md form-control-outlined" ,'autocomplete': "off"}
+    ))
+
     class Meta:
         model = Configuracao
         fields = ['tempo_min_entre_sorteios',
                   'iniciar_sorteio_em',
                   'logo_dash','logo_login','favicon','nome_server','nome_botao','url_botao',
                   'nome_grupo_telegram','url_grupo_telegram','logo_promo',"fundo_front","regras","politicas_de_privacidade",
-                  "contato_cartela","incluir_codigo","incluir_sorteio","incluir_valor","incluir_apelido"]
+                  "contato_cartela","incluir_codigo","incluir_sorteio","incluir_valor","incluir_apelido","mensagem_whatsapp"]
 
 
 class ConfiguracaoVisualForm(forms.ModelForm):

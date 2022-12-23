@@ -38,6 +38,8 @@ def dados_bilhete(request,hash):
             if vencedora:
                 if configuracao.contato_cartela:
                     msg = "Oi.%20Acabei%20de%20ganhar%20um%20sorteio%20no%20Recebabonus.%20"
+                    if configuracao.mensagem_whatsapp:
+                        msg = configuracao.mensagem_whatsapp.replace(" ","%20")
                     link_vencedor = f"https://wa.me?phone={configuracao.contato_cartela}&text={msg}"
                     complemento = []
                     if configuracao.incluir_sorteio:

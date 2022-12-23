@@ -127,6 +127,7 @@ class Configuracao(models.Model):
     incluir_sorteio = models.BooleanField(default=True)
     incluir_valor = models.BooleanField(default=True)
     incluir_apelido = models.BooleanField(default=True)
+    mensagem_whatsapp = models.CharField(blank=True,null=True, max_length=255)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
