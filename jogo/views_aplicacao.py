@@ -47,105 +47,106 @@ class PegarCartela(APIView):
 
         # Encontrar um jogador já cadastrado localmente por perfil
         token = request.headers['Authorization'].split("Token ")[1]
-        jogador = Jogador.objects.filter(usuario_token=token).first()
-        nome = ""
+        jogador = Jogador.objects.select_for_update().filter(usuario_token=token).first()
+        with transaction.atomic():
+            nome = ""
 
-        # Formatando o dado perfil vindo do front para eliminar a url, @ e /, alem de forçar minusculo
-        '''
-        if not jogador.instagram and perfil:
-            if perfil.startswith("@"):
-                perfil = perfil[1:]
-            if "/" in perfil:
-                perfil = perfil.split("/www.instagram.com/")[1].split("/")[0]
-            perfil = perfil.lower()
-            jogador.instagram = perfil
-            jogador.save()
-        '''
-        agora = datetime.datetime.now()
-
-        configuracao = Configuracao.objects.last()
-        # Buscando próxima partida
-        partidas = Partida.objects.filter(data_partida__gt=agora).order_by("data_partida")
-        if partidas:
-            partida = partidas.first()
-            LOGGER.info(f" Sorteio ESCOLHIDO: {partida.id}")
-            if not configuracao.reter_jogadores:
-                for p in partidas:
-                    inicial = p.numero_cartelas_iniciais
-                    atual = Cartela.objects.filter(partida=p, jogador__isnull=False, cancelado=False).count()
-                    if inicial > atual:
-                        partida = p
-                        LOGGER.info(f" Sorteio MUDADO: {partida.id}")
-                        break
-
-            # atualizar o nome do jogador
-            if not jogador.nome or jogador.nome != jogador.usuario:
-                jogador.nome = jogador.usuario
+            # Formatando o dado perfil vindo do front para eliminar a url, @ e /, alem de forçar minusculo
+            '''
+            if not jogador.instagram and perfil:
+                if perfil.startswith("@"):
+                    perfil = perfil[1:]
+                if "/" in perfil:
+                    perfil = perfil.split("/www.instagram.com/")[1].split("/")[0]
+                perfil = perfil.lower()
+                jogador.instagram = perfil
                 jogador.save()
+            '''
+            agora = datetime.datetime.now()
 
-            # Gerando a cartela
-            cartela_existente = True
+            configuracao = Configuracao.objects.last()
+            # Buscando próxima partida
+            partidas = Partida.objects.filter(data_partida__gt=agora).order_by("data_partida")
+            if partidas:
+                partida = partidas.first()
+                LOGGER.info(f" Sorteio ESCOLHIDO: {partida.id}")
+                if not configuracao.reter_jogadores:
+                    for p in partidas:
+                        inicial = p.numero_cartelas_iniciais
+                        atual = Cartela.objects.filter(partida=p, jogador__isnull=False, cancelado=False).count()
+                        if inicial > atual:
+                            partida = p
+                            LOGGER.info(f" Sorteio MUDADO: {partida.id}")
+                            break
 
-            cartelas = Cartela.objects.filter(jogador=jogador, partida=partida)
-            if not cartelas:
-                cartela_existente = False
-                # Para o caso de não ter cartela desse jogador no próximo sorteio
+                # atualizar o nome do jogador
+                if not jogador.nome or jogador.nome != jogador.usuario:
+                    jogador.nome = jogador.usuario
+                    jogador.save()
 
-                # Verificar se é o primeiro sorteio desse jogador
-                if not Cartela.objects.filter(jogador=jogador).exists():
-                    partida.novos_participantes += 1
-                    partida.save()
+                # Gerando a cartela
+                cartela_existente = True
 
-                # Verificando se o jogador tem crédito de bonus para descontar
-                credito_bonus = 0
-                bonus = CreditoBonus.objects.filter(jogador=jogador,resgatado_em__isnull=False).order_by("id").first()
-                if bonus:
-                    credito_bonus = bonus.valor
-                if partida.chance_vitoria == Decimal(100.0):
-                    cartelas_quantidade = Cartela.objects.filter(partida=partida).count()
-                    if cartelas_quantidade>partida.numero_cartelas_iniciais:
-                        mensagem = "Cartelas esgotadas"
-                        LOGGER.info(mensagem)
-                        return Response(data={"detail": mensagem}, status=404)
-                    else:
-                        nome = jogador.usuario
-                        if not nome:
-                            nome = jogador.nome
-                        cartelas_partida = Cartela.objects.select_for_update().filter(partida=partida)
-                        with transaction.atomic():
-                            codigos_possiveis = range(1,partida.numero_cartelas_iniciais)
-                            codigos_cartelas = [x.codigo for x in cartelas_partida]
-                            codigos_a_sortear = [str(x) for x in codigos_possiveis if str(x) not in codigos_cartelas]
+                cartelas = Cartela.objects.filter(jogador=jogador, partida=partida)
+                if not cartelas:
+                    cartela_existente = False
+                    # Para o caso de não ter cartela desse jogador no próximo sorteio
 
-                            if Cartela.objects.filter(jogador=jogador, partida=partida).exists():
-                                cartela_existente = True
-                            else:
-                                cartela = Cartela.objects.create(partida=partida,
-                                                             codigo=random.choice(codigos_a_sortear),
-                                                             jogador=jogador, nome=nome)
+                    # Verificar se é o primeiro sorteio desse jogador
+                    if not Cartela.objects.filter(jogador=jogador).exists():
+                        partida.novos_participantes += 1
+                        partida.save()
 
-                if cartela_existente:
-                    cartelas_livres = Cartela.objects.filter(partida=partida, jogador__isnull=True)
+                    # Verificando se o jogador tem crédito de bonus para descontar
+                    credito_bonus = 0
+                    bonus = CreditoBonus.objects.filter(jogador=jogador,resgatado_em__isnull=False).order_by("id").first()
+                    if bonus:
+                        credito_bonus = bonus.valor
+                    if partida.chance_vitoria == Decimal(100.0):
+                        cartelas_quantidade = Cartela.objects.filter(partida=partida).count()
+                        if cartelas_quantidade>partida.numero_cartelas_iniciais:
+                            mensagem = "Cartelas esgotadas"
+                            LOGGER.info(mensagem)
+                            return Response(data={"detail": mensagem}, status=404)
+                        else:
+                            nome = jogador.usuario
+                            if not nome:
+                                nome = jogador.nome
+                            cartelas_partida = Cartela.objects.select_for_update().filter(partida=partida)
+                            with transaction.atomic():
+                                codigos_possiveis = range(1,partida.numero_cartelas_iniciais)
+                                codigos_cartelas = [x.codigo for x in cartelas_partida]
+                                codigos_a_sortear = [str(x) for x in codigos_possiveis if str(x) not in codigos_cartelas]
 
-                    if cartelas_livres:
+                                if Cartela.objects.filter(jogador=jogador, partida=partida).exists():
+                                    cartela_existente = True
+                                else:
+                                    cartela = Cartela.objects.create(partida=partida,
+                                                                 codigo=random.choice(codigos_a_sortear),
+                                                                 jogador=jogador, nome=nome)
 
-                        cartela = random.choice(cartelas_livres)
-                        cartela.jogador = jogador
-                        cartela.nome = jogador.nome
-                        cartela.save()
-                        cartelas = [cartela]
-                    else:
-                        mensagem = "Cartelas esgotadas"
-                        LOGGER.info(mensagem)
-                        return Response(data={"detail": mensagem}, status=404)
+                    if cartela_existente:
+                        cartelas_livres = Cartela.objects.filter(partida=partida, jogador__isnull=True)
 
-            return Response(
-                data={"cartela":[int(c.id) for c in cartelas], "bilhete": cartelas[0].hash, "sorteio": int(cartelas[0].partida.id)})
+                        if cartelas_livres:
 
-        else:
-            mensagem = "Não há sorteios disponíveis no momento"
-            LOGGER.info(mensagem)
-            return Response(data={"detail": mensagem}, status=404)
+                            cartela = random.choice(cartelas_livres)
+                            cartela.jogador = jogador
+                            cartela.nome = jogador.nome
+                            cartela.save()
+                            cartelas = [cartela]
+                        else:
+                            mensagem = "Cartelas esgotadas"
+                            LOGGER.info(mensagem)
+                            return Response(data={"detail": mensagem}, status=404)
+
+                return Response(
+                    data={"cartela":[int(c.id) for c in cartelas], "bilhete": cartelas[0].hash, "sorteio": int(cartelas[0].partida.id)})
+
+            else:
+                mensagem = "Não há sorteios disponíveis no momento"
+                LOGGER.info(mensagem)
+                return Response(data={"detail": mensagem}, status=404)
 
 class ConfiguracaoAplicacaoView(APIView):
     def get(self, request):
