@@ -124,11 +124,14 @@ PAGAMENTO
                                     {{ jogador.whatsapp }}
                                 </a>
                             </td>
-                            <form method="post">{% csrf_token %}
+
                             {% for dado in dados %}
                             <td scope="row">
                                 {% if dado %}
                                 Quantidade: {{ dado|length }}
+                                {% if not cartela.recibo %}
+                                    <form method="post">{% csrf_token %}
+                                {% endif %}
                                     {% for cartela in dado %}
                                     <table frame="box">
                                         <tr>
@@ -143,14 +146,13 @@ PAGAMENTO
                                         </tr>
                                     </table>
                                     {% endfor %}
-
+                                {% if not cartela.recibo %}
+                                    <input type="submit" value="enviar" >
+                                    </form>
+                                {% endif %}
                                 {% endif %}
                             </td>
                             {% endfor %}
-                            <input type="submit" value="enviar" >                                 
-                            </form>
-
-
                         </tr>
                     {% endwith %}
                     {% endfor %}
