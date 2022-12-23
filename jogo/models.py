@@ -600,6 +600,10 @@ LINHA_CHOICES = (
     (-1, "Não Informado"), (0, "Linha Superior"), (1, "Linha do Meio"), (2, "Linha Inferior"), (3, "Todas as Linhas")
 )
 
+class ReciboPagamento(models.Model):
+    valor_total = models.DecimalField(max_digits=7,decimal_places=2)
+    pago_em = models.DateTimeField(auto_now_add=True)
+    confirmado_por = models.ForeignKey(Usuario, blank=True, null=True, on_delete=models.PROTECT)
 
 class CartelaVencedora(models.Model):
     partida = models.ForeignKey(Partida, on_delete=models.PROTECT)
@@ -607,9 +611,11 @@ class CartelaVencedora(models.Model):
     premio = models.PositiveSmallIntegerField(choices=PREMIO_CHOICES)
     linha_vencedora = models.SmallIntegerField(default=-1)
     valor_premio = models.FloatField(default=0.0)
-
+    recibo = models.ForeignKey(ReciboPagamento, on_delete=models.PROTECT, blank=True,null=True)
     def __str__(self):
         return str(self.cartela)
+
+
 
 
 class Agendamento(models.Model):

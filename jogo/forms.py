@@ -313,6 +313,9 @@ class JogadoresForm(forms.Form):
     partida = forms.IntegerField(required=False,
                                  widget=forms.NumberInput(
                                      attrs={'class': "form-control form-control-lg form-control-outlined", 'autocomplete': "off"}))
+    whatsapp = forms.CharField(required=False, widget=forms.TextInput(attrs={
+        'class': "form-control form-control-lg form-control-outlined", 'autocomplete': "off"
+    }))
 
 
 class UsuarioForm(forms.Form):
