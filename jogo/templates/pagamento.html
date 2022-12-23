@@ -131,16 +131,11 @@ PAGAMENTO
                                     {% for cartela in dado %}
                                     <table frame="box">
                                         <tr>
-                                            <td>Codigo</td><td>: {{ cartela.cartela.codigo }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Sorteio</td><td>: {{ cartela.cartela.partida.id }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Valor</td><td>:R$ {{ cartela.valor_premio }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Tipo</td><td>: {{ cartela.get_premio_display }}</td>
+                                            <td>Codigo: {{ cartela.cartela.codigo }}</td>
+                                            <td>Sorteio: {{ cartela.cartela.partida.id }}</td>
+
+                                            <td>Valor:R$ {{ cartela.valor_premio }} (
+                                                {% if cartela.premio == 1 %}KU{% elif cartela.premio == 2 %}KI{% else %}KE{% endif %})</td>
                                         </tr>
                                     </table>
                                     {% endfor %}
