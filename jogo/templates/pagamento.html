@@ -128,22 +128,23 @@ PAGAMENTO
                             <td scope="row">
                                 {% if dado %}
                                 Quantidade: {{ dado|length }}
-                                <table frame="box">
                                     {% for cartela in dado %}
-                                    <tr>
-                                        <td>Codigo</td><td>: {{ cartela.cartela.codigo }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Sorteio</td><td>: {{ cartela.cartela.sorteio }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Valor</td><td>: {{ cartela.valor_premio }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Tipo</td><td>: {{ cartela.get_premio_display }}</td>
-                                    </tr>
+                                    <table frame="box">
+                                        <tr>
+                                            <td>Codigo</td><td>: {{ cartela.cartela.codigo }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Sorteio</td><td>: {{ cartela.cartela.partida.id }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Valor</td><td>:R$ {{ cartela.valor_premio }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tipo</td><td>: {{ cartela.get_premio_display }}</td>
+                                        </tr>
+                                    </table>
                                     {% endfor %}
-                                </table>
+
                                 {% endif %}
                             </td>
                             {% endfor %}
