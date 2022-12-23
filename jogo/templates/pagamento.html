@@ -127,20 +127,20 @@ PAGAMENTO
                             {% for dado in dados %}
                             <td scope="row">
                                 {% if dado %}
-                                {{ dado|length }}
-                                <table>
+                                Quantidade: {{ dado|length }}
+                                <table frame="box">
                                     {% for cartela in dado %}
                                     <tr>
-                                        <td>Codigo</td><td>: {{ cartela.cartela.codigo</td>
+                                        <td>Codigo</td><td>: {{ cartela.cartela.codigo }}</td>
                                     </tr>
                                     <tr>
-                                        <td>Sorteio</td><td>: {{ cartela.cartela.sorteio</td>
+                                        <td>Sorteio</td><td>: {{ cartela.cartela.sorteio }}</td>
                                     </tr>
                                     <tr>
-                                        <td>Valor</td><td>: {{ cartela.valor_premio</td>
+                                        <td>Valor</td><td>: {{ cartela.valor_premio }}</td>
                                     </tr>
                                     <tr>
-                                        <td>Tipo</td><td>: {{ cartela.get_premio_display</td>
+                                        <td>Tipo</td><td>: {{ cartela.get_premio_display }}</td>
                                     </tr>
                                     {% endfor %}
                                 </table>
