@@ -19,10 +19,10 @@ def reset_sequence(model_class, value=1):
 def run(*args, **kwargs):
     with connection.cursor() as cursor:
         GrupoCanal.objects.all().delete()
+        Partida.objects.all().delete()
         cursor.execute("delete from jogo_cartelavencedora")
         cursor.execute("delete from jogo_cartela")
         ReciboPagamento.objects.all().delete()
-        Partida.objects.all().delete()
         Automato.objects.all().delete()
         TemplatePartida.objects.all().delete()
 
