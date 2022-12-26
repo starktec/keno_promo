@@ -115,8 +115,6 @@ class PegarCartela(APIView):
                                 cartela_nova = Cartela.objects.create(partida=partida,
                                                              codigo=random.choice(codigos_a_sortear),
                                                              jogador=jogador, nome=nome)
-                        if not cartela_existente:
-                            cartelas = Cartela.objects.filter(id=cartela_nova)
 
                 if cartela_existente:
                     cartelas_livres = Cartela.objects.filter(partida=partida, jogador__isnull=True)
@@ -132,6 +130,8 @@ class PegarCartela(APIView):
                         mensagem = "Cartelas esgotadas"
                         LOGGER.info(mensagem)
                         return Response(data={"detail": mensagem}, status=404)
+                else:
+                    cartelas = Cartela.objects.filter(jogador=jogador, partida=partida)
 
             return Response(
                 data={"cartela":[int(c.id) for c in cartelas], "bilhete": cartelas[0].hash, "sorteio": int(cartelas[0].partida.id)})
