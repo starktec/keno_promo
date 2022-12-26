@@ -21,7 +21,11 @@ def dados_bilhete(request,hash):
         jogador = Jogador.objects.filter(usuario_token=token).first()
         if jogador and Cartela.objects.filter(jogador=jogador,hash=hash, cancelado=False):
             logger.info(f" - Jogador {jogador}")
-            cartela = Cartela.objects.filter(jogador=jogador,hash=hash, cancelado=False).first()
+            configuracao = Configuracao.objects.last()
+            data_liberacao = datetime.datetime.now() - datetime.timedelta(configuracao.liberar_resultado_sorteio_em)
+            cartela = Cartela.objects.filter(
+                jogador=jogador,hash=hash, cancelado=False,
+            ).first()
             cartelas = []
             dado = {
                 "nome":cartela.nome,
@@ -34,9 +38,11 @@ def dados_bilhete(request,hash):
             cartelas.append(dado)
             cartela:Cartela = cartela
 
-            configuracao = Configuracao.objects.last()
             link_vencedor = ""
-            vencedora = CartelaVencedora.objects.filter(cartela=cartela).first()
+            vencedora = CartelaVencedora.objects.filter(
+                cartela=cartela,
+                cartela__partida__data_partida__lte=data_liberacao
+            ).first()
             if vencedora:
                 if configuracao.contato_cartela:
                     #msg = "Oi.%20Acabei%20de%20ganhar%20um%20sorteio%20no%20Recebabonus.%20"
