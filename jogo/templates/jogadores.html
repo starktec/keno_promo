@@ -103,7 +103,9 @@ JOGADORES
                     {% for jogador in jogadores %}
                         <tr>
                             <td scope="row">{{ jogador.id }}</td>
-                            <td scope="row">{{ jogador.nome }}</td>
+                            <td scope="row">{{ jogador.nome }}
+                                {% if jogador.instagram %}(@{{ jogador.instagram }}){% endif %}
+                            </td>
                             <!--<td scope="row">
                                 {% if jogador.instagram %}
                                 <a href="https://www.instagram.com/{{ jogador.instagram }}/" target="_blank">
