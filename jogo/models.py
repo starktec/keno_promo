@@ -192,7 +192,7 @@ TEMPO_CHOICES = (
     (1, "1 Minuto"),(2,'2 Minutos'),(3, "3 Minutos"), (4, "4 Minutos"), (5, "5 Minutos")
 )
 TEMPO_LIBERAR_CHOICES = (
-    (5, "5 Minutos"),(6,'6 Minutos'),(7, "7 Minutos"), (8, "8 Minutos"), (9, "9 Minutos"), (10, "10 Minutos")
+    (3, "3 Minutos"),(4,"4 Minutos"),(5, "5 Minutos"),(6,'6 Minutos'),(7, "7 Minutos"), (8, "8 Minutos"), (9, "9 Minutos"), (10, "10 Minutos")
 )
 
 PARTIDA_TIPOS_CHOICES = (
