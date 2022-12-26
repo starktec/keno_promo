@@ -66,7 +66,7 @@ class PartidaSerializer(serializers.ModelSerializer):
                   "vencedores_kuadra","vencedores_kina","vencedores_keno",
                   'valor_kuadra','valor_kina','valor_keno',
                   "cartelas", 'turnos', 'datahora', 'sorteio_nome', 'linhas_vencedoras_kuadra',
-                  "linhas_vencedoras_kina","linhas_vencedoras_keno","status"]
+                  "linhas_vencedoras_kina","linhas_vencedoras_keno","status","velocidade_sorteio","velocidade_sorteio_online"]
 
 
 class PartidaProximaSerializer(serializers.ModelSerializer):
