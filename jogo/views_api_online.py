@@ -22,7 +22,7 @@ def dados_bilhete(request,hash):
         if jogador and Cartela.objects.filter(jogador=jogador,hash=hash, cancelado=False):
             logger.info(f" - Jogador {jogador}")
             configuracao = Configuracao.objects.last()
-            data_liberacao = datetime.datetime.now() - datetime.timedelta(configuracao.liberar_resultado_sorteio_em)
+            data_liberacao = datetime.datetime.now() + datetime.timedelta(configuracao.liberar_resultado_sorteio_em)
             cartela = Cartela.objects.filter(
                 jogador=jogador,hash=hash, cancelado=False,
             ).first()
@@ -41,7 +41,7 @@ def dados_bilhete(request,hash):
             link_vencedor = ""
             vencedora = CartelaVencedora.objects.filter(
                 cartela=cartela,
-                cartela__partida__data_partida__lte=data_liberacao
+                cartela__partida__data_partida__gte=data_liberacao
             ).first()
             if vencedora:
                 if configuracao.contato_cartela:
