@@ -41,7 +41,7 @@ def dados_bilhete(request,hash):
             link_vencedor = ""
             vencedora = CartelaVencedora.objects.filter(
                 cartela=cartela,
-                cartela__partida__data_partida__gte=data_liberacao
+                cartela__partida__data_partida__lte=data_liberacao
             ).first()
             if vencedora:
                 if configuracao.contato_cartela:
