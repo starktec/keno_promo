@@ -129,6 +129,9 @@ class Configuracao(models.Model):
     incluir_apelido = models.BooleanField(default=True)
     mensagem_whatsapp = models.CharField(blank=True,null=True, max_length=255)
 
+    velocidade_sorteio = models.PositiveIntegerField(default=3000)
+    velocidade_sorteio_online = models.PositiveIntegerField(default=3000)
+
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
         if not self.id:

@@ -40,6 +40,16 @@ class PartidaSerializer(serializers.ModelSerializer):
     linhas_vencedoras_kina = serializers.JSONField(source="linhas_vencedoras_kina_json")
     linhas_vencedoras_keno = serializers.JSONField(source="linhas_vencedoras_keno_json")
     status = serializers.SerializerMethodField()
+    velocidade_sorteio = serializers.SerializerMethodField()
+    velocidade_sorteio_online = serializers.SerializerMethodField()
+
+    def get_velocidade_sorteio(self):
+        configuracao = Configuracao.objects.last()
+        return int(configuracao.velocidade_sorteio)
+
+    def get_velocidade_sorteio_online(self):
+        configuracao = Configuracao.objects.last()
+        return int(configuracao.velocidade_sorteio_online)
 
     def get_status(self,partida:Partida):
         agora = datetime.now()
