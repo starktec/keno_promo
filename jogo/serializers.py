@@ -43,11 +43,11 @@ class PartidaSerializer(serializers.ModelSerializer):
     velocidade_sorteio = serializers.SerializerMethodField()
     velocidade_sorteio_online = serializers.SerializerMethodField()
 
-    def get_velocidade_sorteio(self):
+    def get_velocidade_sorteio(self, obj):
         configuracao = Configuracao.objects.last()
         return int(configuracao.velocidade_sorteio)
 
-    def get_velocidade_sorteio_online(self):
+    def get_velocidade_sorteio_online(self, obj):
         configuracao = Configuracao.objects.last()
         return int(configuracao.velocidade_sorteio_online)
 
