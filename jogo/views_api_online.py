@@ -40,10 +40,10 @@ def dados_bilhete(request,hash):
             if vencedora:
                 if configuracao.contato_cartela:
                     #msg = "Oi.%20Acabei%20de%20ganhar%20um%20sorteio%20no%20Recebabonus.%20"
-                    msg = "https://api.whatsapp.com/send?phone=5562992911658&text=Ol%C3%A1!%20Sou%20o%20(a)%20mais%20novo%20(a)%20ganhador%20(a)%20do%20Receba%20B%C3%B4nus!%20%0A%0A"
-                    sorteio_text = "-%20N%C3%BAmero%20do%20sorteio%20premiado:%20%0A"
-                    codigo_text = "-%20C%C3%B3digo:%0A"
-                    apelido_text = "-%20Apelido:%0A"
+                    msg = "Ol%C3%A1!%20Sou%20o%20(a)%20mais%20novo%20(a)%20ganhador%20(a)%20do%20Receba%20B%C3%B4nus!%20%0A%0A"
+                    sorteio_text = "-%20N%C3%BAmero%20do%20sorteio%20premiado:%20"
+                    codigo_text = "-%20C%C3%B3digo:%20"
+                    apelido_text = "-%20Apelido:%20"
                     valor_text = "-%20Valor%20do%20pr%C3%AAmio:%20R$"
                     final_text = "%0A%0AComo%20fa%C3%A7o%20para%20receber%20o%20meu%20b%C3%B4nus?"
                     if configuracao.mensagem_whatsapp:
@@ -51,13 +51,13 @@ def dados_bilhete(request,hash):
                     link_vencedor = f"https://api.whatsapp.com/send/?phone={configuracao.contato_cartela}&text={msg}"
                     complemento = []
                     if configuracao.incluir_sorteio:
-                        complemento.append(f"{sorteio_text}{cartela.partida.id}")
+                        complemento.append(f"{sorteio_text}{cartela.partida.id}%0A")
                     if configuracao.incluir_codigo:
-                        complemento.append(f"{codigo_text}{cartela.codigo}")
+                        complemento.append(f"{codigo_text}{cartela.codigo}%0A")
                     if configuracao.incluir_apelido:
-                        complemento.append(f"{apelido_text}{cartela.jogador.usuario}")
+                        complemento.append(f"{apelido_text}{cartela.jogador.usuario}%0A")
                     if configuracao.incluir_valor:
-                        complemento.append(f"{valor_text}{vencedora.valor_premio}")
+                        complemento.append(f"{valor_text}{vencedora.valor_premio}%0A")
 
                     if complemento:
                         link_vencedor += "".join(complemento)
