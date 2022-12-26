@@ -112,9 +112,10 @@ class PegarCartela(APIView):
                             if Cartela.objects.filter(jogador=jogador, partida=partida).exists():
                                 cartela_existente = True
                             else:
-                                cartelas = Cartela.objects.create(partida=partida,
+                                cartela_nova = Cartela.objects.create(partida=partida,
                                                              codigo=random.choice(codigos_a_sortear),
                                                              jogador=jogador, nome=nome)
+                                cartelas = Cartela.objects.filter(id=cartela_nova)
 
                 if cartela_existente:
                     cartelas_livres = Cartela.objects.filter(partida=partida, jogador__isnull=True)
