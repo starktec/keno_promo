@@ -454,8 +454,8 @@ def pagamento(request):
                     vencedores = vencedores.filter(cartela__partida__id=form.cleaned_data['partida'])
                 if 'nome_jogador' in form.cleaned_data and form.cleaned_data['nome_jogador']:
                     vencedores = vencedores.filter(cartela__jogador__nome__icontains=form.cleaned_data['nome_jogador'])
-                if 'whatsapp' in form.cleaned_data and form.cleaned_data['nome_jogador']:
-                    vencedores = vencedores.filter(cartela__jogador__whatsapp__icontains=form.cleaned_data['nome_jogador'])
+                if 'whatsapp' in form.cleaned_data and form.cleaned_data['whatsapp']:
+                    vencedores = vencedores.filter(cartela__jogador__whatsapp__icontains=form.cleaned_data['whatsapp'])
             else:
                 print(form.errors)
         total_dados = vencedores.count()
