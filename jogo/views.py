@@ -309,7 +309,8 @@ def ganhadores(request):
 
 
         partidas_vencedores = {}
-        total_encontrados = vencedores.count()
+        ids_encontrados = [x.id for x in vencedores]
+        total_encontrados = CartelaVencedora.objects.filter(id__in=ids_encontrados).distinct("cartela__jogador").count()
 
         kuadra, kina, keno, acumulado = (0, 0, 0, 0)
         partidas = []
@@ -343,7 +344,7 @@ def ganhadores(request):
         proxima_pagina = int(pagina) + 1
         pagina_anterior = int(pagina) - 1
 
-        total_cartelas_vencedoras = CartelaVencedora.objects.count()
+        total_cartelas_vencedoras = CartelaVencedora.objects.distinct("cartela__jogador").count()
         total_jogadores = Jogador.objects.count()
         total_estatistica = f"{total_cartelas_vencedoras}/{total_jogadores} ({round((total_cartelas_vencedoras/total_jogadores)*100.0,2)}%)"
 
