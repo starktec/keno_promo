@@ -345,7 +345,7 @@ def ganhadores(request):
         pagina_anterior = int(pagina) - 1
 
         total_cartelas_vencedoras = CartelaVencedora.objects.distinct("cartela__jogador").count()
-        total_jogadores = Jogador.objects.count()
+        total_jogadores = Jogador.objects.filter(cartela__isnull==False).count()
         total_estatistica = f"{total_cartelas_vencedoras}/{total_jogadores} ({round((total_cartelas_vencedoras/total_jogadores)*100.0,2)}%)"
 
         if ultima_pagina == 0:
@@ -373,31 +373,6 @@ def jogadores(request):
         if request.method == "POST":
             form = JogadoresForm(request.POST)
             if form.is_valid():
-                """
-                if 'data_inicio' in form.cleaned_data and form.cleaned_data['data_inicio']:
-                    data_inicio = datetime.datetime.combine(
-                        datetime.datetime.strptime(form.cleaned_data['data_inicio'], "%d/%m/%Y"),
-                        datetime.time.min
-                    )
-                    jogadores = jogadores.filter(cadastrado_em__gte=data_inicio)
-                    if 'data_fim' not in form.cleaned_data or not form.cleaned_data['data_fim']:
-                        data_fim = datetime.datetime.combine(
-                            data_inicio, datetime.time.max
-                        )
-                        jogadores = jogadores.filter(cadastrado_em__lte=data_fim)
-
-                if 'data_fim' in form.cleaned_data and form.cleaned_data['data_fim']:
-                    data_fim = datetime.datetime.combine(
-                        datetime.datetime.strptime(form.cleaned_data['data_fim'], "%d/%m/%Y"),
-                        datetime.time.max
-                    )
-                    jogadores = jogadores.filter(cadastrado_em__lte=data_fim)
-                    if 'data_inicio' not in form.cleaned_data or not form.cleaned_data['data_inicio']:
-                        data_inicio = datetime.datetime.combine(
-                            data_fim, datetime.time.min
-                        )
-                        jogadores.filter(cadastrado_em_gte=data_inicio)
-                """
                 if 'partida' in form.cleaned_data and form.cleaned_data['partida']:
                     filtro.append(f"p.id={form.cleaned_data['partida']}")
                 if 'nome_jogador' in form.cleaned_data and form.cleaned_data['nome_jogador']:
@@ -431,10 +406,11 @@ def jogadores(request):
         pagina_anterior = pagina - 1
         total_partidas = Partida.objects.all()
         partidas = [x.id for x in total_partidas.order_by("id")]
+        sem_cartela = Jogador.objects.filter(cartela__isnull=True).count()
 
         return render(request,'jogadores.html',{'jogadores':jogadores,'form':form,'pagina_atual': pagina,'ultima_pagina':ultima_pagina,'proxima_pagina': proxima_pagina,
                                                 'pagina_anterior': pagina_anterior,'pagina_anterior':pagina_anterior,'total_dados':total_dados,
-                                                "partidas":partidas[-50:],"resultado":resultado_total,"total_partidas":total_partidas})
+                                                "partidas":partidas[-50:],"resultado":resultado_total,"total_partidas":total_partidas, "sem_cartela":sem_cartela})
     return HttpResponse(status=403)
 
 
