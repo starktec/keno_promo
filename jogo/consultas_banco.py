@@ -136,6 +136,7 @@ def estatisticas_jogadores(filtro, vitorias=-1):
             jogadores[row[0]].append(row[1])
         else:
             jogadores[row[0]] = [row[1]]
+    jogadores_vencedores = len(jogadores.keys())
 
     for row in jogadores_geral:
         if row[0] in jogadores.keys():
@@ -151,4 +152,4 @@ def estatisticas_jogadores(filtro, vitorias=-1):
             if vitorias == -1:
                 jogadores[k] = [v]
 
-    return jogadores, len(jogadores_vitorias)
+    return jogadores, jogadores_vencedores
