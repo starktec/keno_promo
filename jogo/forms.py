@@ -4,7 +4,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from jogo.choices import StatusCartelaChoice
 
-from jogo.consts import NamesValidations, NumeroVitorias
+from jogo.consts import NamesValidations, NumeroVitorias, SituacaoPagamento
 from jogo.models import ConfiguracaoAplicacao, TemplatePartida, Usuario, Partida, PARTIDA_TIPOS_CHOICES, \
     Configuracao, TEMPO_CHOICES, TEMPO_LIBERAR_CHOICES, TEMPO_MINIMO_ANTECIPADO, BotaoAplicacao
 from jogo.utils import testa_horario
@@ -299,6 +299,10 @@ class GanhadoresForm(forms.Form):
     partida = forms.IntegerField(required=False,
                                  widget=forms.NumberInput(
                                      attrs={'class': "form-control form-control-lg form-control-outlined", 'autocomplete': "off"}))
+    situacao = forms.ChoiceField(
+        widget=forms.Select(
+            attrs={'class': "form-select-lg form-control form-control-outlined", 'autocomplete': "off"}),
+        choices=SituacaoPagamento.choices, required=False, initial=SituacaoPagamento.TODAS)
 
 class JogadoresForm(forms.Form):
     """

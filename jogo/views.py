@@ -295,9 +295,17 @@ def ganhadores(request):
                         )
 
                 vencedores = vencedores.filter(partida__data_partida__gte=data_inicio, partida__data_partida__lte=data_fim)
+
                 if 'partida' in form.cleaned_data and form.cleaned_data['partida']:
                     vencedores = CartelaVencedora.objects.filter(
                         partida__id=form.cleaned_data['partida'], partida__data_partida__lte=data_liberacao)
+
+                if "situacao" in form.cleaned_data:
+                    if form.cleaned_data['situacao'] == 0:
+                        vencedores = vencedores.filter(recibo__isnull=True)
+                    elif form.cleaned_data['situacao'] == 1:
+                        vencedores = vencedores.filter(recibo__isnull=False)
+
 
         partidas_vencedores = {}
 
@@ -333,13 +341,20 @@ def ganhadores(request):
         proxima_pagina = int(pagina) + 1
         pagina_anterior = int(pagina) - 1
 
+        total_cartelas_vencedoras = CartelaVencedora.objects.count()
+        total_jogadores = Jogador.objects.count()
+        total_estatistica = f"{total_cartelas_vencedoras}/{total_jogadores} ({round((total_cartelas_vencedoras/total_jogadores)*100.0,2)}%)"
+
         if ultima_pagina == 0:
             ultima_pagina = 1
+
+
         return render(request, 'ganhadores.html',
                       {'partidas': partidas_vencedores, 'pagina_atual': pagina, 'proxima_pagina': proxima_pagina,
                        'pagina_anterior': pagina_anterior, 'ultima_pagina': ultima_pagina, 'flag': post, 'form': form,
-                       'kuadra': kuadra, 'kina': kina,
-                       'keno': keno, 'acumulado': acumulado, 'total': total,
+                       'kuadra': kuadra, 'kina': kina,"total_encontrados":total_dados,
+                       'keno': keno, 'acumulado': acumulado, 'total': total,"total_ganhadores":total_estatistica,
+
                        })
     return HttpResponse(status=403)
 
