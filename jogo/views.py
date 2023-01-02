@@ -412,7 +412,8 @@ def jogadores(request):
         total_dados = jogadores.count()
         ultima_pagina = 1
 
-        jogadores_total,resultado_vitorias = estatisticas_jogadores(filtro, vitorias)
+        jogadores_total = estatisticas_jogadores(filtro, vitorias)
+        resultado_vitorias = CartelaVencedora.objects.distinct("cartela__jogador").count()
 
         if (total_dados != 0 and itens_pagina != 0):
             ultima_pagina = int(math.ceil(total_dados / itens_pagina))
