@@ -429,11 +429,12 @@ def jogadores(request):
 
         proxima_pagina = pagina + 1
         pagina_anterior = pagina - 1
-        partidas = [x.id for x in Partida.objects.all().order_by("id")]
+        total_partidas = Partida.objects.all()
+        partidas = [x.id for x in total_partidas.order_by("id")]
 
         return render(request,'jogadores.html',{'jogadores':jogadores,'form':form,'pagina_atual': pagina,'ultima_pagina':ultima_pagina,'proxima_pagina': proxima_pagina,
                                                 'pagina_anterior': pagina_anterior,'pagina_anterior':pagina_anterior,'total_dados':total_dados,
-                                                "partidas":partidas[-50:],"resultado":resultado_total})
+                                                "partidas":partidas[-50:],"resultado":resultado_total,"total_partidas":total_partidas})
     return HttpResponse(status=403)
 
 
