@@ -369,7 +369,7 @@ def jogadores(request):
         jogadores = Jogador.objects.all()
         itens_pagina = 50
         filtro=[]
-        vitorias=1
+        vitorias=-1
         if request.method == "POST":
             form = JogadoresForm(request.POST)
             if form.is_valid():
