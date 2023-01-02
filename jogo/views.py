@@ -413,7 +413,7 @@ def jogadores(request):
         ultima_pagina = 1
 
         jogadores_total = estatisticas_jogadores(filtro, vitorias)
-        resultado_vitorias = CartelaVencedora.objects.distinct("cartela__jogador").count()
+        resultado_total = len(jogadores_total.keys())
 
         if (total_dados != 0 and itens_pagina != 0):
             ultima_pagina = int(math.ceil(total_dados / itens_pagina))
@@ -433,7 +433,7 @@ def jogadores(request):
 
         return render(request,'jogadores.html',{'jogadores':jogadores,'form':form,'pagina_atual': pagina,'ultima_pagina':ultima_pagina,'proxima_pagina': proxima_pagina,
                                                 'pagina_anterior': pagina_anterior,'pagina_anterior':pagina_anterior,'total_dados':total_dados,
-                                                "partidas":partidas[-50:],"resultado":resultado_vitorias})
+                                                "partidas":partidas[-50:],"resultado":resultado_total})
     return HttpResponse(status=403)
 
 
