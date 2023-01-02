@@ -22,6 +22,17 @@ JOGADORES
                                 </div>
                             </div>
                         </div>
+
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 container-input-create-secundary">
+                            <div class="form-group">
+                                <div class="form-control-wrap">
+                                    {{ form.whatsapp }}
+                                    <label class="form-label-outlined label-search" for="id_whatsapp">Whatsapp</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--
                         <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 container-input-create-secundary">
                             <div class="form-group">
                                 <div class="form-control-wrap">
@@ -45,7 +56,7 @@ JOGADORES
                                 </div>
                             </div>
                         </div>
-
+                        -->
                         <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 container-input-create-secundary">
                             <div class="form-group">
                                 <div class="form-control-wrap">
@@ -53,7 +64,16 @@ JOGADORES
                                 <label class="form-label-outlined label-search" for="id_partida">Partida</label>
                                 </div>
                             </div>
-                        </div> 
+                        </div>
+
+                        <div class="col-lg-4 col-sm-6 container-input-create">
+                            <div class="form-group">
+                                <div class="form-control-wrap">
+                                    {{ form.num_vitorias }}
+                                    <label class="form-label-outlined label-search" for="id_num_vitorias">Número de Vitórias</label>
+                                </div>
+                            </div>
+                        </div>
                         <div class="col-12 col-sm-12 col-md-12 col-lg-8 col-xl-8 container-input-search text-right form-group">
                             <button onclick=test(1) class="col-3 col-sm-3 col-md-2 col-lg-2 col-xl-2 justify-content-center btn btn-success btn-search form-control-lg">
                                 <em class="icon ni ni-search"></em>
@@ -70,7 +90,7 @@ JOGADORES
     <!-------------------------------Cards de Status-------------------------------->
     <div class="row my-row">
 
-        <div class="col-sm-6 col-md-6 col-lg-3 ">
+        <div class="col-sm-6 col-md-6 col-lg-6 ">
             <div class="card cards-status">
                 <div class="row text-center">
                     <em class="icon ni ni-sign-mxn icon-card color-card-on-line"></em>
@@ -81,12 +101,24 @@ JOGADORES
                 </div>
             </div>
         </div>
+
+        <div class="col-sm-6 col-md-6 col-lg-6 ">
+            <div class="card cards-status">
+                <div class="row text-center">
+                    <em class="icon ni ni-sign-mxn icon-card color-card-on-line"></em>
+                    <h6 class="title-card color-card-pos">Vencedores Encontrados</h6>
+                </div>
+                <div class="row">
+                    <h6 class="col-12 text-right subtitle-card color-card-pos">{{ resultado }}</h6>
+                </div>
+            </div>
+        </div>
     </div>
     <!-------------------------------tabela de generica de cambistas-------------------------------->
     <div class="row my-row">
         <div class="col-12">
             <div class="card card-table table-responsive-xl overflow-auto">
-                <table id="tabelaJogadores" class="table position-relative table-content">
+                <table id="" class="table position-relative table-content">
                     <thead class="thead-dark text-center thead-content">
                         <tr>
                             <th scope="col"></th>
@@ -94,17 +126,18 @@ JOGADORES
                             <!--<th scope="col">Instagram</th>-->
                             <th scope="col">Whatsapp</th>
                             <th scope="col">Sorteios</th>
+                            <th scope="col">Vitórias</th>
                             <th scope="col">Sorteios que participou</th>
-                            <th scope="col">Status</th>
+                            <!--<th scope="col">Status</th>-->
                             <th scope="col">Senha</th>
                         </tr>
                     </thead>
                     <tbody class="text-center tbody-content">
-                    {% for jogador in jogadores %}
+                    {% for jogador_id,dados in jogadores.items %}
                         <tr>
-                            <td scope="row">{{ jogador.id }}</td>
-                            <td scope="row">{{ jogador.nome }}
-                                {% if jogador.instagram %}(@{{ jogador.instagram }}){% endif %}
+                            <td scope="row">{{ jogador_id }}</td>
+                            <td scope="row">{{ dados.1 }}
+                                {% if dados.2 %}(@{{ dados.2 }}){% endif %}
                             </td>
                             <!--<td scope="row">
                                 {% if jogador.instagram %}
@@ -115,13 +148,17 @@ JOGADORES
                             </td>-->
                             <td scope="row">
                                 <a href="https://wa.me/55{{ jogador.whatsapp }}/" target="_blank">
-                                    {{ jogador.whatsapp }}
+                                    {{ dados.3 }}
                                 </a>
                             </td>
-                            <td scope="row">{{ jogador.sorteios_participou_count }}
+                            <td scope="row">{{ dados.5 }} ({{ dados.4 }} cartelas)</td>
+                            <td scope="row">{{ dados.0 }}</td>
                             <td scope="row" class="celula-media">
                                 <a class="btn btn-danger btn-create-secondary btn-checkbox btn-informacoes" data-toggle="modal" data-target="#modal-informacao-{{ jogador.id }}">
-                                    <p>Sorteios Participados</p>
+                                    <p>Participação nos últimos Sorteios</p>
+                                </a>
+                                <a class="btn btn-danger btn-create-secondary btn-checkbox btn-informacoes" data-toggle="modal" data-target="#modal-todossorteios-{{ jogador.id }}">
+                                    <p>Todos Sorteios Participados</p>
                                 </a>
                                 <div class="modal fade" tabindex="-1" id="modal-informacao-{{ jogador.id }}" style="display: none;" aria-hidden="true">
                                     <div class="modal-dialog modal-lg" role="document">
@@ -130,13 +167,13 @@ JOGADORES
                                                 <div class="col-sm-12 container-information-franquias">
                                                     <div class="col-12 card-infomation-franquias">
                                                         <div class="row justify-content-between itens-infomation-franquias">
-                                                            <h2 class="col-12 title-bolas">{{ jogador.nome }} - Sorteios Participados</h2>
+                                                            <h2 class="col-12 title-bolas">{{ dados.1 }} - Participação nos últimos Sorteios</h2>
                                                         </div>
                                                         <a href="#" class="close close-modal" data-dismiss="modal" aria-label="Close">
                                                             <em class="icon ni ni-cross"></em>
                                                         </a>
                                                         <div class="row itens-infomation-franquias">
-                                                        {% with participou=jogador.sorteios_participou %}
+                                                        {% with participou=dados.6 %}
                                                             {% for partida in partidas %}
                                                                 <div class="content-bolas-sorteadas">
                                                                 {% if partida in participou %}
@@ -154,16 +191,45 @@ JOGADORES
                                         </div>
                                     </div>
                                 </div>
+                                <div class="modal fade" tabindex="-1" id="modal-todossorteios-{{ jogador.id }}" style="display: none;" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg" role="document">
+                                        <div class="modal-content">
+                                            <div class="row modal-body">
+                                                <div class="col-sm-12 container-information-franquias">
+                                                    <div class="col-12 card-infomation-franquias">
+                                                        <div class="row justify-content-between itens-infomation-franquias">
+                                                            <h2 class="col-12 title-bolas">{{ dados.1 }} - Todos os Sorteios Participados</h2>
+                                                        </div>
+                                                        <a href="#" class="close close-modal" data-dismiss="modal" aria-label="Close">
+                                                            <em class="icon ni ni-cross"></em>
+                                                        </a>
+                                                        <div class="row itens-infomation-franquias">
+                                                        {% with participou=dados.6 %}
+                                                            {% for partida in participou %}
+                                                                <div class="content-bolas-sorteadas">
+                                                                    <p class="bolas-sorteadas">{{ partida }}</p>
+                                                                </div>
+                                                            {% endfor %}
+                                                        {% endwith %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
+                            <!--
                             <td>
                                 {% if jogador.user.is_active %}
-                                <a href="/jogador/{{ jogador.id }}/status/0/">DESATIVAR</a>
+                                <a href="/jogador/{{ jogador_id }}/status/0/">DESATIVAR</a>
                                 {% else %}
-                                <a href="/jogador/{{ jogador.id }}/status/1/">ATIVAR</a>
+                                <a href="/jogador/{{ jogador_id }}/status/1/">ATIVAR</a>
                                 {% endif %}
                             </td>
+                            -->
                             <td>
-                                <form id="form{{ jogador.id }}" method="post" action="/jogador/{{ jogador.id }}/senha/">
+                                <form id="form{{ jogador_id }}" method="post" action="/jogador/{{ jogador_id }}/senha/">
                                     {% csrf_token %}
                                     Nova: <input type="text" name="senha" size="10"/>
                                     <input type="submit" value="enviar" >

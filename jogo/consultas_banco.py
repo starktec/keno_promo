@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta,time
 
-from jogo.models import Partida,  Configuracao
-from django.db.models import Sum
+from jogo.consts import NumeroVitorias
 from django.db import connection, transaction
 
 def dictfetchall(cursor):
@@ -57,3 +56,99 @@ def cartelas_sql_linhas(partida_id):
             ]
 
         return dados
+
+
+def estatisticas_jogadores(filtro, vitorias=-1):
+    jogadores_geral = []
+    jogadores_vitorias = []
+    jogadores_partidas = {}
+    with connection.cursor() as cursor:
+        sql = """
+            select j.id,j.nome,j.instagram,j.whatsapp,
+            count(c.id) as cartelas, count(distinct p.id) as sorteios
+            from jogo_jogador as j
+            inner join jogo_cartela as c
+            on c.jogador_id=j.id
+            inner join jogo_partida as p
+            on p.id=c.partida_id 
+        """
+        if filtro:
+            sql+=f"WHERE {' AND '.join(filtro)}"
+        sql += " group by j.id"
+
+        cursor.execute(sql)
+        jogadores_geral = cursor.fetchall()
+
+    with connection.cursor() as cursor:
+        sql = """
+            select j.id, p.id  
+            from jogo_jogador as j
+            inner join jogo_cartela as c
+            on c.jogador_id=j.id
+            inner join jogo_partida as p on p.id=c.partida_id 
+        """
+        if filtro:
+            sql+=f"WHERE {' AND '.join(filtro)}"
+
+        sql += " order by j.id"
+        cursor.execute(sql)
+        jogadores_partidas_sql = cursor.fetchall()
+        for j in jogadores_partidas_sql:
+            if j[0] in jogadores_partidas.keys():
+                jogadores_partidas[j[0]].append(j[1])
+            else:
+                jogadores_partidas[j[0]]=[j[1]]
+
+    with connection.cursor() as cursor:
+        sql = """
+            select j.id,count(distinct cv.id) as vitorias 
+            from jogo_jogador as j
+            inner join jogo_cartela as c
+            on c.jogador_id=j.id
+            left join jogo_cartelavencedora as cv
+            on c.id=cv.cartela_id
+            inner join jogo_partida as p
+            on p.id=c.partida_id 
+        """
+        if filtro:
+            sql+=f"WHERE {' AND '.join(filtro)}"
+
+        sql += " group by j.id "
+
+        if vitorias == NumeroVitorias.NENHUMA:
+            sql += " HAVING count(distinct cv.id)=0 "
+        elif vitorias == NumeroVitorias.MINIMO_1:
+            sql += " HAVING count(distinct cv.id)>0 "
+        elif vitorias == NumeroVitorias.ATE_5:
+            sql += " HAVING count(distinct cv.id)>0 and count(distinct cv.id)<6 "
+        elif vitorias == NumeroVitorias.ATE_20:
+            sql += " HAVING count(distinct cv.id)>0 and count(distinct cv.id)<21 "
+        elif vitorias == NumeroVitorias.MAIS_20:
+            sql += " HAVING count(distinct cv.id)>20 "
+
+        sql += "order by vitorias desc,count(c.id) desc"
+        cursor.execute(sql)
+        jogadores_vitorias = cursor.fetchall()
+
+    jogadores = {}
+    for row in jogadores_vitorias:
+        if row[0] in jogadores.keys():
+            jogadores[row[0]].append(row[1])
+        else:
+            jogadores[row[0]] = [row[1]]
+
+    for row in jogadores_geral:
+        if row[0] in jogadores.keys():
+            jogadores[row[0]]+=[row[1],row[2],row[3],row[4],row[5]]
+        else:
+            if vitorias==-1:
+                jogadores[row[0]] = [0,row[1],row[2],row[3],row[4],row[5]]
+
+    for k,v in jogadores_partidas.items():
+        if k in jogadores.keys():
+            jogadores[k]+=[v]
+        else:
+            if vitorias == -1:
+                jogadores[k] = [v]
+
+    return jogadores, len(jogadores_vitorias)

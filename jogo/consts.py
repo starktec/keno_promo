@@ -29,6 +29,14 @@ class TipoSolicitacaoRecolhe(TextChoices):
         return dict(cls.choices) 
 
 
+class NumeroVitorias(IntegerChoices):
+    TODOS = -1, "Todos os jogadores"
+    NENHUMA = 0, "Nenhuma"
+    MINIMO_1 = 1, "Pelo menos 1"
+    ATE_5 = 5, "Até 5 vitorias"
+    ATE_20 = 20, "Até 20 vitórias"
+    MAIS_20 = 999, "Mais de 20"
+
 class TipoRedeSocial(TextChoices):
     INSTAGRAM = "Instagram","instagram"
     FACEBOOK = "Facebook","facebook"

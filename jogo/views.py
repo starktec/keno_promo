@@ -1,6 +1,7 @@
 import datetime
 import json
 import time
+from collections import OrderedDict
 from datetime import date, timedelta
 import random
 from decimal import Decimal
@@ -8,6 +9,7 @@ import csv
 import math
 import logging
 
+from jogo.consultas_banco import estatisticas_jogadores
 from jogo.permissions import EhJogador
 from instagrapi import Client
 from instagrapi.exceptions import ClientLoginRequired, UserNotFound
@@ -348,9 +350,12 @@ def jogadores(request):
         form = JogadoresForm()
         jogadores = Jogador.objects.all()
         itens_pagina = 50
+        filtro=[]
+        vitorias=1
         if request.method == "POST":
             form = JogadoresForm(request.POST)
             if form.is_valid():
+                """
                 if 'data_inicio' in form.cleaned_data and form.cleaned_data['data_inicio']:
                     data_inicio = datetime.datetime.combine(
                         datetime.datetime.strptime(form.cleaned_data['data_inicio'], "%d/%m/%Y"),
@@ -374,34 +379,42 @@ def jogadores(request):
                             data_fim, datetime.time.min
                         )
                         jogadores.filter(cadastrado_em_gte=data_inicio)
+                """
                 if 'partida' in form.cleaned_data and form.cleaned_data['partida']:
-                    cartelas = Cartela.objects.filter(partida__id=form.cleaned_data['partida'])
-                    jogadores = jogadores.filter(cartela__in=cartelas)
+                    filtro.append(f"p.id={form.cleaned_data['partida']}")
                 if 'nome_jogador' in form.cleaned_data and form.cleaned_data['nome_jogador']:
-                    jogadores = jogadores.filter(nome__icontains=form.cleaned_data['nome_jogador'])
+                    filtro.append(f"j.nome ilike '%{form.cleaned_data['nome_jogador']}%'")
+                if 'whatsapp' in form.cleaned_data and form.cleaned_data['whatsapp']:
+                    filtro.append(f"j.whatsapp ilike '%{form.cleaned_data['whatsapp']}%'")
+                if 'num_vitorias' in form.cleaned_data:
+                    vitorias = int(form.cleaned_data['num_vitorias'])
+
             else:
                 print(form.errors)
         total_dados = jogadores.count()
         ultima_pagina = 1
-        jogadores = jogadores.annotate(num_cartelas = Count('cartela')).order_by('-num_cartelas')
+
+        jogadores_total,resultado_vitorias = estatisticas_jogadores(filtro, vitorias)
+
         if (total_dados != 0 and itens_pagina != 0):
             ultima_pagina = int(math.ceil(total_dados / itens_pagina))
         if request.GET.get("pagina"):
             pagina = int(request.GET["pagina"])
             numeroF = int(int(pagina) * itens_pagina)
             numeroI = numeroF - itens_pagina
-            jogadores = jogadores[numeroI:numeroF]
+            jogadores = OrderedDict(itertools.islice(jogadores_total.items(), numeroI,numeroF))
 
         else:
             pagina = 1
-            jogadores = jogadores[0:itens_pagina]
+            jogadores = dict(itertools.islice(jogadores_total.items(), 0,itens_pagina))
 
         proxima_pagina = pagina + 1
         pagina_anterior = pagina - 1
         partidas = [x.id for x in Partida.objects.all().order_by("id")]
+
         return render(request,'jogadores.html',{'jogadores':jogadores,'form':form,'pagina_atual': pagina,'ultima_pagina':ultima_pagina,'proxima_pagina': proxima_pagina,
                                                 'pagina_anterior': pagina_anterior,'pagina_anterior':pagina_anterior,'total_dados':total_dados,
-                                                "partidas":partidas[-50:]})
+                                                "partidas":partidas[-50:],"resultado":resultado_vitorias})
     return HttpResponse(status=403)
 
 

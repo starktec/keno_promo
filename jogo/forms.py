@@ -4,7 +4,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from jogo.choices import StatusCartelaChoice
 
-from jogo.consts import NamesValidations
+from jogo.consts import NamesValidations, NumeroVitorias
 from jogo.models import ConfiguracaoAplicacao, TemplatePartida, Usuario, Partida, PARTIDA_TIPOS_CHOICES, \
     Configuracao, TEMPO_CHOICES, TEMPO_LIBERAR_CHOICES, TEMPO_MINIMO_ANTECIPADO, BotaoAplicacao
 from jogo.utils import testa_horario
@@ -301,12 +301,14 @@ class GanhadoresForm(forms.Form):
                                      attrs={'class': "form-control form-control-lg form-control-outlined", 'autocomplete': "off"}))
 
 class JogadoresForm(forms.Form):
+    """
     data_inicio = forms.CharField(required=False, widget=forms.TextInput(attrs={'data-date-format': "dd/mm/yyyy",
                                                                                 'class': "form-control date-picker form-control-lg form-control-outlined input-search-financeiro",
                                                                                 'autocomplete': "off"}))
     data_fim = forms.CharField(required=False, widget=forms.TextInput(attrs={'data-date-format': "dd/mm/yyyy",
                                                                              'class': "form-control date-picker form-control-lg form-control-outlined input-search-financeiro",
                                                                              'autocomplete': "off"}))
+    """
     nome_jogador = forms.CharField(required=False, widget=forms.TextInput(attrs={
         'class': "form-control form-control-lg form-control-outlined", 'autocomplete': "off"
     }))
@@ -316,6 +318,9 @@ class JogadoresForm(forms.Form):
     whatsapp = forms.CharField(required=False, widget=forms.TextInput(attrs={
         'class': "form-control form-control-lg form-control-outlined", 'autocomplete': "off"
     }))
+    num_vitorias = forms.ChoiceField(
+        widget=forms.Select(attrs={'class': "form-select-lg form-control form-control-outlined", 'autocomplete': "off"}),
+        choices=NumeroVitorias.choices, required=False, initial=NumeroVitorias.TODOS)
 
 
 class UsuarioForm(forms.Form):

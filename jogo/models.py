@@ -487,6 +487,15 @@ class Jogador(models.Model):
         if credito:
             return credito.get("valor",0)
         return valor
+
+    def vitorias(self):
+        return CartelaVencedora.objects.filter(cartela__jogador=self).count()
+
+    def percentual_vitoria(self):
+        participou = self.sorteios_participou_count()
+        if participou:
+            return f"({self.vitorias()}/{participou})"
+        return "0"
          
 
 class Cartela(models.Model):
