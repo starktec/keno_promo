@@ -9,6 +9,7 @@ import csv
 import math
 import logging
 
+from jogo.consts import SituacaoPagamento
 from jogo.consultas_banco import estatisticas_jogadores
 from jogo.permissions import EhJogador
 from instagrapi import Client
@@ -301,13 +302,14 @@ def ganhadores(request):
                         partida__id=form.cleaned_data['partida'], partida__data_partida__lte=data_liberacao)
 
                 if "situacao" in form.cleaned_data:
-                    if form.cleaned_data['situacao'] == 0:
+                    if int(form.cleaned_data['situacao']) == SituacaoPagamento.PENDENTE:
                         vencedores = vencedores.filter(recibo__isnull=True)
-                    elif form.cleaned_data['situacao'] == 1:
+                    elif int(form.cleaned_data['situacao']) == SituacaoPagamento.PAGO:
                         vencedores = vencedores.filter(recibo__isnull=False)
 
 
         partidas_vencedores = {}
+        total_encontrados = vencedores.count()
 
         kuadra, kina, keno, acumulado = (0, 0, 0, 0)
         partidas = []
@@ -352,7 +354,7 @@ def ganhadores(request):
         return render(request, 'ganhadores.html',
                       {'partidas': partidas_vencedores, 'pagina_atual': pagina, 'proxima_pagina': proxima_pagina,
                        'pagina_anterior': pagina_anterior, 'ultima_pagina': ultima_pagina, 'flag': post, 'form': form,
-                       'kuadra': kuadra, 'kina': kina,"total_encontrados":total_dados,
+                       'kuadra': kuadra, 'kina': kina,"total_encontrados":total_encontrados,
                        'keno': keno, 'acumulado': acumulado, 'total': total,"total_ganhadores":total_estatistica,
 
                        })

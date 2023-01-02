@@ -40,7 +40,7 @@ class NumeroVitorias(IntegerChoices):
 class SituacaoPagamento(IntegerChoices):
     TODAS = -1, "Todas"
     PENDENTE = 0, "Pendente"
-    Pago = 1, "Pago"
+    PAGO = 1, "Pago"
 
 class TipoRedeSocial(TextChoices):
     INSTAGRAM = "Instagram","instagram"
