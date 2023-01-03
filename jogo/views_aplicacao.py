@@ -61,7 +61,7 @@ class PegarCartela(APIView):
                 if configuracao.max_vitorias_jogador>0:
                     vitorias = CartelaVencedora.objects.filter(cartela__jogador=jogador).count()
                     if vitorias >= configuracao.max_vitorias_jogador:
-                        raise serializers.ValidationError(detail="Limite de vitórias atingido")
+                        raise serializers.ValidationError(detail={"detail":"Limite de vitórias atingido"})
 
                 # Buscando próxima partida
                 partidas = Partida.objects.filter(data_partida__gt=agora).order_by("data_partida")
