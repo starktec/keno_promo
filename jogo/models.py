@@ -132,6 +132,8 @@ class Configuracao(models.Model):
     velocidade_sorteio = models.PositiveIntegerField(default=3000)
     velocidade_sorteio_online = models.PositiveIntegerField(default=3000)
 
+    max_vitorias_jogador = models.PositiveSmallIntegerField(default=0)
+
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
         if not self.id:
@@ -798,6 +800,7 @@ class ConfiguracaoAplicacao(models.Model):
     defaultcolorUnderline = ColorField(blank=True, null=True)
     footerText = models.CharField(max_length=255, blank=True, null=True)
     footerImage = models.ImageField(blank=True, null=True, upload_to=configuracao_images_path)
+
 
 class RequisicaoPremioAplicacao(models.Model):
     texto_segue = models.CharField(max_length=255)
