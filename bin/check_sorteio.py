@@ -2,10 +2,10 @@ import psycopg2
 import datetime
 
 conn = psycopg2.connect(
-    host="130.185.238.250",
-    database="keno",
+    host="IP DO BANCO",
+    database="DATABASE",
     user="postgres",
-    password="keno@123"
+    password="SENHA DO BANCO"
 )
 #print(conn)
 partida_id = 0

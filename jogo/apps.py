@@ -11,7 +11,7 @@ class JogoConfig(AppConfig):
     name = 'jogo'
     processou = False
 
-    
+    """
     def ready(self):
         if set(
                 ['jogo_partida','jogo_templatepartida','jogo_configuracao']
@@ -49,4 +49,4 @@ class JogoConfig(AppConfig):
 
             agenda.log("Organizando os grupos websocket")
             agenda.limpar_conexoes_websocket()
-    
+    """

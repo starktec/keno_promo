@@ -179,7 +179,7 @@ def partida_automatica(request):
                     configuracao = Configuracao.objects.last()
                     comprar_cartelas(partida_inicial,configuracao.quantidade_cartelas_compradas)
 
-                    agenda.agendar(partida_inicial)
+                    #agenda.agendar(partida_inicial)
                 return redirect('/partidas/')
         return render(request, "partida_automatizada.html", {'form': form})
     return HttpResponse(status=403)
@@ -588,7 +588,7 @@ def criarpartida(request):
                         comprar_cartelas(partida,numero_cartelas_iniciais)
 
                     # Agendando sorteio
-                    agenda.agendar(partida)
+                    #agenda.agendar(partida)
                     event_tela_partidas()
 
                     return redirect("/partidas/")
@@ -644,9 +644,10 @@ def partida_edit(request, partida_id):
                         partida.save()
 
                         # NOVO AGENDAMENTO
+                        """
                         if not antigadata == novadata:
                             agenda.agendar(partida)
-
+                        """
                         event_tela_partidas()
                         event_bilhete_partida(partida.id)
                         return redirect("/partidas/")
@@ -856,7 +857,7 @@ def sortear_template(request, template_id):
         # comprando cartelas
         configuracao = Configuracao.objects.last()
         comprar_cartelas(p,configuracao.quantidade_cartelas_compradas)
-        agenda.agendar(p)
+        #agenda.agendar(p)
         template.play = True
         template.save()
 

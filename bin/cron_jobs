@@ -1,0 +1,1 @@
+* * * * *   bash   /home/project/keno_promo/bin/sortear.sh >> /home/project/keno_promo/logs/cron.log 2>&1
