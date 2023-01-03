@@ -34,6 +34,7 @@ def dados_bilhete(request,hash):
                 "linha1_lista":cartela.linha1_lista(),
                 "linha2_lista":cartela.linha2_lista(),
                 "linha3_lista":cartela.linha3_lista(),
+                "posicao":int(cartela.posicao),
             }
             cartelas.append(dado)
             cartela:Cartela = cartela
