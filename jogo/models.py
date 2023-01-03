@@ -522,6 +522,7 @@ class Cartela(models.Model):
     comprado_em = models.DateTimeField(auto_now_add=True)
     hash = models.CharField(max_length=30)
     cancelado = models.BooleanField(default=False)
+    posicao = models.IntegerField(default=0)
 
 
     def linha_restante(self, num_linha):

@@ -76,6 +76,7 @@ class Agenda():
         partida_id = partida.id
         try:
             c = Agendamento.objects.create(partida=partida)
+            cartelas_ordenadas_bola = None
             if c:
 
                 # self.agendas[partida.id][1] = True
@@ -257,8 +258,8 @@ class Agenda():
                                                            (cartela_restante, numeros[2].copy(), 2)
                                                            ]
 
-                            cartelas_ordenadas_bola = sorted(cartelas_estrutura, key=lambda x: len(x[1]))[:15]
-                            cartelas_ordenadas.append(cartelas_ordenadas_bola)
+                            cartelas_ordenadas_bola = sorted(cartelas_estrutura, key=lambda x: len(x[1]))
+                            cartelas_ordenadas.append(cartelas_ordenadas_bola[:15])
 
                             if rodada_kuadra:
                                 ##print("KUADRA")
@@ -388,6 +389,21 @@ class Agenda():
                         Cartela.objects.filter(
                             partida=partida,jogador__isnull=True
                         ).exclude(codigo__in=codigos_participantes).delete()
+
+                        # Informando a posição das cartelas
+                        if cartelas_ordenadas_bola:
+                            codigos = [x[0] for x in cartelas_ordenadas_bola]
+                            cartelas_obj = Cartela.objects.filter(codigo__in=codigos, partida=partida)
+                            posicao = 1
+                            cartelas_obj_ord = []
+                            for codigo in codigos:
+                                cartela = cartelas_obj.get(codigo=codigo)
+                                cartela.posicao=posicao
+                                cartelas_obj_ord.append(cartela)
+                                posicao+=1
+                            Cartela.objects.update("codigo",cartelas_obj_ord)
+
+
                     else:
                         partida.em_sorteio = False
                         partida.save()
