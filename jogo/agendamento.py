@@ -401,7 +401,7 @@ class Agenda():
                                 cartela.posicao=posicao
                                 cartelas_obj_ord.append(cartela)
                                 posicao+=1
-                            Cartela.objects.update("codigo",cartelas_obj_ord)
+                            Cartela.objects.bulk_update(cartelas_obj_ord,["posicao"])
 
 
                     else:
