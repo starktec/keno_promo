@@ -10,7 +10,8 @@ from jogo.views import cancelar_template, index, \
 
 from .views import configuracao_visual, jogadores, realtime_data
 from .views_api_media import logo_promo, media_login, nome_server, media_logo, media_favicon, media_fundo
-from .views_api_online import dados_bilhete, get_politicas_de_privacidade_kol, get_regras_kol, proximos_kol, data_hora_servidor, ultimos_ganhadores_kol
+from .views_api_online import dados_bilhete, get_politicas_de_privacidade_kol, get_regras_kol, proximos_kol, \
+    data_hora_servidor, ultimos_ganhadores_kol, ultimos_bilhetes
 from .views_api_tela import resultado_sorteio, proximos, proximos_especiais, historico, status, ultimos_ganhadores
 from .views_aplicacao import CadastroJogador, LoginJogador, PegarCartela, ConfiguracaoAplicacaoView, \
     RequisicaoPremioAplicacaoView
@@ -62,7 +63,8 @@ urlpatterns = [
             path('ultimos_ganhadores/', ultimos_ganhadores_kol),
             path('ultimos_ganhadores/<int:sorteio_id>/', ultimos_ganhadores_kol),
             path('regras/',get_regras_kol),
-            path('politicas_de_privacidade/',get_politicas_de_privacidade_kol)
+            path('politicas_de_privacidade/',get_politicas_de_privacidade_kol),
+            path("ultimos_bilhetes/",ultimos_bilhetes),
         ]
 
     )),

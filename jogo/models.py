@@ -133,6 +133,7 @@ class Configuracao(models.Model):
     velocidade_sorteio_online = models.PositiveIntegerField(default=3000)
 
     max_vitorias_jogador = models.PositiveSmallIntegerField(default=0)
+    numero_cadastro_libera_jogador = models.PositiveSmallIntegerField(default=0)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
@@ -264,6 +265,7 @@ class Partida(models.Model):
     # NOVOS CAMPOS
     chance_vitoria = models.DecimalField(default=100.0, decimal_places=2,max_digits=5)
     numero_cartelas_iniciais = models.PositiveSmallIntegerField(default=500)
+    codigos_escolhidos = ArrayField(models.PositiveIntegerField(), default=list)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
@@ -276,7 +278,7 @@ class Partida(models.Model):
             """
         super().save(force_insert, force_update, using, update_fields)
         # notificar?
-        event_doacoes()
+        #event_doacoes()
 
 
     def cartelas_compradas(self):
@@ -601,7 +603,7 @@ class Cartela(models.Model):
                 self.codigo = str(self.gerar_codigo())
             """
         super().save(force_insert, force_update, using, update_fields)
-        event_doacoes()
+        #event_doacoes()
 
     def __str__(self):
         if self.codigo:

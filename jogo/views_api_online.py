@@ -86,7 +86,29 @@ def dados_bilhete(request,hash):
     else:
         return JsonResponse(data={}, status=403)
 
-
+@require_http_methods(["GET"])
+def ultimos_bilhetes(request):
+    if 'Authorization' in request.headers and "Token" in request.headers['Authorization']:
+        token = request.headers['Authorization'].split("Token ")[1]
+        jogador = Jogador.objects.filter(usuario_token=token).first()
+        cartelas_jogador = Cartela.objects.filter(jogador=jogador, cancelado=False).order_by("-id")
+        if jogador and cartelas_jogador:
+            logger.info(f" - Jogador {jogador}")
+            cartelas_response = cartelas_jogador[:20]
+            dados = []
+            for cartela in cartelas_response:
+                dados.append(
+                    {
+                        "sorteio_id":int(cartela.partida.id),
+                        "bilhete":cartela.hash,
+                        "nome":cartela.nome
+                    }
+                )
+            return JsonResponse(data=dados,status=200,safe=False)
+        else:
+            return JsonResponse(data={}, status=404)
+    else:
+        return JsonResponse(data={}, status=403)
 @csrf_exempt
 @require_http_methods(["GET","OPTIONS"])
 def proximos_kol(request):
