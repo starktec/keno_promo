@@ -31,7 +31,7 @@ class ConexaoBilheteConsumer(AsyncJsonWebsocketConsumer):
                 jogador = cartela_jogo.jogador
                 cartelas = Cartela.objects.filter(jogador=jogador).order_by("-id")
                 if cartelas.count()>5:
-                    cartelas = cartelas[:5]
+                    cartelas = cartelas[:20]
                 proximos = Partida.objects.filter(cartelas__in=cartelas)
                 bilhetes = [{"sorteio_id": cartela.partida_id, "bilhete": cartela.hash, "nome": cartela.nome} for cartela in cartelas]
                 serializer = PartidaProximaSerializer(instance=proximos, many=True)
