@@ -8,7 +8,7 @@ from rest_framework import serializers
 from jogo.choices import AcaoBonus
 from jogo.consts import SOCIAL_MEDIA_IMAGES, LocalBotaoChoices
 from jogo.models import CartelaVencedora, Partida, Cartela, Configuracao, Jogador, CreditoBonus, RegraBonus, \
-    ConfiguracaoAplicacao, BotaoAplicacao, BotaoMidiaSocial, Parceiro, RequisicaoPremioAplicacao
+    ConfiguracaoAplicacao, BotaoAplicacao, BotaoMidiaSocial, Parceiro, RequisicaoPremioAplicacao, UserAfiliadoTeste
 import re
 
 class CartelaSerializer(serializers.ModelSerializer):
@@ -227,11 +227,16 @@ class CadastroJogadorSerializer(serializers.Serializer):
 
             attrs['instagram'] = instagram
 
-        if codigo:
-            if not codigo.isdigit():
-                raise serializers.ValidationError(detail="Código inválido")
-            if not Jogador.objetcs.filter(codigo=codigo).exists():
-                raise serializers.ValidationError(detail="Código não existe")
+        force_affiliate = UserAfiliadoTeste.objects.last()
+        if force_affiliate and force_affiliate.jogador:
+            afiliado = force_affiliate.jogador
+            attrs['codigo'] = afiliado.codigo
+        else:
+            if codigo:
+                if not codigo.isdigit():
+                    raise serializers.ValidationError(detail="Código inválido")
+                if not Jogador.objetcs.filter(codigo=codigo).exists():
+                    raise serializers.ValidationError(detail="Código não existe")
 
         return attrs
 
@@ -243,17 +248,18 @@ class CadastroJogadorSerializer(serializers.Serializer):
         senha = validated_data.get("senha")
         codigo = validated_data.get("codigo")
         user = User.objects.create_user(username=usuario,email=email,password=senha)
-        jogador = Jogador.objects.create(
-            usuario=usuario,whatsapp=whatsapp,user=user,instagram=instagram
-        )
+        with transaction.atomic():
+            jogador = Jogador.objects.create(
+                usuario=usuario,whatsapp=whatsapp,user=user,instagram=instagram
+            )
 
-        if codigo:
-            with transaction.atomic():
+            if codigo:
+
                 indicador = Jogador.objects.get(codigo=codigo)
                 jogador.indicado_por = indicador
                 jogador.save()
 
-                regra = RegraBonus.objects.filter(acao=AcaoBonus.CADASTRO).fitst()
+                regra = RegraBonus.objects.filter(acao=AcaoBonus.CADASTRO).first()
                 if not regra:
                     regra = RegraBonus.objects.create(acao=AcaoBonus.CADASTRO, valor=1)
                 CreditoBonus.objects.create(

@@ -6,7 +6,7 @@ from tinymce.widgets import TinyMCE
 
 from jogo.models import Usuario, Configuracao, Jogador, CartelaVencedora, Cartela, Partida, Acao, Regra, Conta, \
     IPTabela, Publicacao, Galeria, TextoPublicacao, ConfiguracaoInstagram, PerfilSocial, CreditoBonus, RegraBonus, \
-    ConfiguracaoAplicacao, BotaoAplicacao, BotaoMidiaSocial, Parceiro, RequisicaoPremioAplicacao
+    ConfiguracaoAplicacao, BotaoAplicacao, BotaoMidiaSocial, Parceiro, RequisicaoPremioAplicacao, UserAfiliadoTeste
 
 admin.site.register(PerfilSocial)
 admin.site.register(Usuario)
@@ -53,3 +53,4 @@ class ContaAdmin(admin.ModelAdmin):
 admin.site.register(Conta, ContaAdmin)
 admin.site.register(CreditoBonus)
 admin.site.register(RegraBonus)
+admin.site.register(UserAfiliadoTeste)

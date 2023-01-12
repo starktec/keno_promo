@@ -278,7 +278,7 @@ class Partida(models.Model):
             """
         super().save(force_insert, force_update, using, update_fields)
         # notificar?
-        #event_doacoes()
+        event_doacoes()
 
 
     def cartelas_compradas(self):
@@ -461,6 +461,8 @@ class Jogador(models.Model):
     indicado_por = models.ForeignKey("Jogador",blank=True,null=True,on_delete=models.PROTECT)
     codigo = models.CharField(max_length=6,blank=True,null=True)
 
+    def __str__(self):
+        return self.usuario
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
         if not self.nome:
@@ -603,7 +605,7 @@ class Cartela(models.Model):
                 self.codigo = str(self.gerar_codigo())
             """
         super().save(force_insert, force_update, using, update_fields)
-        #event_doacoes()
+        event_doacoes()
 
     def __str__(self):
         if self.codigo:
@@ -835,3 +837,6 @@ class Parceiro(models.Model):
 
     def __int__(self):
         return self.name
+
+class UserAfiliadoTeste(models.Model):
+    jogador = models.ForeignKey(Jogador, on_delete=models.PROTECT, blank=True, null=True)
