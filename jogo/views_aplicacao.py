@@ -36,7 +36,7 @@ class LoginJogador(APIView):
         serializer = LoginJogadorSerializer(data=request.data)
         if serializer.is_valid():
             usuario = request.data.get("usuario")
-            jogador = Jogador.objects.filter(usuario=usuario).first()
+            jogador = Jogador.objects.filter(usuario=usuario.strip()).first()
             return Response(data=JogadorSerializer(jogador).data,status=status.HTTP_200_OK)
 
         raise serializers.ValidationError(detail=format_serializer_message(serializer.errors))
