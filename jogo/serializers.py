@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.db import transaction
+from django.db.models import Count
 from rest_framework import serializers
 
 from jogo.choices import AcaoBonus
@@ -270,9 +271,15 @@ class CadastroJogadorSerializer(serializers.Serializer):
         return jogador
 
 class JogadorSerializer(serializers.ModelSerializer):
+    travado = serializers.SerializerMethodField()
+
+    def get_travado(self,obj):
+        num_vitorias = CartelaVencedora.objects.filter(cartela__jogador=obj).count()
+        configuracao = Configuracao.objects.last()
+        return num_vitorias>=configuracao.max_vitorias_jogador
     class Meta:
         model = Jogador
-        fields = ["id","usuario","instagram","creditos"]
+        fields = ["id","usuario","instagram","creditos","travado"]
 
 class LoginJogadorSerializer(serializers.Serializer):
     usuario = serializers.CharField(max_length=100)
@@ -291,8 +298,6 @@ class LoginJogadorSerializer(serializers.Serializer):
             raise serializers.ValidationError(detail="apelido ou senha inválidos")
 
         return attrs
-
-
 
 class ConfiguracaoAplicacaoSerializer(serializers.ModelSerializer):
     footerImage = serializers.SerializerMethodField()
@@ -349,4 +354,65 @@ class RequisicaoPremioAplicacaoSerializer(serializers.ModelSerializer):
     class Meta:
         model = RequisicaoPremioAplicacao
         exclude = ["id"]
+
+class AfiliadoSerializer(serializers.ModelSerializer):
+    travado = serializers.SerializerMethodField()
+    link_afiliado = serializers.SerializerMethodField()
+    saldo = serializers.SerializerMethodField()
+    libera_bilhete = serializers.SerializerMethodField()
+    falta_liberar = serializers.SerializerMethodField()
+    top5 = serializers.SerializerMethodField()
+
+    def get_travado(self, obj):
+        num_vitorias = CartelaVencedora.objects.filter(cartela__jogador=obj).count()
+        configuracao = Configuracao.objects.last()
+        return num_vitorias >= configuracao.max_vitorias_jogador
+
+    def get_link_afiliado(self, obj):
+        configuracao = Configuracao.objects.last()
+        codigo = obj.codigo
+        if configuracao and configuracao.url_app and codigo:
+            return f"{configuracao.url_app}?codigo={codigo}"
+        return ""
+
+    def get_saldo(self, obj):
+        bonus = CreditoBonus.objects.filter(jogador=obj)
+        if not bonus:
+            return 0
+        total = bonus.count()
+        usado = bonus.filter(resgatado_em__isnull=False).count()
+        restante = total - usado
+        return {"total":total,"usado":usado,"restante":restante}
+
+    def get_libera_bilhete(self, obj):
+        configuracao = Configuracao.objects.last()
+        return configuracao.numero_cadastro_libera_jogador
+
+    def get_falta_liberar(self, obj):
+        configuracao = Configuracao.objects.last()
+        num_vitorias = CartelaVencedora.objects.filter(cartela__jogador=obj).count()
+        if num_vitorias >= configuracao.max_vitorias_jogador:
+            libera = configuracao.numero_cadastro_libera_jogador
+            bonus = CreditoBonus.objects.filter(jogador=obj,resgatado_em__isnull=True).count()
+            if libera>0 and libera >= bonus:
+                return libera-bonus
+        return 0
+
+    def get_top5(self,obj):
+        results = Jogador.objects.filter(
+            jogador__isnull=False
+        ).annotate(quantidade=Count("id")).order_by("-quantidade").values("nome","quantidade")
+        if results.count()>5:
+            posicao = 5
+            for i in range(1,results.count()+1):
+                if results[posicao+i]['quantidade']==results[posicao]['quantidade']:
+                    posicao += 1
+                else:
+                    results = results[:posicao]
+        return results
+
+    class Meta:
+        model = Jogador
+        fields = ["id", "usuario", "instagram", "travado", "link_afiliado","saldo","libera_bilhete",
+                  "falta_liberar","top5"]
 

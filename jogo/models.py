@@ -135,6 +135,8 @@ class Configuracao(models.Model):
     max_vitorias_jogador = models.PositiveSmallIntegerField(default=0)
     numero_cadastro_libera_jogador = models.PositiveSmallIntegerField(default=0)
 
+    url_app = models.URLField()
+
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
         if not self.id:
@@ -491,7 +493,7 @@ class Jogador(models.Model):
         valor = 0
         credito = CreditoBonus.objects.filter(jogador=self,resgatado_em__isnull=True).aggregate(Sum("valor"))
         if credito:
-            return credito.get("valor",0)
+            return credito.get("valor__sum",0)
         return valor
 
     def vitorias(self):

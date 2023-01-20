@@ -13,7 +13,8 @@ from rest_framework.views import APIView
 from jogo.models import Cartela, Partida, Configuracao, CreditoBonus, Jogador, ConfiguracaoAplicacao, CartelaVencedora
 from jogo.permissions import EhJogador
 from jogo.serializers import JogadorSerializer, LoginJogadorSerializer, CadastroJogadorSerializer, \
-    ConfiguracoesAplicacaoSerializer, ConfiguracaoAplicacaoSerializer, RequisicaoPremioAplicacaoSerializer
+    ConfiguracoesAplicacaoSerializer, ConfiguracaoAplicacaoSerializer, RequisicaoPremioAplicacaoSerializer, \
+    AfiliadoSerializer
 from jogo.utils import format_serializer_message
 
 import logging
@@ -214,3 +215,10 @@ class RequisicaoPremioAplicacaoView(APIView):
     def get(self, request):
         requisicao_premio_serializer = RequisicaoPremioAplicacaoSerializer(read_only=True)
         return Response(data=requisicao_premio_serializer.data,status=status.HTTP_200_OK)
+
+class AfiliadoView(APIView):
+    permission_classes = [EhJogador,]
+    def get(self,request):
+        token = request.headers['Authorization'].split("Token ")[1]
+        jogador = Jogador.objects.get(usuario_token=token)
+        return Response(AfiliadoSerializer(instance=jogador).data,status=status.HTTP_200_OK)

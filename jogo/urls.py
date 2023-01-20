@@ -14,7 +14,7 @@ from .views_api_online import dados_bilhete, get_politicas_de_privacidade_kol, g
     data_hora_servidor, ultimos_ganhadores_kol, ultimos_bilhetes
 from .views_api_tela import resultado_sorteio, proximos, proximos_especiais, historico, status, ultimos_ganhadores
 from .views_aplicacao import CadastroJogador, LoginJogador, PegarCartela, ConfiguracaoAplicacaoView, \
-    RequisicaoPremioAplicacaoView
+    RequisicaoPremioAplicacaoView, AfiliadoView
 from .views_social_instagram import index_social, gerar_bilhete
 
 urlpatterns = [
@@ -92,6 +92,7 @@ urlpatterns = [
     path("api/gerar_bilhete/",PegarCartela.as_view()),
     path("api/configuracao_aplicacao/", ConfiguracaoAplicacaoView.as_view()),
     path("api/requisicao_premio_aplicacao/", RequisicaoPremioAplicacaoView.as_view()),
+    path("api/afiliado/",AfiliadoView.as_view()),
 
     path("manter_contas/", manter_contas_view),
 
