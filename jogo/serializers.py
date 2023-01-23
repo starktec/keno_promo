@@ -9,8 +9,12 @@ from rest_framework import serializers
 from jogo.choices import AcaoBonus
 from jogo.consts import SOCIAL_MEDIA_IMAGES, LocalBotaoChoices
 from jogo.models import CartelaVencedora, Partida, Cartela, Configuracao, Jogador, CreditoBonus, RegraBonus, \
-    ConfiguracaoAplicacao, BotaoAplicacao, BotaoMidiaSocial, Parceiro, RequisicaoPremioAplicacao, UserAfiliadoTeste
+    ConfiguracaoAplicacao, BotaoAplicacao, BotaoMidiaSocial, Parceiro, RequisicaoPremioAplicacao, UserAfiliadoTeste, \
+    CampoCadastro
 import re
+
+from jogo.utils import cpf_isvalid
+
 
 class CartelaSerializer(serializers.ModelSerializer):
     codigo = serializers.IntegerField(source='id')
@@ -169,6 +173,7 @@ class CadastroJogadorSerializer(serializers.Serializer):
     instagram = serializers.CharField(max_length=50,required=False, allow_blank=True)
     senha = serializers.CharField(max_length=20)
     confirmar_senha = serializers.CharField(max_length=20)
+    cpf = serializers.CharField(max_length=11,required=False, allow_blank=True)
     codigo = serializers.CharField(max_length=6, min_length=6,required=False, allow_blank=True)
 
     def validate(self, attrs):
@@ -179,6 +184,22 @@ class CadastroJogadorSerializer(serializers.Serializer):
         confirmar_senha = attrs.get("confirmar_senha")
         instagram = attrs.get("instagram")
         codigo = attrs.get("codigo")
+        cpf = attrs.get("cpf")
+
+        campos_obrigatorios = CampoCadastro.objects.filter(ativo=True,obrigatorio=True)
+        for obrigatorio in campos_obrigatorios:
+            if not attrs.get(obrigatorio.nome):
+                raise serializers.ValidationError(detail=f"{obrigatorio.nome.upper()}: Campo Obrigatório")
+
+
+        if cpf:
+            if not cpf.isdigit():
+                raise serializers.ValidationError(detail="CPF apenas dígitos")
+            if not len(cpf)==11 or len(set(cpf)) == 1 or not cpf_isvalid(cpf):
+                raise serializers.ValidationError(detail="CPF inválido")
+            if Jogador.objects.filter(cpf=cpf).exists():
+                raise serializers.ValidationError(detail="CPF inválido")
+
 
         usuario = usuario.lower()
         if Jogador.objects.filter(usuario__iexact=usuario).exists() or User.objects.filter(username__iexact=usuario).exists():
@@ -248,10 +269,11 @@ class CadastroJogadorSerializer(serializers.Serializer):
         instagram = validated_data.get("instagram")
         senha = validated_data.get("senha")
         codigo = validated_data.get("codigo")
+        cpf = validated_data.get("cpf")
         user = User.objects.create_user(username=usuario,email=email,password=senha)
         with transaction.atomic():
             jogador = Jogador.objects.create(
-                usuario=usuario,whatsapp=whatsapp,user=user,instagram=instagram
+                usuario=usuario,whatsapp=whatsapp,user=user,instagram=instagram,cpf=cpf
             )
 
             if codigo:
@@ -334,12 +356,19 @@ class ParceiroSerializer(serializers.ModelSerializer):
         model = Parceiro
         exclude = ["id","ativo"]
 
+class CamposCadastroSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CampoCadastro
+        fields = ["id","nome","obrigatorio"]
+
 class ConfiguracoesAplicacaoSerializer(serializers.Serializer):
     configuracao_aplicacao = ConfiguracaoAplicacaoSerializer(read_only=True)
     botoes_login = BotaoAplicacaoSerializer(read_only=True,many=True)
     botoes_logado = BotaoAplicacaoSerializer(read_only=True,many=True)
     midias_sociais = BotaoMidiaSocialSerializer(read_only=True,many=True)
     patrocinadores = ParceiroSerializer(read_only=True,many=True)
+    campos_cadastro = CamposCadastroSerializer(read_only=True,many=True)
+
 
     def validate(self, attrs):
         attrs["configuracao_aplicacao"] = ConfiguracaoAplicacaoSerializer(instance=ConfiguracaoAplicacao.objects.last(),read_only=True).data
@@ -347,6 +376,7 @@ class ConfiguracoesAplicacaoSerializer(serializers.Serializer):
         attrs["botoes_logado"] = BotaoAplicacaoSerializer(BotaoAplicacao.objects.filter(local=LocalBotaoChoices.LOGADO),many=True).data
         attrs["midias_sociais"] = BotaoMidiaSocialSerializer(BotaoMidiaSocial.objects.filter(ativo=True),many=True).data
         attrs["patrocinadores"] = ParceiroSerializer(Parceiro.objects.filter(ativo=True),many=True).data
+        attrs["campos_cadastro"] = CamposCadastroSerializer(CampoCadastro.objects.filter(ativo=True),many=True).data
 
         return attrs
 
@@ -369,9 +399,9 @@ class AfiliadoSerializer(serializers.ModelSerializer):
         return num_vitorias >= configuracao.max_vitorias_jogador
 
     def get_link_afiliado(self, obj):
-        configuracao = Configuracao.objects.last()
+        configuracao = RegraBonus.objects.filter(acao=AcaoBonus.CADASTRO).last()
         codigo = obj.codigo
-        if configuracao and configuracao.url_app and codigo:
+        if configuracao and configuracao.url and codigo:
             return f"{configuracao.url_app}?codigo={codigo}"
         return ""
 

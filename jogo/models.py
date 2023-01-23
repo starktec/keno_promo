@@ -27,7 +27,7 @@ from django_resized import ResizedImageField
 from jogo import local_settings
 from jogo.choices import AcaoTipoChoices, AcaoBonus
 from jogo.constantes import NOME_PESSOAS
-from jogo.consts import TipoRedeSocial, LocalBotaoChoices
+from jogo.consts import TipoRedeSocial, LocalBotaoChoices, CampoCadastroChoices
 from jogo.websocket_triggers import event_doacoes
 from colorfield.fields import ColorField
 
@@ -134,8 +134,6 @@ class Configuracao(models.Model):
 
     max_vitorias_jogador = models.PositiveSmallIntegerField(default=0)
     numero_cadastro_libera_jogador = models.PositiveSmallIntegerField(default=0)
-
-    url_app = models.URLField()
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
@@ -462,6 +460,7 @@ class Jogador(models.Model):
     instagram = models.CharField(max_length=50,blank=True,null=True)
     indicado_por = models.ForeignKey("Jogador",blank=True,null=True,on_delete=models.PROTECT)
     codigo = models.CharField(max_length=6,blank=True,null=True)
+    cpf = models.CharField(max_length=11,blank=True,null=True)
 
     def __str__(self):
         return self.usuario
@@ -772,6 +771,7 @@ class Publicacao(models.Model):
 class RegraBonus(models.Model):
     acao = models.CharField(max_length=1,choices=AcaoBonus.choices, unique=True)
     valor = models.PositiveSmallIntegerField()
+    url = models.URLField()
 
     def __str__(self):
         return self.get_acao_display()
@@ -842,3 +842,8 @@ class Parceiro(models.Model):
 
 class UserAfiliadoTeste(models.Model):
     jogador = models.ForeignKey(Jogador, on_delete=models.PROTECT, blank=True, null=True)
+
+class CampoCadastro(models.Model):
+    nome = models.CharField(max_length=20, choices=CampoCadastroChoices.choices)
+    obrigatorio = models.BooleanField(default=False)
+    ativo = models.BooleanField(default=True)

@@ -62,6 +62,12 @@ SOCIAL_MEDIA_IMAGES = {
 
 }
 
+class CampoCadastroChoices(TextChoices):
+    WHATSAPP = "whatsapp", "Whatsapp"
+    INSTAGRAM = "instagram", "Instagram"
+    CPF = "cpf", "CPF"
+    EMAIL = "email", "e-mail"
+
 class LocalBotaoChoices(IntegerChoices):
     LOGIN = 1,"Login"
     LOGADO = 2,"Logado"
