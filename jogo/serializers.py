@@ -402,7 +402,7 @@ class AfiliadoSerializer(serializers.ModelSerializer):
         configuracao = RegraBonus.objects.filter(acao=AcaoBonus.CADASTRO).last()
         codigo = obj.codigo
         if configuracao and configuracao.url and codigo:
-            return f"{configuracao.url_app}?codigo={codigo}"
+            return f"{configuracao.url}?codigo={codigo}"
         return ""
 
     def get_saldo(self, obj):
