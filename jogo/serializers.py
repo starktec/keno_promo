@@ -257,7 +257,7 @@ class CadastroJogadorSerializer(serializers.Serializer):
             if codigo:
                 if not codigo.isdigit():
                     raise serializers.ValidationError(detail="Código inválido")
-                if not Jogador.objetcs.filter(codigo=codigo).exists():
+                if not Jogador.objects.filter(codigo=codigo).exists():
                     raise serializers.ValidationError(detail="Código não existe")
 
         return attrs
