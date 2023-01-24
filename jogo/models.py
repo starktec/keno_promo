@@ -133,7 +133,8 @@ class Configuracao(models.Model):
     velocidade_sorteio_online = models.PositiveIntegerField(default=3000)
 
     max_vitorias_jogador = models.PositiveSmallIntegerField(default=0)
-    numero_cadastro_libera_jogador = models.PositiveSmallIntegerField(default=0)
+    numero_cadastro_libera_jogador = models.PositiveSmallIntegerField(default=1)
+    creditos_bonus_gera_bilhete = models.PositiveSmallIntegerField(default=1)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
@@ -278,7 +279,7 @@ class Partida(models.Model):
             """
         super().save(force_insert, force_update, using, update_fields)
         # notificar?
-        event_doacoes()
+        #event_doacoes()
 
 
     def cartelas_compradas(self):
@@ -492,7 +493,7 @@ class Jogador(models.Model):
         valor = 0
         credito = CreditoBonus.objects.filter(jogador=self,resgatado_em__isnull=True).aggregate(Sum("valor"))
         if credito:
-            return credito.get("valor__sum",0)
+            valor = credito.get("valor__sum") or 0
         return valor
 
     def vitorias(self):
@@ -503,6 +504,12 @@ class Jogador(models.Model):
         if participou:
             return f"({self.vitorias()}/{participou})"
         return "0"
+
+    def ehTravado(self):
+        configuracao = Configuracao.objects.last()
+        return self.vitorias()>=configuracao.max_vitorias_jogador
+
+
          
 
 class Cartela(models.Model):
@@ -606,7 +613,7 @@ class Cartela(models.Model):
                 self.codigo = str(self.gerar_codigo())
             """
         super().save(force_insert, force_update, using, update_fields)
-        event_doacoes()
+        #event_doacoes()
 
     def __str__(self):
         if self.codigo:
@@ -635,8 +642,6 @@ class CartelaVencedora(models.Model):
     recibo = models.ForeignKey(ReciboPagamento, on_delete=models.PROTECT, blank=True,null=True)
     def __str__(self):
         return str(self.cartela)
-
-
 
 
 class Agendamento(models.Model):
@@ -847,3 +852,7 @@ class CampoCadastro(models.Model):
     nome = models.CharField(max_length=20, choices=CampoCadastroChoices.choices)
     obrigatorio = models.BooleanField(default=False)
     ativo = models.BooleanField(default=True)
+
+class ResetScore(models.Model):
+    usuario = models.ForeignKey(Usuario, on_delete=models.PROTECT)
+    datetime = models.DateTimeField(auto_now_add=True)

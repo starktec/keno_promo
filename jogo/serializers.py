@@ -298,7 +298,9 @@ class JogadorSerializer(serializers.ModelSerializer):
     def get_travado(self,obj):
         num_vitorias = CartelaVencedora.objects.filter(cartela__jogador=obj).count()
         configuracao = Configuracao.objects.last()
-        return num_vitorias>=configuracao.max_vitorias_jogador
+        if configuracao.max_vitorias_jogador>0:
+            return num_vitorias>=configuracao.max_vitorias_jogador
+        return False
     class Meta:
         model = Jogador
         fields = ["id","usuario","instagram","creditos","travado"]
