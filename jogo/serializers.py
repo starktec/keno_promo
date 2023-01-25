@@ -418,7 +418,7 @@ class AfiliadoSerializer(serializers.ModelSerializer):
     def get_saldo(self, obj):
         bonus = CreditoBonus.objects.filter(jogador=obj)
         if not bonus:
-            return 0
+            return {"total":0,"usado":0,"restante":0}
         total = bonus.count()
         usado = bonus.filter(resgatado_em__isnull=False).count()
         restante = total - usado
