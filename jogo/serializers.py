@@ -13,6 +13,9 @@ from jogo.models import CartelaVencedora, Partida, Cartela, Configuracao, Jogado
     CampoCadastro
 import re
 
+import logging
+logger = logging.getLogger(__name__)
+
 from jogo.utils import cpf_isvalid
 
 
@@ -275,7 +278,7 @@ class CadastroJogadorSerializer(serializers.Serializer):
             jogador = Jogador.objects.create(
                 usuario=usuario,whatsapp=whatsapp,user=user,instagram=instagram,cpf=cpf
             )
-
+            logger.info(f"CREATE: código {codigo}")
             if codigo:
 
                 indicador = Jogador.objects.get(codigo=codigo)
@@ -289,7 +292,7 @@ class CadastroJogadorSerializer(serializers.Serializer):
                     regra=regra, valor=regra.valor,
                     jogador=indicador,indicado=jogador
                 )
-
+        
         return jogador
 
 class JogadorSerializer(serializers.ModelSerializer):
