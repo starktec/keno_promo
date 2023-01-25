@@ -39,18 +39,15 @@ def dados_bilhete(request,hash):
                 "linha2_lista":cartela.linha2_lista(),
                 "linha3_lista":cartela.linha3_lista(),
                 "posicao":int(cartela.posicao),
+                "premio":[],
             }
-            cartelas.append(dado)
-            cartela:Cartela = cartela
 
             link_vencedor = ""
-            vencedora: CartelaVencedora = CartelaVencedora.objects.filter(
-                cartela=cartela,
-                cartela__partida__data_partida__lte=data_liberacao
-            ).first()
-            premio = ""
+            vencedora: CartelaVencedora = cartela.cartelavencedora_set.all()
             if vencedora:
-                premio = PREMIOS[vencedora.premio]
+                premio = [PREMIOS[x.premio] for x in vencedora]
+                dado["premio"]=premio
+
                 if configuracao.contato_cartela:
                     #msg = "Oi.%20Acabei%20de%20ganhar%20um%20sorteio%20no%20Recebabonus.%20"
                     msg = "Ol%C3%A1!%20Sou%20o%20(a)%20mais%20novo%20(a)%20ganhador%20(a)%20do%20Receba%20B%C3%B4nus!%20%0A%0A"
@@ -76,16 +73,16 @@ def dados_bilhete(request,hash):
                         link_vencedor += "".join(complemento)
 
                     link_vencedor += final_text
+            cartelas.append(dado)
 
             dados = {
                 "hash":cartela.hash,
                 "sorteio":PartidaProximaSerializer(cartela.partida).data,
                 "data_hora_sorteio":datetime.date.strftime(cartela.partida.data_partida,'%Y-%m-%dT%H:%M:%S'),
                 "comprado_em":cartela.comprado_em,
-                "ganhou":CartelaVencedora.objects.filter(cartela=cartela).exists(),
+                "ganhou": vencedora.count()>0,
                 "cartelas":cartelas,
                 "link_vencedor":link_vencedor,
-                "premio":premio,
             }
             return JsonResponse(data=dados, status=200, safe=False)
         else:
