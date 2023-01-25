@@ -2,7 +2,7 @@ import json
 import logging
 import urllib
 
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.views.decorators.http import require_http_methods
 from rest_framework.decorators import api_view
 from django.views.decorators.csrf import csrf_exempt
@@ -67,7 +67,8 @@ def dados_bilhete(request,hash):
                     if configuracao.incluir_apelido:
                         complemento.append(f"{apelido_text}{cartela.jogador.usuario}%0A")
                     if configuracao.incluir_valor:
-                        complemento.append(f"{valor_text}{vencedora.valor_premio}%0A")
+                        valor_somado = vencedora.aggregate(Sum("valor"))
+                        complemento.append(f"{valor_text}{valor_somado['valor__sum']}%0A")
 
                     if complemento:
                         link_vencedor += "".join(complemento)
