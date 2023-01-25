@@ -777,6 +777,7 @@ class RegraBonus(models.Model):
     acao = models.CharField(max_length=1,choices=AcaoBonus.choices, unique=True)
     valor = models.PositiveSmallIntegerField()
     url = models.URLField()
+    link_formatado = models.TextField(blank=True,null=True)
 
     def __str__(self):
         return self.get_acao_display()

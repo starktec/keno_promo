@@ -62,6 +62,10 @@ SOCIAL_MEDIA_IMAGES = {
 
 }
 
+class OrdemAfiliadoChoices(TextChoices):
+    WHATSAPP = "whatsapp", "Whatsapp"
+    INSTAGRAM = "instagram", "Instagram"
+
 class CampoCadastroChoices(TextChoices):
     WHATSAPP = "whatsapp", "Whatsapp"
     INSTAGRAM = "instagram", "Instagram"

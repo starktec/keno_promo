@@ -6,13 +6,17 @@ from django.db.models import Q
 from django.views.decorators.http import require_http_methods
 from rest_framework.decorators import api_view
 from django.views.decorators.csrf import csrf_exempt
-from jogo.models import Cartela, CartelaVencedora, Configuracao, Partida, Jogador
+from jogo.models import Cartela, CartelaVencedora, Configuracao, Partida, Jogador, PREMIO_CHOICES
 import datetime
 from django.http import HttpResponse, JsonResponse
 
 logger = logging.getLogger(__name__)
 
 from jogo.serializers import PartidaProximaSerializer,  UltimosGanhadoresSerializer
+
+PREMIOS = {
+    1:'ku', 2: "ki", 3: "ke"
+}
 
 @require_http_methods(["GET"])
 def dados_bilhete(request,hash):
@@ -40,11 +44,13 @@ def dados_bilhete(request,hash):
             cartela:Cartela = cartela
 
             link_vencedor = ""
-            vencedora = CartelaVencedora.objects.filter(
+            vencedora: CartelaVencedora = CartelaVencedora.objects.filter(
                 cartela=cartela,
                 cartela__partida__data_partida__lte=data_liberacao
             ).first()
+            premio = ""
             if vencedora:
+                premio = PREMIOS[vencedora.premio]
                 if configuracao.contato_cartela:
                     #msg = "Oi.%20Acabei%20de%20ganhar%20um%20sorteio%20no%20Recebabonus.%20"
                     msg = "Ol%C3%A1!%20Sou%20o%20(a)%20mais%20novo%20(a)%20ganhador%20(a)%20do%20Receba%20B%C3%B4nus!%20%0A%0A"
@@ -79,6 +85,7 @@ def dados_bilhete(request,hash):
                 "ganhou":CartelaVencedora.objects.filter(cartela=cartela).exists(),
                 "cartelas":cartelas,
                 "link_vencedor":link_vencedor,
+                "premio":premio,
             }
             return JsonResponse(data=dados, status=200, safe=False)
         else:

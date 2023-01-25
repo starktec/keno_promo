@@ -390,6 +390,7 @@ class RequisicaoPremioAplicacaoSerializer(serializers.ModelSerializer):
 class AfiliadoSerializer(serializers.ModelSerializer):
     travado = serializers.SerializerMethodField()
     link_afiliado = serializers.SerializerMethodField()
+    link_formatado = serializers.SerializerMethodField()
     saldo = serializers.SerializerMethodField()
     libera_bilhete = serializers.SerializerMethodField()
     falta_liberar = serializers.SerializerMethodField()
@@ -405,6 +406,13 @@ class AfiliadoSerializer(serializers.ModelSerializer):
         codigo = obj.codigo
         if configuracao and configuracao.url and codigo:
             return f"{configuracao.url}?codigo={codigo}"
+        return ""
+
+    def get_link_formatado(self, obj):
+        configuracao = RegraBonus.objects.filter(acao=AcaoBonus.CADASTRO).last()
+        codigo = obj.codigo
+        if configuracao and configuracao.link_formatado and configuracao.url and codigo:
+            return f"{configuracao.link_formatado}<br />{configuracao.url}?codigo={codigo}"
         return ""
 
     def get_saldo(self, obj):
@@ -445,6 +453,6 @@ class AfiliadoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Jogador
-        fields = ["id", "usuario", "instagram", "travado", "link_afiliado","saldo","libera_bilhete",
+        fields = ["id", "usuario", "instagram", "travado", "link_afiliado","link_formatado","saldo","libera_bilhete",
                   "falta_liberar","top5"]
 
