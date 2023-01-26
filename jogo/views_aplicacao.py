@@ -352,3 +352,10 @@ class PegarCartelaBonus(APIView):
                     return Response(data={"detail": mensagem}, status=404)
             else:
                 raise PermissionDenied()
+
+class DadosJogadorView(APIView):
+    permission_classes = [EhJogador, ]
+    def get(self, request):
+        token = request.headers['Authorization'].split("Token ")[1]
+        jogador = Jogador.objects.get(usuario_token=token)
+        return Response(data=JogadorSerializer(jogador).data,status=200)

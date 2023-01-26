@@ -314,7 +314,7 @@ class JogadorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Jogador
-        fields = ["id","usuario","instagram","creditos","travado","desconto_credito_bonus"]
+        fields = ["id","usuario","instagram","creditos","travado","desconto_credito_bonus","indicado_por"]
 
 class LoginJogadorSerializer(serializers.Serializer):
     usuario = serializers.CharField(max_length=100)
@@ -333,6 +333,7 @@ class LoginJogadorSerializer(serializers.Serializer):
             raise serializers.ValidationError(detail="apelido ou senha inválidos")
 
         return attrs
+
 
 class ConfiguracaoAplicacaoSerializer(serializers.ModelSerializer):
     footerImage = serializers.SerializerMethodField()
