@@ -292,11 +292,12 @@ class CadastroJogadorSerializer(serializers.Serializer):
                     regra=regra, valor=regra.valor,
                     jogador=indicador,indicado=jogador
                 )
-        
+
         return jogador
 
 class JogadorSerializer(serializers.ModelSerializer):
     travado = serializers.SerializerMethodField()
+    desconto_credito_bonus = serializers.SerializerMethodField()
 
     def get_travado(self,obj):
         num_vitorias = CartelaVencedora.objects.filter(cartela__jogador=obj).count()
@@ -304,9 +305,16 @@ class JogadorSerializer(serializers.ModelSerializer):
         if configuracao.max_vitorias_jogador>0:
             return num_vitorias>=configuracao.max_vitorias_jogador
         return False
+
+    def get_desconto_credito_bonus(self, obj):
+        configuracao = Configuracao.objects.last()
+        if configuracao:
+            return int(configuracao.creditos_bonus_gera_bilhete)
+        return 1
+
     class Meta:
         model = Jogador
-        fields = ["id","usuario","instagram","creditos","travado"]
+        fields = ["id","usuario","instagram","creditos","travado","desconto_credito_bonus"]
 
 class LoginJogadorSerializer(serializers.Serializer):
     usuario = serializers.CharField(max_length=100)
