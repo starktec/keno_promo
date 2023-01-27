@@ -314,7 +314,7 @@ class PegarCartelaBonus(APIView):
                             # gerando as cartelas
                             for i in range(gerar_cartelas):
                                 cartelas.append(Cartela.objects.create(partida=partida,codigo=str(codigos_sorteados[i]),
-                                                   jogador=jogador, nome=nome))
+                                                   jogador=jogador, nome=jogador.nome))
                             for item in bonus_usados:
                                 item.resgatado_em = agora # registrando o resgate do bonus
                                 item.save()
