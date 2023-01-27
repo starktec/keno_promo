@@ -461,6 +461,7 @@ class AfiliadoSerializer(serializers.ModelSerializer):
                     posicao += 1
                 else:
                     results = results[:posicao]
+                    break
         return results
 
     class Meta:
