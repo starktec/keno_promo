@@ -457,7 +457,7 @@ class AfiliadoSerializer(serializers.ModelSerializer):
         if results.count()>5:
             posicao = 5
             for i in range(results.count()-posicao):
-                if results[posicao+i+1]['quantidade']==results[posicao+i]['quantidade']:
+                if posicao >= results.count() and results[posicao+i+1]['quantidade']==results[posicao+i]['quantidade']:
                     posicao += 1
                 else:
                     results = results[:posicao]
