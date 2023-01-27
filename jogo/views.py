@@ -9,6 +9,8 @@ import csv
 import math
 import logging
 
+from django.contrib import messages
+
 from jogo.consts import SituacaoPagamento
 from jogo.consultas_banco import estatisticas_jogadores
 from jogo.permissions import EhJogador
@@ -990,4 +992,12 @@ def configuracao_visual(request):
             form = ConfiguracaoVisualForm(instance=instance)
         return render(request, 'configuracao_visual.html', {'form': form, 'instance': instance})
     return HttpResponse(status=403)
-    
+
+@login_required(login_url="/login/")
+def zerar_creditos(request):
+    if ehUsuarioDash(request.user):
+        CreditoBonus.objects.all().update(ativo=False)
+        msg = "Todos os créditos foram zerados"
+        messages.success(request,msg)
+        return redirect("/jogadores/")
+    return HttpResponse(status=403)

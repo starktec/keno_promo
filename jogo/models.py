@@ -492,7 +492,7 @@ class Jogador(models.Model):
 
     def creditos(self):
         valor = 0
-        credito = CreditoBonus.objects.filter(jogador=self,resgatado_em__isnull=True).aggregate(Sum("valor"))
+        credito = CreditoBonus.objects.filter(jogador=self,resgatado_em__isnull=True,ativo=True).aggregate(Sum("valor"))
         if credito:
             valor = credito.get("valor__sum") or 0
         return valor
@@ -790,6 +790,7 @@ class CreditoBonus(models.Model):
     indicado = models.ForeignKey(Jogador,on_delete=models.PROTECT,related_name="credito_indicado")
     gerado_em = models.DateTimeField(auto_now_add=True)
     resgatado_em = models.DateTimeField(blank=True,null=True)
+    ativo = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.id} - ({self.regra}) {self.jogador}"

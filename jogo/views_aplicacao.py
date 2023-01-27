@@ -86,7 +86,7 @@ class PegarCartela(APIView):
                         # Para o caso de não ter cartela desse jogador no próximo sorteio
                         # verificando bonus disponiveis
                         bonus = CreditoBonus.objects.filter(jogador=jogador,
-                                                            resgatado_em__isnull=True).order_by("id")
+                                                            resgatado_em__isnull=True, ativo=True).order_by("id")
                         desconta = 0  # sem descontos de creditos
 
                         if configuracao.max_vitorias_jogador > 0:  # Limite de vitorias é positivo
@@ -240,7 +240,7 @@ class PegarCartelaBonus(APIView):
                     raise PermissionDenied()
 
                 bonus = CreditoBonus.objects.filter(jogador=jogador,
-                                                    resgatado_em__isnull=True).order_by("id")
+                                                    resgatado_em__isnull=True,ativo=True).order_by("id")
                 if not bonus:
                     raise serializers.ValidationError(
                         detail={"detail": "Você não tem crédito bônus suficientes para ganhar bilhetes"})

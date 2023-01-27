@@ -1,4 +1,4 @@
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.db import models
 # Register your models here.
 from django.utils.html import format_html
@@ -52,7 +52,24 @@ class ContaAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Conta, ContaAdmin)
-admin.site.register(CreditoBonus)
+
+@admin.action(description='Zerar todos os créditos')
+def reset_creditos(modeladmin, request, queryset=None):
+    CreditoBonus.objects.all().update(ativo=False)
+    messages.success(request, "Todos os créditos foram zerados")
+
+class CreditoBonusAdmin(admin.ModelAdmin):
+    exclude = ["id"]
+    actions = [reset_creditos]
+    # TODO: zerar os creditos via admin sem precisar selecionar
+    def response_action(self, request, queryset):
+        data = request.POST.copy()
+        queryset = CreditoBonus.objects.all()[:65535]  # cap at classic Excel maximum minus 1 row for headers
+        return getattr(self, data['action'])(request, queryset)
+
+
+
+admin.site.register(CreditoBonus,CreditoBonusAdmin)
 admin.site.register(RegraBonus)
 admin.site.register(UserAfiliadoTeste)
 admin.site.register(CampoCadastro)

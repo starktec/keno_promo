@@ -428,7 +428,7 @@ class AfiliadoSerializer(serializers.ModelSerializer):
         return ""
 
     def get_saldo(self, obj):
-        bonus = CreditoBonus.objects.filter(jogador=obj)
+        bonus = CreditoBonus.objects.filter(jogador=obj,ativo=True)
         if not bonus:
             return {"total":0,"usado":0,"restante":0}
         total = bonus.count()
@@ -445,7 +445,7 @@ class AfiliadoSerializer(serializers.ModelSerializer):
         num_vitorias = CartelaVencedora.objects.filter(cartela__jogador=obj).count()
         if num_vitorias >= configuracao.max_vitorias_jogador:
             libera = configuracao.numero_cadastro_libera_jogador
-            bonus = CreditoBonus.objects.filter(jogador=obj,resgatado_em__isnull=True).count()
+            bonus = CreditoBonus.objects.filter(jogador=obj,resgatado_em__isnull=True,ativo=True).count()
             if libera>0 and libera >= bonus:
                 return libera-bonus
         return 0
