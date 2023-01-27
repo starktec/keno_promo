@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.db import transaction
-from django.db.models import Count
+from django.db.models import Count, Sum
 from rest_framework import serializers
 
 from jogo.choices import AcaoBonus
@@ -452,8 +452,10 @@ class AfiliadoSerializer(serializers.ModelSerializer):
 
     def get_top5(self,obj):
         results = Jogador.objects.filter(
-            jogador__isnull=False
-        ).annotate(quantidade=Count("id")).order_by("-quantidade").values("nome","quantidade")
+            credito_jogador__isnull=False,credito_jogador__resgatado_em__isnull=True
+        ).annotate(
+            Count("id"),quantidade=Sum("credito_jogador__valor")
+        ).order_by("-quantidade").values("nome","quantidade")
         if results.count()>5:
             posicao = 5
             for i in range(results.count()-posicao):
