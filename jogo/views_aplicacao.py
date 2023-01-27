@@ -248,6 +248,8 @@ class PegarCartelaBonus(APIView):
                 agora = datetime.datetime.now()
                 configuracao = Configuracao.objects.last()
 
+
+
                 # Verificando se o jogador tem crédito de bonus para descontar e definindo o numero de cartelas a pegar
                 gerar_cartelas = 0 # Padrão
 
@@ -272,6 +274,11 @@ class PegarCartelaBonus(APIView):
                     if not cartelas:
                         raise serializers.ValidationError(detail={"detail": "Você ainda não pegou bilhete para o proximo sorteio"})
 
+                    if configuracao.max_cartelas_bonus_por_sorteio > 0 and cartelas.count()>configuracao.max_cartelas_bonus_por_sorteio:
+                        raise serializers.ValidationError(
+                            detail={
+                                "detail": f"Nesse sorteio você atingiu o limite de {configuracao.max_cartelas_bonus_por_sorteio} cartela(s) bonus"
+                            })
 
                     libera_bilhete = configuracao.creditos_bonus_gera_bilhete
                     bonus_usados = []

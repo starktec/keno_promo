@@ -135,6 +135,7 @@ class Configuracao(models.Model):
     max_vitorias_jogador = models.PositiveSmallIntegerField(default=0)
     numero_cadastro_libera_jogador = models.PositiveSmallIntegerField(default=1)
     creditos_bonus_gera_bilhete = models.PositiveSmallIntegerField(default=1)
+    max_cartelas_bonus_por_sorteio = models.PositiveSmallIntegerField(default=0)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
