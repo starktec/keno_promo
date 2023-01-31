@@ -201,7 +201,7 @@ class CadastroJogadorSerializer(serializers.Serializer):
             if not len(cpf)==11 or len(set(cpf)) == 1 or not cpf_isvalid(cpf):
                 raise serializers.ValidationError(detail="CPF inválido")
             if Jogador.objects.filter(cpf=cpf).exists():
-                raise serializers.ValidationError(detail="CPF inválido")
+                raise serializers.ValidationError(detail="CPF já cadastrado")
 
 
         usuario = usuario.lower()
