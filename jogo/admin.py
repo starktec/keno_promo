@@ -25,7 +25,13 @@ admin.site.register(RequisicaoPremioAplicacao)
 admin.site.register(Partida)
 admin.site.register(Cartela)
 admin.site.register(CartelaVencedora)
-admin.site.register(Jogador)
+
+class JogadorAdmin(admin.ModelAdmin):
+    exclude = ["seguidores","usuario","usuario_id"]
+    readonly_fields = ['nome', "usuario_token","user","whatsapp","instagram",
+                       "indicado_por","codigo","cpf"]
+    list_filter = ["nome","instagram","whatsapp","cpf"]
+admin.site.register(Jogador,JogadorAdmin)
 admin.site.register(Acao)
 admin.site.register(Regra)
 admin.site.register(IPTabela)
@@ -53,20 +59,16 @@ class ContaAdmin(admin.ModelAdmin):
 
 admin.site.register(Conta, ContaAdmin)
 
-@admin.action(description='Zerar todos os créditos')
-def reset_creditos(modeladmin, request, queryset=None):
-    CreditoBonus.objects.all().update(ativo=False)
-    messages.success(request, "Todos os créditos foram zerados")
-
 class CreditoBonusAdmin(admin.ModelAdmin):
     exclude = ["id"]
-    actions = [reset_creditos]
-    # TODO: zerar os creditos via admin sem precisar selecionar
-    def response_action(self, request, queryset):
-        data = request.POST.copy()
-        queryset = CreditoBonus.objects.all()[:65535]  # cap at classic Excel maximum minus 1 row for headers
-        return getattr(self, data['action'])(request, queryset)
+    change_list_template = "bonus_change_list.html"
+    list_display = ['__str__','jogador','indicado','resgatado','ativo']
+    list_filter = ['ativo']
 
+    def resgatado(self, obj):
+        if obj.resgatado_em:
+            return obj.resgatado_em.strftime("%d/%m/%Y %H:%M:%S")
+        return "Não"
 
 
 admin.site.register(CreditoBonus,CreditoBonusAdmin)

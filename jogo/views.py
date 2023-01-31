@@ -997,7 +997,7 @@ def configuracao_visual(request):
 def zerar_creditos(request):
     if ehUsuarioDash(request.user):
         CreditoBonus.objects.all().update(ativo=False)
-        msg = "Todos os créditos foram zerados"
+        msg = "Todos os créditos foram DESATIVADOS e não contarão para os Jogadores"
         messages.success(request,msg)
-        return redirect("/jogadores/")
+        return redirect("/admin/jogo/creditobonus/")
     return HttpResponse(status=403)
