@@ -4,14 +4,7 @@ CONFIGURAÇÃO
 {% endblock %}
 {% block nav-bar %}
 
-    <!-- content @s -->
-        <!-- <div class="row justify-content-center">
-            <div class="row col-lg-12 col-md-12 col-sm-12 justify-content-center">
-                
-                    
-                </div>
-            </div>
-        </div> -->
+
 
         <div class="row justify-content-center">
             <div class="row col-lg-12 col-md-12 col-sm-12 justify-content-center padding-zero">
@@ -62,18 +55,6 @@ CONFIGURAÇÃO
                                     </div>
                                 </div>
                                 <div class="col-lg-6 col-md-6 col-sm-6 container-input-create input-container-conf">
-                                    <label class="form-label" for="id_codigo_cartela">Número do contato para cartelas vencedoras</label>
-                                    <div class="form-control-wrap">
-                                        {{ form.contato_cartela }}
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 col-md-6 col-sm-6 container-input-create input-container-conf">
-                                    <label class="form-label" for="id_codigo_cartela">Mensagem padrão para whatsapp</label>
-                                    <div class="form-control-wrap">
-                                        {{ form.mensagem_whatsapp }}
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 col-md-6 col-sm-6 container-input-create input-container-conf">
                                     <label class="form-label" for="id_incluir_codigo">Incluir código da cartela no link</label>
                                     <div class="form-control-wrap">
                                         {{ form.incluir_codigo }}
@@ -97,6 +78,32 @@ CONFIGURAÇÃO
                                         {{ form.incluir_apelido }}
                                     </div>
                                 </div>
+
+                                <div class="col-lg-6 col-md-6 col-sm-12 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_max_vitorias_jogador">Max vitórias permitidas (0 = sem limite)</label>
+                                    <div class="form-control-wrap">
+                                        {{ form.max_vitorias_jogador }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_numero_cadastro_libera_jogador">Num créditos desbloqueia jogador</label>
+                                    <div class="form-control-wrap">
+                                        {{ form.numero_cadastro_libera_jogador }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_creditos_bonus_gera_bilhete">Num créditos para gerar cartela bonus</label>
+                                    <div class="form-control-wrap">
+                                        {{ form.creditos_bonus_gera_bilhete }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_max_cartelas_bonus_por_sorteio">Max cartelas bonus por sorteio (0 = sem limite)</label>
+                                    <div class="form-control-wrap">
+                                        {{ form.max_cartelas_bonus_por_sorteio }}
+                                    </div>
+                                </div>
+
                             </div>
                             <div class="row container-server-conf">
                                 <!-- <div class="row justify-content-center col-lg-12 col-sm-12 container-input-create">

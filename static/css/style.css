@@ -10,6 +10,9 @@
     --color-secondary: #0c0c0c;
     --background-number-card: #ddd8d8;
     --font-cards : 'Bebas Neue', cursive;
+    --message-success-bg: #dfd;
+    --message-warning-bg: #ffc;
+    --message-error-bg: #ffefef;
 
     font-size: 60%;
 }
@@ -150,4 +153,78 @@ body{
     flex: 0 0 50%;
     max-width: 50%;
 
+}
+
+/* MESSAGES & ERRORS */
+
+ul.messagelist {
+    padding: 0;
+    margin: 0;
+}
+
+ul.messagelist li {
+    display: block;
+    font-weight: 400;
+    font-size: 13px;
+    padding: 10px 10px 10px 65px;
+    margin: 0 0 10px 0;
+    background: var(--message-success-bg) url(/static/admin/img/icon-yes.svg) 40px 12px no-repeat;
+    background-size: 16px auto;
+    color: var(--body-fg);
+}
+
+ul.messagelist li.warning {
+    background: var(--message-warning-bg) url(/static/admin/img/icon-alert.svg) 40px 14px no-repeat;
+    background-size: 14px auto;
+}
+
+ul.messagelist li.error {
+    background: var(--message-error-bg) url(/static/admin/img/icon-no.svg) 40px 12px no-repeat;
+    background-size: 16px auto;
+}
+
+.errornote {
+    font-size: 14px;
+    font-weight: 700;
+    display: block;
+    padding: 10px 12px;
+    margin: 0 0 10px 0;
+    color: var(--error-fg);
+    border: 1px solid var(--error-fg);
+    border-radius: 4px;
+    background-color: var(--body-bg);
+    background-position: 5px 12px;
+    overflow-wrap: break-word;
+}
+
+ul.errorlist {
+    margin: 0 0 4px;
+    padding: 0;
+    color: var(--error-fg);
+    background: var(--body-bg);
+}
+
+ul.errorlist li {
+    font-size: 13px;
+    display: block;
+    margin-bottom: 4px;
+    overflow-wrap: break-word;
+}
+
+ul.errorlist li:first-child {
+    margin-top: 0;
+}
+
+ul.errorlist li a {
+    color: inherit;
+    text-decoration: underline;
+}
+
+td ul.errorlist {
+    margin: 0;
+    padding: 0;
+}
+
+td ul.errorlist li {
+    margin: 0;
 }

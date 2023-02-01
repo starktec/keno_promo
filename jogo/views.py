@@ -755,6 +755,7 @@ def configuracao(request):
             form = ConfiguracaoForm(request.POST, request.FILES, instance=c)
             if form.is_valid():
                 form.save()
+                messages.success(request,f"Configurações atualizadas as {datetime.datetime.now().strftime('%d/%m/%Y %H:%M:%S')}")
             else:
                 print(form.errors)
         else:

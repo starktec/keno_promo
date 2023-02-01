@@ -479,12 +479,17 @@ class ConfiguracaoForm(forms.ModelForm):
         attrs={'class': "form-control form-control-md form-control-outlined" ,'autocomplete': "off",'cols': 80, 'rows': 30}
     ))
 
-    contato_cartela = forms.CharField(required=False, widget=forms.TextInput(
-        attrs={'class': "form-control form-control-md form-control-outlined" ,'autocomplete': "off"}
+    max_vitorias_jogador = forms.IntegerField(min_value=0, max_value=60, widget=forms.NumberInput(
+        attrs={'class': 'form-control form-control-lg form-control-outlined', 'autocomplete': "off"}
     ))
-
-    mensagem_whatsapp= forms.CharField(required=False, widget=forms.TextInput(
-        attrs={'class': "form-control form-control-md form-control-outlined" ,'autocomplete': "off"}
+    numero_cadastro_libera_jogador = forms.IntegerField(min_value=0, max_value=60, widget=forms.NumberInput(
+        attrs={'class': 'form-control form-control-lg form-control-outlined', 'autocomplete': "off"}
+    ))
+    creditos_bonus_gera_bilhete = forms.IntegerField(min_value=0, max_value=60, widget=forms.NumberInput(
+        attrs={'class': 'form-control form-control-lg form-control-outlined', 'autocomplete': "off"}
+    ))
+    max_cartelas_bonus_por_sorteio = forms.IntegerField(min_value=0, max_value=60, widget=forms.NumberInput(
+        attrs={'class': 'form-control form-control-lg form-control-outlined', 'autocomplete': "off"}
     ))
 
     class Meta:
@@ -493,7 +498,9 @@ class ConfiguracaoForm(forms.ModelForm):
                   'iniciar_sorteio_em',
                   'logo_dash','logo_login','favicon','nome_server','nome_botao','url_botao',
                   'nome_grupo_telegram','url_grupo_telegram','logo_promo',"fundo_front","regras","politicas_de_privacidade",
-                  "contato_cartela","incluir_codigo","incluir_sorteio","incluir_valor","incluir_apelido","mensagem_whatsapp"]
+                  "incluir_codigo","incluir_sorteio","incluir_valor","incluir_apelido",
+                  "max_vitorias_jogador","numero_cadastro_libera_jogador","creditos_bonus_gera_bilhete",
+                  "max_cartelas_bonus_por_sorteio"]
 
 
 class ConfiguracaoVisualForm(forms.ModelForm):

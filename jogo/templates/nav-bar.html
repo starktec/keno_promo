@@ -39,6 +39,7 @@
     <link rel="stylesheet" href="/static/style/configuracao.css">
     <link rel="stylesheet" href="/static/style/ganhadores.css">
     <link rel="stylesheet" href="/static/style/help.css">
+    <link rel="stylesheet" href="/static/css/messages.css">
 {% block extra_head %}{% endblock %}
 </head>
 
@@ -104,7 +105,7 @@
                                 </li>
                                     <li class="nk-menu-item">
                                     <a href="/pagamento/" class="nk-menu-link">
-                                        <span class="nk-menu-icon"><em class="icon ni ni-user text-verde"></em></span>
+                                        <span class="nk-menu-icon"><em class="icon ni ni-coin-alt-fill text-verde"></em></span>
                                         <span class="nk-menu-text">Pagamento</span>
                                     </a>
                                 </li>
@@ -119,7 +120,7 @@
                                 <li class="nk-menu-item">
                                     <a href="/configuracao-visual/" class="nk-menu-link">
                                         <span class="nk-menu-icon"><em class="icon ni ni-eye-alt"></em></span>
-                                        <span class="nk-menu-text">Configuração visual</span>
+                                        <span class="nk-menu-text">Configuração Cores</span>
                                     </a>
                                 </li>
                                 </section>
@@ -228,6 +229,17 @@
                     <!-- content @s -->
                     <!-- <div class="nk-content notificacao-ativa"> -->
                     <div class="nk-content">
+                        {% if messages %}
+                        <div class="row justify-content-center">
+                            <div class="row col-lg-12 col-md-12 col-sm-12 justify-content-center padding-zero">
+                                <ul class="messagelist">
+                                    {% for message in messages %}
+                                    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                        {% endif %}
                     {% block nav-bar %}
 
                     {% endblock %}
