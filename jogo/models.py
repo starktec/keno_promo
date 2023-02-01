@@ -1,6 +1,7 @@
 import base64
 import pickle
 import string
+import urllib
 
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
@@ -122,12 +123,10 @@ class Configuracao(models.Model):
 
     politicas_de_privacidade = models.TextField(default="")
 
-    contato_cartela = models.CharField(max_length=20,blank=True,null=True)
     incluir_codigo = models.BooleanField(default=True)
     incluir_sorteio = models.BooleanField(default=True)
     incluir_valor = models.BooleanField(default=True)
     incluir_apelido = models.BooleanField(default=True)
-    mensagem_whatsapp = models.CharField(blank=True,null=True, max_length=255)
 
     velocidade_sorteio = models.PositiveIntegerField(default=3000)
     velocidade_sorteio_online = models.PositiveIntegerField(default=3000)
@@ -859,3 +858,45 @@ class CampoCadastro(models.Model):
 class ResetScore(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.PROTECT)
     datetime = models.DateTimeField(auto_now_add=True)
+
+class ContatoCartelaVencedora(models.Model):
+    tipo = models.CharField(choices=TipoRedeSocial.choices,max_length=50)
+    link = models.URLField()
+    mensagem_inicial = models.TextField(blank=True, null=True)
+    mensagem_final = models.TextField(blank=True,null=True)
+    ativo = models.BooleanField(default=True)
+
+    def get_link_vencedor_formatado(self, cartela=None):
+        configuracao = Configuracao.objects.last()
+
+        if self.tipo == TipoRedeSocial.WHATSAPP:
+            msg = ""
+            if self.mensagem_inicial:
+                msg = urllib.parse.quote(self.mensagem_inicial)
+            sorteio_text = "-%20N%C3%BAmero%20do%20sorteio%20premiado:%20"
+            codigo_text = "-%20C%C3%B3digo:%20"
+            apelido_text = "-%20Apelido:%20"
+            valor_text = "-%20Valor%20do%20pr%C3%AAmio:%20R$"
+            final_text = "%0A%0AComo%20fa%C3%A7o%20para%20receber%20o%20meu%20b%C3%B4nus?"
+            if self.mensagem_final:
+                final_text = urllib.parse.quote(self.mensagem_final)
+            link_vencedor = f"{self.link}&text={msg}"
+            complemento = []
+            if configuracao.incluir_sorteio and cartela:
+                complemento.append(f"{sorteio_text}{cartela.partida.id}%0A")
+            if configuracao.incluir_codigo and cartela:
+                complemento.append(f"{codigo_text}{cartela.codigo}%0A")
+            if configuracao.incluir_apelido and cartela:
+                complemento.append(f"{apelido_text}{cartela.jogador.usuario}%0A")
+            if configuracao.incluir_valor and cartela:
+                vencedora: CartelaVencedora = cartela.cartelavencedora_set.all()
+                valor_somado = vencedora.aggregate(Sum("valor_premio"))
+                complemento.append(f"{valor_text}{valor_somado['valor_premio__sum']}%0A")
+
+            if complemento:
+                link_vencedor += "".join(complemento)
+
+            link_vencedor += final_text
+            return link_vencedor
+        elif self.tipo == TipoRedeSocial.INSTAGRAM:
+            return self.link

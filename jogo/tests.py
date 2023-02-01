@@ -11,7 +11,9 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from jogo.choices import AcaoBonus
-from jogo.models import Jogador, Configuracao, Partida, Regra, Usuario, Cartela, CreditoBonus, RegraBonus
+from jogo.consts import TipoRedeSocial
+from jogo.models import Jogador, Configuracao, Partida, Regra, Usuario, Cartela, CreditoBonus, RegraBonus, \
+    CartelaVencedora, ContatoCartelaVencedora
 
 
 class AccountTests(APITestCase):
@@ -34,13 +36,19 @@ class AccountTests(APITestCase):
         self.regra = Regra.objects.create(nome="REGRA")
         self.regrabonus = RegraBonus.objects.create(acao=AcaoBonus.CADASTRO,valor=1,url="www.google.com.br")
 
+
+
     def set_credentials(self):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.j1.usuario_token)
 
-    def criar_partida(self):
-        mais_tarde = datetime.datetime.now() + datetime.timedelta(minutes=10)
+    def criar_partida(self, futuro=True):
+        horario = None
+        if futuro:
+            horario = datetime.datetime.now() + datetime.timedelta(minutes=10)
+        else:
+            horario = datetime.datetime.now() - datetime.timedelta(minutes=10)
         return Partida.objects.create(
-            data_partida=mais_tarde, tipo_rodada=1, valor_kuadra=1.0, valor_kina=2.0, valor_keno=3.0, regra=self.regra,
+            data_partida=horario, tipo_rodada=1, valor_kuadra=1.0, valor_kina=2.0, valor_keno=3.0, regra=self.regra,
             usuario=self.usuario
         )
     def gerar_bilhete(self, partida):
@@ -113,3 +121,32 @@ class AccountTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Cartela.objects.filter(jogador=self.j1,partida=partida).count(),2)
         self.assertEqual(self.j1.creditos(), 0)
+
+    def test_link_vencedor(self):
+        self.set_credentials()
+        partida = self.criar_partida(futuro=False)
+        cartela = self.gerar_bilhete(partida)
+        CartelaVencedora.objects.create(cartela=cartela,partida=partida,premio=1,valor_premio=1.0)
+        CartelaVencedora.objects.create(cartela=cartela,partida=partida,premio=2,valor_premio=2.0)
+        CartelaVencedora.objects.create(cartela=cartela,partida=partida,premio=3,valor_premio=3.0)
+
+        url = f"/api/kol/bilhete/{cartela.hash}/"
+
+        contato = ContatoCartelaVencedora.objects.create(
+            tipo=TipoRedeSocial.WHATSAPP,link="https://api.whatsapp.com/send?phone=5581982814585",
+            mensagem_inicial="Seja bem vindo!\n",
+            mensagem_final="Até mais"
+        )
+
+        response = self.client.get(url)
+        print(response.json()['link_vencedor'])
+
+        contato.ativo=False
+        contato.save()
+
+        ContatoCartelaVencedora.objects.create(
+            tipo=TipoRedeSocial.INSTAGRAM, link="https://ig.me/m/recebabonus",
+        )
+
+        response = self.client.get(url)
+        print(response.json()['link_vencedor'])

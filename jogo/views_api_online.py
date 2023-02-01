@@ -6,7 +6,8 @@ from django.db.models import Q, Sum
 from django.views.decorators.http import require_http_methods
 from rest_framework.decorators import api_view
 from django.views.decorators.csrf import csrf_exempt
-from jogo.models import Cartela, CartelaVencedora, Configuracao, Partida, Jogador, PREMIO_CHOICES
+from jogo.models import Cartela, CartelaVencedora, Configuracao, Partida, Jogador, PREMIO_CHOICES, \
+    ContatoCartelaVencedora
 import datetime
 from django.http import HttpResponse, JsonResponse
 
@@ -26,7 +27,8 @@ def dados_bilhete(request,hash):
         if jogador and Cartela.objects.filter(jogador=jogador,hash=hash, cancelado=False):
             logger.info(f" - Jogador {jogador}")
             configuracao = Configuracao.objects.last()
-            data_liberacao = datetime.datetime.now() + datetime.timedelta(configuracao.liberar_resultado_sorteio_em)
+            data_liberacao = datetime.datetime.now() - datetime.timedelta(
+                minutes=configuracao.liberar_resultado_sorteio_em)
             cartela = Cartela.objects.filter(
                 jogador=jogador,hash=hash, cancelado=False,
             ).first()
@@ -43,37 +45,17 @@ def dados_bilhete(request,hash):
             }
 
             link_vencedor = ""
-            vencedora: CartelaVencedora = cartela.cartelavencedora_set.all()
+            vencedora: CartelaVencedora = cartela.cartelavencedora_set.filter(
+                partida__data_partida__lte=data_liberacao
+            )
             if vencedora:
                 premio = [PREMIOS[x.premio] for x in vencedora]
                 dado["premio"]=premio
 
-                if configuracao.contato_cartela:
-                    #msg = "Oi.%20Acabei%20de%20ganhar%20um%20sorteio%20no%20Recebabonus.%20"
-                    msg = "Ol%C3%A1!%20Sou%20o%20(a)%20mais%20novo%20(a)%20ganhador%20(a)%20do%20Receba%20B%C3%B4nus!%20%0A%0A"
-                    sorteio_text = "-%20N%C3%BAmero%20do%20sorteio%20premiado:%20"
-                    codigo_text = "-%20C%C3%B3digo:%20"
-                    apelido_text = "-%20Apelido:%20"
-                    valor_text = "-%20Valor%20do%20pr%C3%AAmio:%20R$"
-                    final_text = "%0A%0AComo%20fa%C3%A7o%20para%20receber%20o%20meu%20b%C3%B4nus?"
-                    if configuracao.mensagem_whatsapp:
-                        final_text = urllib.parse.quote(configuracao.mensagem_whatsapp)
-                    link_vencedor = f"https://api.whatsapp.com/send/?phone={configuracao.contato_cartela}&text={msg}"
-                    complemento = []
-                    if configuracao.incluir_sorteio:
-                        complemento.append(f"{sorteio_text}{cartela.partida.id}%0A")
-                    if configuracao.incluir_codigo:
-                        complemento.append(f"{codigo_text}{cartela.codigo}%0A")
-                    if configuracao.incluir_apelido:
-                        complemento.append(f"{apelido_text}{cartela.jogador.usuario}%0A")
-                    if configuracao.incluir_valor:
-                        valor_somado = vencedora.aggregate(Sum("valor_premio"))
-                        complemento.append(f"{valor_text}{valor_somado['valor_premio__sum']}%0A")
+                contato = ContatoCartelaVencedora.objects.filter(ativo=True).last()
 
-                    if complemento:
-                        link_vencedor += "".join(complemento)
-
-                    link_vencedor += final_text
+                if contato:
+                    link_vencedor = contato.get_link_vencedor_formatado(cartela)
             cartelas.append(dado)
 
             dados = {

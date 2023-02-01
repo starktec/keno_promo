@@ -49,7 +49,8 @@ class TipoRedeSocial(TextChoices):
     YOUTUBE = "Youtube","youtube"
     TIKTOK = "TikTok","tikTok",
     TELEGRAM = "Telegram","telegram",
-    TWITCH = "Twitch", "twitch"
+    TWITCH = "Twitch", "twitch",
+    WHATSAPP = "Whatsapp","whatsapp"
 
 SOCIAL_MEDIA_IMAGES = {
     TipoRedeSocial.INSTAGRAM: "/static/social_media/instagram.png",

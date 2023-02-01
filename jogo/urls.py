@@ -58,7 +58,7 @@ urlpatterns = [
 
     path('api/kol/', include(
         [
-            path('bilhete/<str:hash>/', dados_bilhete),
+            path('bilhete/<str:hash>/', dados_bilhete,name="dados_bilhete"),
             path('proximossorteios/', proximos_kol),
             path('data_hora/', data_hora_servidor),
             path('ultimos_ganhadores/', ultimos_ganhadores_kol),
