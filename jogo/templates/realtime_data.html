@@ -16,7 +16,7 @@ INFORMAÇÕES DAS PARTIDAS
 <div>
     
     <div class="row my-row">
-        <div class="col-sm-12 col-md-6 col-lg-6">
+        <div class="col-sm-12">
             <div class="card cards-status">
                 <div class="row text-center">
                     <em class="icon ni ni-sign-mxn icon-card color-card-pos"></em>
@@ -27,8 +27,17 @@ INFORMAÇÕES DAS PARTIDAS
                 </div>
 
                 <div class="row my-row">
-                    <div class="content-cel" >
+                    <div class="col-sm-12 col-md-4 col-lg-4" >
+                        <h6>Participantes/min</h6>
                     <canvas id="canvas"></canvas>
+                    </div>
+                    <div class="col-sm-12 col-md-4 col-lg-4" >
+                        <h6>Novos Participantes/min</h6>
+                    <canvas id="canvas_2"></canvas>
+                    </div>
+                    <div class="col-sm-12 col-md-4 col-lg-4" >
+                        <h6>Indicações/min</h6>
+                    <canvas id="canvas_3"></canvas>
                     </div>
                 </div>
 
@@ -78,13 +87,24 @@ INFORMAÇÕES DAS PARTIDAS
         socket = new WebSocket('ws://' + location.host + '/ws/dados/realtime/');
     }
     socket.onmessage = function(event) {
-        data = JSON.parse(event.data)
-        console.log(data)
+        data = JSON.parse(event.data);
+        console.log(data);
         clearTimeout(timer);
-        let doacoes_min = 0
-        if (data.novos_jogadores_min || data.novos_jogadores_min == 0){
+        let doacoes_min = 0;
+        let novos_jogadores = 0;
+        let indicados = 0;
+
+        if (data.jogadores_min || data.jogadores_min >= 0){
             document.querySelector("#novos_jogadores_min").innerText = data.novos_jogadores_min;
-            doacoes_min = data.novos_jogadores_min
+            doacoes_min = data.jogadores_min;
+        }
+
+        if (data.novos_jogadores_min || data.novos_jogadores_min >= 0){
+            novos_jogadores = data.novos_jogadores_min;
+        }
+
+        if (data.indicados_min || data.indicados_min >= 0){
+            indicados = data.indicados_min;
         }
 
         var participantes = 0;
@@ -108,6 +128,8 @@ INFORMAÇÕES DAS PARTIDAS
             });
             document.querySelector('#tbody').innerHTML = html
         }
+
+        // Canvas 1
         var velocidade_max = 100;
         if (doacoes_min>100){
             velocidade_max = doacoes_min;
@@ -118,7 +140,36 @@ INFORMAÇÕES DAS PARTIDAS
             gear = Math.floor(doacoes_min/15)+1;
         }
 
-        drawSpeedo(doacoes_min,gear,(participantes/limite),velocidade_max);
+        drawSpeedo(doacoes_min,gear,(participantes/limite),velocidade_max, "canvas");
+
+        // Canvas 2
+        velocidade_max = 100;
+        if (novos_jogadores>100){
+            velocidade_max = novos_jogadores;
+        }
+
+        gear = 0;
+        if (novos_jogadores>0){
+            gear = Math.floor(novos_jogadores/15)+1;
+        }
+
+        drawSpeedo(novos_jogadores,gear,(participantes/limite),velocidade_max,"canvas_2");
+
+        // Canvas 3
+        velocidade_max = 100;
+        if (indicados>100){
+            velocidade_max = indicados;
+        }
+
+        gear = 0;
+        if (indicados>0){
+            gear = Math.floor(indicados/15)+1;
+        }
+
+        drawSpeedo(indicados,gear,(participantes/limite),velocidade_max,"canvas_3");
+
+
+
         timer = setTimeout(test_time_out, 60000,doacoes_min.toFixed(2));
         
     }

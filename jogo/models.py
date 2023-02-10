@@ -613,7 +613,8 @@ class Cartela(models.Model):
                 self.codigo = str(self.gerar_codigo())
             """
         super().save(force_insert, force_update, using, update_fields)
-        #event_doacoes()
+        if Cartela.objects.filter(partida=self.partida,jogador=self.jogador).count()==1:
+            event_doacoes()
 
     def __str__(self):
         if self.codigo:

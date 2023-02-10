@@ -3,7 +3,7 @@ from channels.generic.websocket import AsyncJsonWebsocketConsumer, AsyncWebsocke
 from asgiref.sync import sync_to_async
 import logging
 import json
-from django.db.models.aggregates import Sum
+from django.db.models.aggregates import Sum, Count
 from jogo.serializers import PartidaProximaSerializer, PartidaProximaEspecialSerializer
 
 from jogo.models import Cartela, Jogador, Partida, Configuracao, CartelaVencedora
@@ -124,12 +124,13 @@ class DadosTempoRealConsumer(AsyncWebsocketConsumer):
             logger.info(f"WS Connection {self.channel_name} - DADOS TEMPO REAL")
             self.user = self.scope["user"]
             await self.accept()
-            partidas,novos_jogadores_min = await self.doacoes()
+            partidas,novos_jogadores_min,jogadores_min,indicados_min = await self.doacoes()
             await self.channel_layer.group_add( # criando um layer group
                 "real-time-data",
                 self.channel_name
             )
-            await self.send(json.dumps({'partidas':partidas, "novos_jogadores_min":novos_jogadores_min}))
+            await self.send(json.dumps({'partidas':partidas, "novos_jogadores_min":novos_jogadores_min,
+                                        "jogadores_min":jogadores_min,"indicados_min":indicados_min}))
         except Exception as e:
             logger.exception(e)
             raise e
@@ -139,11 +140,19 @@ class DadosTempoRealConsumer(AsyncWebsocketConsumer):
         try:
             dados = []
             agora = datetime.datetime.now()
+            date_range = [agora - datetime.timedelta(minutes=1), agora]
 
-            novos_jogadores_min = Cartela.objects.filter(
-                comprado_em__gt =(agora - datetime.timedelta(minutes=1)),
-                comprado_em__lt = agora
-            ).count()
+            ultimas_cartelas = Cartela.objects.filter(
+                comprado_em__range=date_range
+            )
+
+            jogadores_min = ultimas_cartelas.count()
+
+            novos_jogadores = ultimas_cartelas.annotate(Count("jogador__cartela")).filter(jogador__cartela__count=1,)
+
+            novos_jogadores_min = novos_jogadores.count()
+
+            indicados_min = novos_jogadores.filter(jogador__indicado_por__isnull=False).count()
 
             for p in Partida.objects.filter(
                     data_partida__gt=agora,bolas_sorteadas__isnull = True
@@ -162,15 +171,16 @@ class DadosTempoRealConsumer(AsyncWebsocketConsumer):
                 }
                 dados.append(partida)
     
-            return {'partidas':dados},novos_jogadores_min
+            return {'partidas':dados}, novos_jogadores_min, jogadores_min, indicados_min
         except Exception as e:
             logger.exception(e)
             raise e
     
     async def events_doacoes(self,event):
         try:
-            partidas,novos_jogadores_min = await self.doacoes()
-            await self.send(json.dumps({'partidas':partidas,'novos_jogadores_min':novos_jogadores_min}))
+            partidas,novos_jogadores_min, jogadores_min, indicados_min = await self.doacoes()
+            await self.send(json.dumps({'partidas':partidas,'novos_jogadores_min':novos_jogadores_min,
+                                        "jogadores_min":jogadores_min,"indicados`min":indicados_min}))
         except Exception as e:
             logger.exception(e)
             raise e

@@ -136,7 +136,7 @@ JOGADORES
             </div>
         </div>
     </div>
-    <!-------------------------------tabela de generica de cambistas-------------------------------->
+    <!-------------------------------tabela de jogadores-------------------------------->
     <div class="row my-row">
         <div class="col-12">
             <div class="card card-table table-responsive-xl overflow-auto">
@@ -172,8 +172,9 @@ JOGADORES
                                 <a href="https://wa.me/55{{ jogador.whatsapp }}/" target="_blank">
                                     {{ dados.3 }}
                                 </a>
+                                {% if dados.4 %}{{ dados.4 }}{% endif %}
                             </td>
-                            <td scope="row">{{ dados.5 }} ({{ dados.4 }} cartelas)</td>
+                            <td scope="row">{{ dados.6 }} ({{ dados.5 }} cartelas)</td>
                             <td scope="row">{{ dados.0 }}</td>
                             <td scope="row" class="celula-media">
                                 <a class="btn btn-danger btn-create-secondary btn-checkbox btn-informacoes" data-toggle="modal" data-target="#modal-informacao-{{ jogador.id }}">

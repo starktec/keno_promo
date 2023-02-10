@@ -384,8 +384,7 @@ def jogadores(request):
                 if 'num_vitorias' in form.cleaned_data:
                     vitorias = int(form.cleaned_data['num_vitorias'])
 
-            else:
-                print(form.errors)
+
         total_dados = jogadores.count()
         ultima_pagina = 1
 

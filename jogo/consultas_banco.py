@@ -64,7 +64,7 @@ def estatisticas_jogadores(filtro, vitorias=-1):
     jogadores_partidas = {}
     with connection.cursor() as cursor:
         sql = """
-            select j.id,j.nome,j.instagram,j.whatsapp,
+            select j.id,j.nome,j.instagram,j.whatsapp,j.cpf,
             count(c.id) as cartelas, count(distinct p.id) as sorteios
             from jogo_jogador as j
             inner join jogo_cartela as c
@@ -140,10 +140,10 @@ def estatisticas_jogadores(filtro, vitorias=-1):
 
     for row in jogadores_geral:
         if row[0] in jogadores.keys():
-            jogadores[row[0]]+=[row[1],row[2],row[3],row[4],row[5]]
+            jogadores[row[0]]+=[row[1],row[2],row[3],row[4],row[5],row[6]]
         else:
             if vitorias==-1:
-                jogadores[row[0]] = [0,row[1],row[2],row[3],row[4],row[5]]
+                jogadores[row[0]] = [0,row[1],row[2],row[3],row[4],row[5],row[6]]
 
     for k,v in jogadores_partidas.items():
         if k in jogadores.keys():

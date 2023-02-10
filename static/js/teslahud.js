@@ -7,25 +7,9 @@ let dev = false;
 //let t0 = 0;
 //let t1 = 0;
 
-     var c = document.getElementById("canvas");
-        c.width = 350;
-        c.height = 350;
 
-        var ctx = c.getContext("2d");
 
-        //Rescale the size
-        ctx.scale(0.7,0.7);
-
-        var speedGradient = ctx.createLinearGradient(0, 500, 0, 0);
-        speedGradient.addColorStop(0, '#00b8fe');
-        speedGradient.addColorStop(1, '#41dcf4');
-
-        var rpmGradient = ctx.createLinearGradient(0, 500, 0, 0);
-        rpmGradient.addColorStop(0, '#f7b733');
-        rpmGradient.addColorStop(1, '#fc4a1a');
-        //rpmGradient.addColorStop(1, '#EF4836');
-
-        function speedNeedle(rotation) {
+        function speedNeedle(rotation, ctx) {
             ctx.lineWidth = 2;
 
             ctx.save();
@@ -37,7 +21,7 @@ let dev = false;
             rotation += Math.PI / 180;
         }
 
-        function rpmNeedle(rotation) {
+        function rpmNeedle(rotation, ctx) {
             ctx.lineWidth = 2;
 
             ctx.save();
@@ -49,7 +33,7 @@ let dev = false;
             rotation += Math.PI / 180;
         }
 
-        function drawMiniNeedle(rotation, width, speed) {
+        function drawMiniNeedle(rotation, width, speed, ctx) {
             ctx.lineWidth = width;
 
             ctx.save();
@@ -81,7 +65,25 @@ let dev = false;
             return radian >= -0.46153862656807704 ? radian : -0.46153862656807704;
         }
 
-        function drawSpeedo(speed, gear, rpm, topSpeed) {
+        function drawSpeedo(speed, gear, rpm, topSpeed, canvas_id) {
+            var c = document.getElementById(canvas_id);
+            c.width = 350;
+            c.height = 350;
+
+            var ctx = c.getContext("2d");
+
+            //Rescale the size
+            ctx.scale(0.7,0.7);
+
+            var speedGradient = ctx.createLinearGradient(0, 500, 0, 0);
+            speedGradient.addColorStop(0, '#00b8fe');
+            speedGradient.addColorStop(1, '#41dcf4');
+
+            var rpmGradient = ctx.createLinearGradient(0, 500, 0, 0);
+            rpmGradient.addColorStop(0, '#f7b733');
+            rpmGradient.addColorStop(1, '#fc4a1a');
+            //rpmGradient.addColorStop(1, '#EF4836');
+
             if (speed == undefined) {
                 return false;
             } else {
@@ -165,12 +167,16 @@ let dev = false;
             ctx.fillStyle = "#FFF";
             for (var i = 10; i <= Math.ceil(topSpeed / 20) * 20; i += 10) {
                 console.log();
-                drawMiniNeedle(calculateSpeedAngle(i / topSpeed, 83.07888, 34.3775) * Math.PI, i % 20 == 0 ? 3 : 1, i%20 == 0 ? i : '');
+                drawMiniNeedle(
+                    calculateSpeedAngle(i / topSpeed, 83.07888, 34.3775) * Math.PI,
+                    i % 20 == 0 ? 3 : 1, i%20 == 0 ? i : '',
+                    ctx);
                 
                 if(i<=100) { 
-                    drawMiniNeedle(calculateSpeedAngle(i / 47, 0, 22.9183) * Math.PI, i % 20 == 0 ? 3 : 1, i % 20 ==
-                    0 ?
-                    i / 10 : '');
+                    drawMiniNeedle(
+                    calculateSpeedAngle(i / 47, 0, 22.9183) * Math.PI,
+                    i % 20 == 0 ? 3 : 1, i % 20 == 0 ? i / 10 : '',
+                    ctx);
                 }
             }
 
@@ -195,10 +201,10 @@ let dev = false;
 
 
             ctx.strokeStyle = '#41dcf4';
-            speedNeedle(calculateSpeedAngle(speed / topSpeed, 83.07888, 34.3775) * Math.PI);
+            speedNeedle(calculateSpeedAngle(speed / topSpeed, 83.07888, 34.3775) * Math.PI, ctx);
 
             ctx.strokeStyle = rpmGradient;
-            rpmNeedle(calculateRPMAngel(rpm / 4.7, 0, 22.9183) * Math.PI);
+            rpmNeedle(calculateRPMAngel(rpm / 4.7, 0, 22.9183) * Math.PI, ctx);
 
             ctx.strokeStyle = "#000";
         }
@@ -210,5 +216,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     //setInterval(setSpeed, 100)
     //renderCanvas();
-    drawSpeedo(120,4,.8,160);
+    drawSpeedo(120,4,.8,160,"canvas");
+    drawSpeedo(120,4,.8,160,"canvas_2");
+    drawSpeedo(120,4,.8,160,"canvas_3");
 }, false);
