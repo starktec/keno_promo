@@ -348,7 +348,9 @@ def ganhadores(request):
 
         total_cartelas_vencedoras = CartelaVencedora.objects.distinct("cartela__jogador").count()
         total_jogadores = Jogador.objects.filter(cartela__isnull=False).count()
-        total_estatistica = f"{total_cartelas_vencedoras}/{total_jogadores} ({round((total_cartelas_vencedoras/total_jogadores)*100.0,2)}%)"
+        total_estatistica = "0"
+        if total_jogadores:
+            total_estatistica = f"{total_cartelas_vencedoras}/{total_jogadores} ({round((total_cartelas_vencedoras / total_jogadores) * 100.0, 2)}%)"
 
         if ultima_pagina == 0:
             ultima_pagina = 1
