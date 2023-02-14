@@ -18,6 +18,9 @@ from jogo.serializers import JogadorSerializer, LoginJogadorSerializer, Cadastro
 from jogo.utils import format_serializer_message
 
 import logging
+
+from jogo.websocket_triggers import event_doacoes
+
 LOGGER = logging.getLogger(__name__)
 
 class CadastroJogador(APIView):
@@ -26,6 +29,8 @@ class CadastroJogador(APIView):
         serializer = CadastroJogadorSerializer(data=request.data)
         if serializer.is_valid():
             jogador = serializer.save()
+            if jogador.indicado_por:
+                event_doacoes()
             return Response(data=JogadorSerializer(jogador).data, status=status.HTTP_201_CREATED)
         LOGGER.info(format_serializer_message(serializer.errors))
         raise serializers.ValidationError(detail=format_serializer_message(serializer.errors))

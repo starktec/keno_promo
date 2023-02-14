@@ -180,7 +180,7 @@ class DadosTempoRealConsumer(AsyncWebsocketConsumer):
         try:
             partidas,novos_jogadores_min, jogadores_min, indicados_min = await self.doacoes()
             await self.send(json.dumps({'partidas':partidas,'novos_jogadores_min':novos_jogadores_min,
-                                        "jogadores_min":jogadores_min,"indicados`min":indicados_min}))
+                                        "jogadores_min":jogadores_min,"indicados_min":indicados_min}))
         except Exception as e:
             logger.exception(e)
             raise e

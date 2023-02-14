@@ -465,7 +465,7 @@ class Agenda():
                         tipo_rodada = template.tipo_rodada,
                         regra = template.regra
                     )
-                    self.agendar(p)
+                    #self.agendar(p)
                     template.play =True
                     template.save()
                     # comprando cartelas
