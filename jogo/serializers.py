@@ -428,11 +428,11 @@ class AfiliadoSerializer(serializers.ModelSerializer):
         return ""
 
     def get_saldo(self, obj):
-        bonus = CreditoBonus.objects.filter(jogador=obj,ativo=True)
+        bonus = CreditoBonus.objects.filter(jogador=obj)
         if not bonus:
             return {"total":0,"usado":0,"restante":0}
         total = bonus.count()
-        usado = bonus.filter(resgatado_em__isnull=False).count()
+        usado = bonus.filter(resgatado_em__isnull=False,ativo=True).count()
         restante = total - usado
         return {"total":total,"usado":usado,"restante":restante}
 
@@ -452,7 +452,7 @@ class AfiliadoSerializer(serializers.ModelSerializer):
 
     def get_top5(self,obj):
         results = Jogador.objects.filter(
-            credito_jogador__isnull=False,credito_jogador__resgatado_em__isnull=True
+            credito_jogador__isnull=False,credito_jogador__resgatado_em__isnull=True,ativo=True
         ).annotate(
             Count("id"),quantidade=Sum("credito_jogador__valor")
         ).order_by("-quantidade").values("nome","quantidade")
