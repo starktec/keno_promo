@@ -15,7 +15,7 @@ CONFIGURAÇÃO
                                 <nav class="col-12 tab">
                                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
                                       <button class="nav-link active-tabs tabs-margin" id="jogo-conf" data-bs-toggle="tab" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Configuração Jogo</button>
-                                      <button class="nav-link deactivate-tabs tabs-margin" id="server-conf" data-bs-toggle="tab" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Configuração Visual</button>
+                                      <button class="nav-link deactivate-tabs tabs-margin" id="server-conf" data-bs-toggle="tab" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Configuração Dash</button>
                                       <button class="nav-link deactivate-tabs tabs-margin" id="regras-e-politicas" data-bs-toggle="tab" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Configuração Regras e Politicas</button>
                                     </div>
                                 </nav>
@@ -78,7 +78,12 @@ CONFIGURAÇÃO
                                         {{ form.incluir_apelido }}
                                     </div>
                                 </div>
-
+                                <div class="col-lg-6 col-md-6 col-sm-12 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_velocidade_sorteio">Velocidade Sorteio</label>
+                                    <div class="form-control-wrap">
+                                        {{ form.velocidade_sorteio }}
+                                    </div>
+                                </div>
                                 <div class="col-lg-6 col-md-6 col-sm-12 container-input-create input-container-conf">
                                     <label class="form-label" for="id_max_vitorias_jogador">Max vitórias permitidas (0 = sem limite)</label>
                                     <div class="form-control-wrap">
@@ -117,31 +122,6 @@ CONFIGURAÇÃO
                                     <label class="form-label" for="id_nome_server">Nome do painel</label>
                                     <div class="form-control-wrap">
                                         {{ form.nome_server }}
-                                    </div>
-                                </div>
-                                <div class="col-lg-12 col-md-12 col-sm-12 container-input-create input-container-conf">
-                                    <label class="form-label" for="id_nome_server">Nome do Botão</label>
-                                    <div class="form-control-wrap">
-                                        {{ form.nome_botao }}
-                                    </div>
-                                </div>
-                                <div class="col-lg-12 col-md-12 col-sm-12 container-input-create input-container-conf">
-                                    <label class="form-label" for="id_nome_server">URL do Botão</label>
-                                    <div class="form-control-wrap">
-                                        {{ form.url_botao }}
-                                    </div>
-                                </div>
-                                
-                                <div class="col-lg-12 col-md-12 col-sm-12 container-input-create input-container-conf">
-                                    <label class="form-label" for="id_nome_server">Nome do Grupo Telegram</label>
-                                    <div class="form-control-wrap">
-                                        {{ form.nome_grupo_telegram }}
-                                    </div>
-                                </div>
-                                <div class="col-lg-12 col-md-12 col-sm-12 container-input-create input-container-conf">
-                                    <label class="form-label" for="id_nome_server">URL do Grupo Telegram</label>
-                                    <div class="form-control-wrap">
-                                        {{ form.url_grupo_telegram }}
                                     </div>
                                 </div>
 

@@ -102,20 +102,8 @@ class Configuracao(models.Model):
     # Versao da branch
     versao = models.CharField(max_length=100, blank=True, null=True)
 
-    # Link para jogos reais
-    nome_botao = models.CharField(max_length=200,blank=True,null=True)
-    url_botao = models.URLField(blank=True,null=True)
-
-    # link para grupo telegram
-    nome_grupo_telegram =  models.CharField(max_length=200,blank=True,null=True)
-    url_grupo_telegram = models.URLField(blank=True,null=True)
-
     # instagram compatibilidade
-    instagram_connection = models.BinaryField(blank=True, null=True)
     perfil_default = models.URLField(blank=True, null=True)
-    validacao_ativa = models.BooleanField(default=False)
-    publicacao_uma_vez_dia = models.BooleanField(default=True)
-
     reter_jogadores = models.BooleanField(default=True)
 
     # regras e politica
