@@ -10,7 +10,7 @@ from jogo.choices import AcaoBonus
 from jogo.consts import SOCIAL_MEDIA_IMAGES, LocalBotaoChoices
 from jogo.models import CartelaVencedora, Partida, Cartela, Configuracao, Jogador, CreditoBonus, RegraBonus, \
     ConfiguracaoAplicacao, BotaoAplicacao, BotaoMidiaSocial, Parceiro, RequisicaoPremioAplicacao, UserAfiliadoTeste, \
-    CampoCadastro
+    CampoCadastro, DebitoBonus
 import re
 
 import logging
@@ -431,9 +431,10 @@ class AfiliadoSerializer(serializers.ModelSerializer):
         bonus = CreditoBonus.objects.filter(jogador=obj)
         if not bonus:
             return {"total":0,"usado":0,"restante":0}
-        total = bonus.count()
-        usado = bonus.filter(resgatado_em__isnull=False,ativo=True).count()
-        restante = total - usado
+        total = bonus.aggegate(total=Sum("valor"))['total'] or 0
+        validos = bonus.filter(ativo=True).aggegate(validos=Sum("valor"))['validos'] or 0
+        usado = bonus.filter(ativo=True,debito__isnull=False).aggegate(usado=Sum("valor"))['usado'] or 0
+        restante = validos - usado
         return {"total":total,"usado":usado,"restante":restante}
 
     def get_libera_bilhete(self, obj):
@@ -445,7 +446,7 @@ class AfiliadoSerializer(serializers.ModelSerializer):
         num_vitorias = CartelaVencedora.objects.filter(cartela__jogador=obj).count()
         if num_vitorias >= configuracao.max_vitorias_jogador:
             libera = configuracao.numero_cadastro_libera_jogador
-            bonus = CreditoBonus.objects.filter(jogador=obj,resgatado_em__isnull=True,ativo=True).count()
+            bonus = CreditoBonus.objects.filter(jogador=obj,debito__isnull=True,ativo=True).count()
             if libera>0 and libera >= bonus:
                 return libera-bonus
         return 0

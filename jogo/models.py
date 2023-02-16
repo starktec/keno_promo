@@ -26,7 +26,7 @@ from django.utils.crypto import get_random_string
 from django_resized import ResizedImageField
 
 from jogo import local_settings
-from jogo.choices import AcaoTipoChoices, AcaoBonus
+from jogo.choices import AcaoTipoChoices, AcaoBonus, TipoDebitoBonus
 from jogo.constantes import NOME_PESSOAS
 from jogo.consts import TipoRedeSocial, LocalBotaoChoices, CampoCadastroChoices
 from jogo.websocket_triggers import event_doacoes
@@ -479,7 +479,7 @@ class Jogador(models.Model):
 
     def creditos(self):
         valor = 0
-        credito = CreditoBonus.objects.filter(jogador=self,resgatado_em__isnull=True,ativo=True).aggregate(Sum("valor"))
+        credito = CreditoBonus.objects.filter(jogador=self,debito__isnull=True,ativo=True).aggregate(Sum("valor"))
         if credito:
             valor = credito.get("valor__sum") or 0
         return valor
@@ -771,17 +771,27 @@ class RegraBonus(models.Model):
     def __str__(self):
         return self.get_acao_display()
 
+class DebitoBonus(models.Model):
+    valor = models.PositiveSmallIntegerField()
+    jogador = models.ForeignKey(Jogador,on_delete=models.PROTECT)
+    resgatado_em = models.DateTimeField(auto_now_add=True)
+    tipo = models.PositiveSmallIntegerField(choices=TipoDebitoBonus.choices)
+    def __str__(self):
+        return f"{self.id} - ({self.regra}) {self.jogador}"
+
 class CreditoBonus(models.Model):
     regra = models.ForeignKey(RegraBonus, on_delete=models.PROTECT)
     valor = models.PositiveSmallIntegerField()
     jogador = models.ForeignKey(Jogador,on_delete=models.PROTECT,related_name="credito_jogador")
     indicado = models.ForeignKey(Jogador,on_delete=models.PROTECT,related_name="credito_indicado")
     gerado_em = models.DateTimeField(auto_now_add=True)
-    resgatado_em = models.DateTimeField(blank=True,null=True)
+    debito = models.ForeignKey(DebitoBonus, on_delete=models.PROTECT, blank=True,null=True)
     ativo = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.id} - ({self.regra}) {self.jogador}"
+
+
 
 class ConfiguracaoAplicacao(models.Model):
     backgroundColor = ColorField(blank=True, null=True)

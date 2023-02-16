@@ -7,7 +7,7 @@ from tinymce.widgets import TinyMCE
 from jogo.models import Usuario, Configuracao, Jogador, CartelaVencedora, Cartela, Partida, Acao, Regra, Conta, \
     IPTabela, Publicacao, Galeria, TextoPublicacao, ConfiguracaoInstagram, PerfilSocial, CreditoBonus, RegraBonus, \
     ConfiguracaoAplicacao, BotaoAplicacao, BotaoMidiaSocial, Parceiro, RequisicaoPremioAplicacao, UserAfiliadoTeste, \
-    CampoCadastro, ContatoCartelaVencedora
+    CampoCadastro, ContatoCartelaVencedora, DebitoBonus
 
 admin.site.register(PerfilSocial)
 admin.site.register(Usuario)
@@ -62,7 +62,7 @@ admin.site.register(Conta, ContaAdmin)
 class CreditoBonusAdmin(admin.ModelAdmin):
     exclude = ["id"]
     change_list_template = "bonus_change_list.html"
-    list_display = ['__str__','jogador','indicado','resgatado','ativo']
+    list_display = ['__str__','jogador','indicado','debito','ativo']
     list_filter = ['ativo']
 
     def resgatado(self, obj):
@@ -72,6 +72,7 @@ class CreditoBonusAdmin(admin.ModelAdmin):
 
 
 admin.site.register(CreditoBonus,CreditoBonusAdmin)
+admin.site.register(DebitoBonus)
 admin.site.register(RegraBonus)
 admin.site.register(UserAfiliadoTeste)
 admin.site.register(CampoCadastro)

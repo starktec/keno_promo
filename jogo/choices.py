@@ -15,6 +15,10 @@ class AcaoBonus(TextChoices):
     CADASTRO = "C", "Cadastros"
     PARTICIPACAO = "P", "Participação em Sorteios"
 
+class TipoDebitoBonus(IntegerChoices):
+    CARTELA_BONUS = 1, "Cartela Bonus"
+    DESBLOQUEIO = 2, "Desbloqueio"
+
 UF_CHOICES = (
     ('AC', 'Acre'),
     ('AL', 'Alagoas'),

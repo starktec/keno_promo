@@ -10,7 +10,9 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from jogo.models import Cartela, Partida, Configuracao, CreditoBonus, Jogador, ConfiguracaoAplicacao, CartelaVencedora
+from jogo.choices import TipoDebitoBonus
+from jogo.models import Cartela, Partida, Configuracao, CreditoBonus, Jogador, ConfiguracaoAplicacao, CartelaVencedora, \
+    DebitoBonus
 from jogo.permissions import EhJogador
 from jogo.serializers import JogadorSerializer, LoginJogadorSerializer, CadastroJogadorSerializer, \
     ConfiguracoesAplicacaoSerializer, ConfiguracaoAplicacaoSerializer, RequisicaoPremioAplicacaoSerializer, \
@@ -91,7 +93,7 @@ class PegarCartela(APIView):
                         # Para o caso de não ter cartela desse jogador no próximo sorteio
                         # verificando bonus disponiveis
                         bonus = CreditoBonus.objects.filter(jogador=jogador,
-                                                            resgatado_em__isnull=True, ativo=True).order_by("id")
+                                                            debito__isnull=True, ativo=True).order_by("id")
                         desconta = 0  # sem descontos de creditos
 
                         if configuracao.max_vitorias_jogador > 0:  # Limite de vitorias é positivo
@@ -159,12 +161,14 @@ class PegarCartela(APIView):
                                         # decontando o bonus
                                         if bonus and desconta:
                                             contador = 0
-                                            agora = datetime.datetime.now()
+                                            debito_bonus = DebitoBonus.objects.create(
+                                                jogador=jogador,valor=desconta,tipo=TipoDebitoBonus.DESBLOQUEIO
+                                            )
                                             for bonus_obj in bonus:
                                                 contador += bonus_obj.valor
                                                 if contador > desconta:
                                                     break
-                                                bonus_obj.resgatado_em = agora # registrando o resgate do bonus
+                                                bonus_obj.debito = debito_bonus # registrando o resgate do bonus
                                                 bonus_obj.save()
 
                         if cartela_existente: # regra da partida que gera cartelas antecipadamente
@@ -184,12 +188,14 @@ class PegarCartela(APIView):
 
                                     if bonus and desconta:
                                         contador = 0
-                                        agora = datetime.datetime.now()
+                                        debito_bonus = DebitoBonus.objects.create(
+                                            jogador=jogador, valor=desconta, tipo=TipoDebitoBonus.DESBLOQUEIO
+                                        )
                                         for bonus_obj in bonus:
                                             contador += bonus_obj.valor
                                             if contador > desconta:
                                                 break
-                                            bonus_obj.resgatado_em = agora  # registrando o resgate do bonus
+                                            bonus_obj.debito = debito_bonus  # registrando o resgate do bonus
                                             bonus_obj.save()
                                 else:
                                     mensagem = "Cartelas esgotadas"
@@ -200,7 +206,6 @@ class PegarCartela(APIView):
                             cartelas = Cartela.objects.filter(jogador=jogador, partida=partida)
 
                     return Response(
-                        #data={"cartelas":[int(c.id) for c in cartelas], "bilhete": cartelas[0].hash, "sorteio": int(cartelas[0].partida.id)})
                         data={"cartelas":[{"id":int(c.id),"hash":c.hash} for c in cartelas], "sorteio": int(cartelas[0].partida.id)})
 
                 else:
@@ -245,7 +250,7 @@ class PegarCartelaBonus(APIView):
                     raise PermissionDenied()
 
                 bonus = CreditoBonus.objects.filter(jogador=jogador,
-                                                    resgatado_em__isnull=True,ativo=True).order_by("id")
+                                                    debito__isnull=True,ativo=True).order_by("id")
                 if not bonus:
                     raise serializers.ValidationError(
                         detail={"detail": "Você não tem crédito bônus suficientes para ganhar bilhetes"})
@@ -327,8 +332,13 @@ class PegarCartelaBonus(APIView):
                             for i in range(gerar_cartelas):
                                 cartelas.append(Cartela.objects.create(partida=partida,codigo=str(codigos_sorteados[i]),
                                                    jogador=jogador, nome=jogador.nome))
+
+                            debito_bonus = DebitoBonus.objects.create(
+                                jogador=jogador, valor=desconta, tipo=TipoDebitoBonus.CARTELA_BONUS
+                            )
+
                             for item in bonus_usados:
-                                item.resgatado_em = agora # registrando o resgate do bonus
+                                item.debito = debito_bonus # registrando o resgate do bonus
                                 item.save()
 
                     else: # regra da partida que gera cartelas antecipadamente
@@ -347,8 +357,11 @@ class PegarCartelaBonus(APIView):
                                     cartela_sorteada.save()
                                     cartelas.append(cartela_sorteada)
 
+                                debito_bonus = DebitoBonus.objects.create(
+                                    jogador=jogador, valor=desconta, tipo=TipoDebitoBonus.CARTELA_BONUS
+                                )
                                 for item in bonus_usados:
-                                    item.resgatado_em = agora  # registrando o resgate do bonus
+                                    item.debito = debito_bonus  # registrando o resgate do bonus
                                     item.save()
                             else:
                                 mensagem = "Cartelas esgotadas"
