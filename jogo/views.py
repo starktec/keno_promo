@@ -32,7 +32,7 @@ from jogo.forms import CartelasFilterForm, ConfiguracaoVisualForm, JogadoresForm
 from jogo.models import ConfiguracaoAplicacao, Jogador, Partida, Automato, Cartela, Usuario, Configuracao, \
     CartelaVencedora, TemplatePartida, \
     Regra, \
-    Acao, PerfilSocial, ConfiguracaoInstagram, Agendamento, CreditoBonus, ReciboPagamento
+    Acao, PerfilSocial, ConfiguracaoInstagram, Agendamento, CreditoBonus, ReciboPagamento, CampoCadastro
 from jogo.views_social_instagram import CLIENT
 from jogo.websocket_triggers import event_tela_partidas
 from jogo.websocket_triggers_bilhete import event_bilhete_partida
@@ -761,7 +761,7 @@ def configuracao(request):
                 print(form.errors)
         else:
             form = ConfiguracaoForm(instance=c)
-        return render(request, 'configuracao.html', {'form': form, 'configuracao': c})
+        return render(request, 'configuracao.html', {'form': form, 'configuracao': c, "campos_cadastro":CampoCadastro.objects.all()})
     return HttpResponse(status=403)
 
 @login_required(login_url="/login/")
@@ -1002,4 +1002,26 @@ def zerar_creditos(request):
         msg = "Todos os créditos foram DESATIVADOS e não contarão para os Jogadores"
         messages.success(request,msg)
         return redirect("/admin/jogo/creditobonus/")
+    return HttpResponse(status=403)
+
+@login_required(login_url="/login/")
+def campos_alterar_ativo(request, campo_id):
+    if ehUsuarioDash(request.user):
+        campo = CampoCadastro.objects.filter(id=campo_id).first()
+        if campo:
+            campo.ativo = not campo.ativo
+            campo.save()
+            messages.success(request,f"Campo {campo} alterado com sucesso")
+        return redirect("/configuracao/")
+    return HttpResponse(status=403)
+
+@login_required(login_url="/login/")
+def campos_alterar_obrigatorio(request, campo_id):
+    if ehUsuarioDash(request.user):
+        campo = CampoCadastro.objects.filter(id=campo_id).first()
+        if campo:
+            campo.obrigatorio = not campo.obrigatorio
+            campo.save()
+            messages.success(request, f"Campo {campo} alterado com sucesso")
+        return redirect("/configuracao/")
     return HttpResponse(status=403)

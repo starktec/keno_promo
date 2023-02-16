@@ -17,12 +17,13 @@ CONFIGURAÇÃO
                                       <button class="nav-link active-tabs tabs-margin" id="jogo-conf" data-bs-toggle="tab" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Configuração Jogo</button>
                                       <button class="nav-link deactivate-tabs tabs-margin" id="server-conf" data-bs-toggle="tab" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Configuração Dash</button>
                                       <button class="nav-link deactivate-tabs tabs-margin" id="regras-e-politicas" data-bs-toggle="tab" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Configuração Regras e Politicas</button>
+                                      <button class="nav-link deactivate-tabs tabs-margin" id="campos-cadastro" data-bs-toggle="tab" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Configuração Cadastros</button>
                                     </div>
                                 </nav>
                             </div>
                         </div>
                         
-                        <form class="col-12 row justify-content-start form-group" method="post" enctype="multipart/form-data">
+
                         {% csrf_token %}
                             {% if form.non_fields_errors %}
                             <div class="errors-box container-error container-center">
@@ -34,6 +35,7 @@ CONFIGURAÇÃO
                               {{ form.fields_errors }}
                             </div>
                         {% endif %}
+                        <form class="col-12 row justify-content-start form-group" method="post" enctype="multipart/form-data">
                             <div class="row container-jogo-conf">
                                 <div class="col-lg-6 col-md-6 col-sm-12 container-input-create input-container-conf">
                                     <label class="form-label" for="id_tempo_min_entre_sorteios">Tempo mínimo entre Sorteios (minutos)</label>
@@ -246,37 +248,8 @@ CONFIGURAÇÃO
                                         </div>
                                     </div>
                                 </div>
-
-                                <!--
-                                <div class="col-md-6 box-card-input">
-                                    <div class="row col-md-12 card-input padding-top-botton">
-                                        {% if configuracao.gif_inicializador %}
-                                        <div class="col-4 col-lg-4 col-sm-4 container-img-conf">
-                                            <img src="{{ configuracao.gif_inicializador.url }}">
-                                        </div>
-                                        {% else %}
-                                        <div class="col-4 col-lg-4 col-sm-4 container-img-conf">
-                                            <img src="/static/gif_loading_tela.gif">
-                                        </div>
-                                        {% endif %}
-                                        <div class="row col-8 col-lg-8 col-sm-8 padding-zero conatiner-img-input">
-                                            <h4 class="conf-img-title col-12">Gif Inicializador</h4>
-                                            <div class="d-flex col-12 col-sm-12">
-                                                {{ form.gif_inicializador }}
-                                                <div class="col-9 col-9 name_logo" id="name_gif_inicializador"></div>
-                                                <button type="button" id="btn_gif_inicializador" class="col-3 btn btn_logo"><em class="icon ni ni-arrow-to-up"></em></button>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-12 col-md-12 col-sm-12 container-input-create input-container-conf margin-zero">
-                                            <label class="form-label" for="id_tempo_max_espera_sorteio">Mensagem Gif Inicializador</label>
-                                            <div class="form-control-wrap">
-                                                {{ form.msg_gif_inicializador }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                -->
                             </div>
+
                             <div class="row container-regras-e-politicas-conf">
                                 <div class="col-lg-12 col-md-12 col-sm-12 container-input-create input-container-conf">
                                     <label class="form-label" for="id_regras">Regras</label>
@@ -291,16 +264,56 @@ CONFIGURAÇÃO
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="row container-campos-cadastro">
+                                {% for campo in campos_cadastro %}
+                                <div class="col-lg-6 col-md-6 col-sm-6 container-input-create input-container-conf">
+                                    <label class="form-label" for="id_nome_server">{{ campo|upper }}</label>
+                                    <div class="form-control-wrap">
+                                        <table cellpadding="5px">
+                                            <tr>
+                                                <td>Ativo</td>
+                                                <td>
+                                                    <div class="custom-control custom-control-sm custom-switch">
+                                                        <input type="checkbox" name="ativo{{campo.id}}" class="custom-control-input"
+                                                               id="ativo{{campo.id}}"
+                                                               onchange="window.location.href='/campo/{{ campo.id }}/ativo/'"
+                                                               {% if campo.ativo %}checked{% endif %}>
+                                                        <label class="custom-control-label" for="ativo{{campo.id}}"></label>
+                                                    </div>
+
+                                                </td>
+
+                                            </tr>
+                                            <tr>
+                                                <td>Obrigatório</td>
+                                                <td>
+                                                    <div class="custom-control custom-control-sm custom-switch">
+                                                        <input type="checkbox" name="obrigatorio{{campo.id}}" class="custom-control-input" id="obrigatorio{{campo.id}}"
+                                                               onchange="window.location.href='/campo/{{ campo.id }}/obrigatorio/'"
+                                                               {% if campo.obrigatorio %}checked{% endif %}>
+                                                        <label class="custom-control-label" for="obrigatorio{{campo.id}}"></label>
+                                                    </div>
+
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+
                             <div class="col-12 row justify-content-end container-btn-create-estabelecimento">
                                 <div class="col-12 text-right container-input-create container-salve-conf">
                                      <div class="form-group">
-                                        <div class="form-control-wrap">
+                                        <div class="form-control-wrap" id="submit-button">
                                             <button class="btn btn-success btn-create-secondary">Salvar</button>
                                         </div>
                                      </div>
                                 </div>
                             </div>
                         </form>
+
                     </div>
                 </div>
             </div>
@@ -312,15 +325,22 @@ CONFIGURAÇÃO
     
     const jogo = $('#jogo-conf');
     const server = $('#server-conf');
-    const regras = $('#regras-e-politicas')
+    const regras = $('#regras-e-politicas');
+    const campos = $('#campos-cadastro');
 
     const jogoContainer = $('.container-jogo-conf');
     const serverContainer = $('.container-server-conf');
     const regrasContainer = $('.container-regras-e-politicas-conf');
+    const camposContainer = $('.container-campos-cadastro');
+    const submit_button = $('#submit-button');
 
     regras.removeClass('active-tabs');
     regras.addClass('deactivate-tabs');
     regrasContainer.css('display','none');
+    campos.removeClass('active-tabs');
+    campos.addClass('deactivate-tabs');
+    camposContainer.css('display','none');
+
     $(jogo).click(function () {
         jogo.removeClass('deactivate-tabs');
         jogo.addClass('active-tabs');
@@ -333,6 +353,12 @@ CONFIGURAÇÃO
         regras.removeClass('active-tabs');
         regras.addClass('deactivate-tabs');
         regrasContainer.css('display','none');
+
+        campos.removeClass('active-tabs');
+        campos.addClass('deactivate-tabs');
+        camposContainer.css('display','none');
+
+        submit_button.css('display','flex');
     })
 
     $(server).click(function () {
@@ -347,6 +373,12 @@ CONFIGURAÇÃO
         regras.removeClass('active-tabs');
         regras.addClass('deactivate-tabs');
         regrasContainer.css('display','none');
+
+        campos.removeClass('active-tabs');
+        campos.addClass('deactivate-tabs');
+        camposContainer.css('display','none');
+
+        submit_button.css('display','flex');
     })
     $(regras).click(function () {
         regras.removeClass('deactivate-tabs');
@@ -360,6 +392,32 @@ CONFIGURAÇÃO
         server.removeClass('active-tabs');
         server.addClass('deactivate-tabs');
         serverContainer.css('display','none');
+
+        campos.removeClass('active-tabs');
+        campos.addClass('deactivate-tabs');
+        camposContainer.css('display','none');
+
+        submit_button.css('display','flex');
+    })
+
+    $(campos).click(function () {
+        jogo.removeClass('active-tabs');
+        jogo.addClass('deactivate-tabs');
+        jogoContainer.css('display','none');
+
+        server.removeClass('active-tabs');
+        server.addClass('deactivate-tabs');
+        serverContainer.css('display','none');
+
+        regras.removeClass('active-tabs');
+        regras.addClass('deactivate-tabs');
+        regrasContainer.css('display','none');
+
+        campos.removeClass('deactivate-tabs');
+        campos.addClass('active-tabs');
+        camposContainer.css('display','flex');
+
+        submit_button.css('display','none');
     })
 
 </script>

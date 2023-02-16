@@ -6,7 +6,8 @@ from jogo.views import cancelar_template, index, \
     partidas, ganhadores, cartela, login_page, logout_page, criarpartida, \
     cartelas, configuracao, cancelar_partida, cancelar_bilhete, partida_edit, \
     partida_automatica, automatos, parar_automato, sortear_template, editar_template, manter_contas_view, \
-    aumentar_cartelas, forcar_sorteio, status_jogador, mudar_senha_jogador, pagamento, zerar_creditos
+    aumentar_cartelas, forcar_sorteio, status_jogador, mudar_senha_jogador, pagamento, zerar_creditos, \
+    campos_alterar_ativo, campos_alterar_obrigatorio
 
 from .views import configuracao_visual, jogadores, realtime_data
 from .views_api_media import logo_promo, media_login, nome_server, media_logo, media_favicon, media_fundo
@@ -44,6 +45,9 @@ urlpatterns = [
 
     path("pagamento/",pagamento),
     path("zerar_creditos/",zerar_creditos),
+
+    path("campo/<int:campo_id>/ativo/",campos_alterar_ativo),
+    path("campo/<int:campo_id>/obrigatorio/",campos_alterar_obrigatorio),
 
     path('api/v1/', include(
         [
