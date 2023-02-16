@@ -452,7 +452,7 @@ class AfiliadoSerializer(serializers.ModelSerializer):
 
     def get_top5(self,obj):
         results = Jogador.objects.filter(
-            credito_jogador__isnull=False,credito_jogador__resgatado_em__isnull=True,ativo=True
+            credito_jogador__isnull=False,credito_jogador__resgatado_em__isnull=True,credito_jogador__ativo=True
         ).annotate(
             Count("id"),quantidade=Sum("credito_jogador__valor")
         ).order_by("-quantidade").values("nome","quantidade")

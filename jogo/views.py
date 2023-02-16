@@ -1025,3 +1025,18 @@ def campos_alterar_obrigatorio(request, campo_id):
             messages.success(request, f"Campo {campo} alterado com sucesso")
         return redirect("/configuracao/")
     return HttpResponse(status=403)
+
+@login_required(login_url="/login/")
+def afiliados(request):
+    if ehUsuarioDash(request.user):
+        jogadores = Jogador.objects.filter(credito_jogador__isnull=False).annotate(
+            total=Sum("credito_jogador__valor")
+        ).annotate(
+            usado=Sum("credito_jogador__valor",filter=Q(credito_jogador__resgatado_em__isnull=False,credito_jogador__ativo=True))
+        ).annotate(
+            restante=Sum("credito_jogador__valor",filter=Q(credito_jogador__resgatado_em__isnull=True, credito_jogador__ativo=True))
+        )
+
+        indicados = Jogador.objects.filter(indicado_por__isnull=False).count()
+        return render(request,"afiliados.html",{"afiliados":jogadores,"indicados":indicados})
+    return HttpResponse(status=403)
