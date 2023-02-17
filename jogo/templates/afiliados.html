@@ -135,15 +135,15 @@ AFILIADOS
                     <tbody class="text-center tbody-content">
                     {% for jogador in afiliados %}
                         <tr>
-                            <td scope="row">{{ jogador.codigo }} (<a href="/afiliado/{{ jogador.id }}/">Extrato</a>)</td>
+                            <td scope="row">{{ jogador.codigo }} (<a href="/afiliado/{{ jogador.id }}/">Ver Extrato</a>)</td>
                             <td scope="row">{{ jogador.nome }}
                                 {% if jogador.instagram %}(@{{ jogador.instagram }}){% endif %}
                             </td>
                             <td scope="row">{{ jogador.total }}</td>
                             <td scope="row">{% if jogador.usado %}{{ jogador.usado }}{% else %}0{% endif %}</td>
                             <td scope="row">{% if jogador.restante %}{{ jogador.restante }}{% else %}0{% endif %}</td>
-                            <td scope="row"></td>
-                            <td scope="row"></td>
+                            <td scope="row">{% if jogador.bonus %}{{ jogador.bonus }}{% else %}0{% endif %}</td>
+                            <td scope="row">{% if jogador.desbloqueio %}{{ jogador.desbloqueio }}{% else %}0{% endif %}</td>
                         </tr>
                     {% endfor %}
 

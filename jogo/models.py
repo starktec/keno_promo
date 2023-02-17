@@ -495,6 +495,8 @@ class Jogador(models.Model):
 
     def ehTravado(self):
         configuracao = Configuracao.objects.last()
+        if configuracao.max_vitorias_jogador == 0:
+            return False
         return self.vitorias()>=configuracao.max_vitorias_jogador
 
 

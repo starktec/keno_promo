@@ -21,7 +21,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from jogo.choices import AcaoTipoChoices, StatusCartelaChoice
+from jogo.choices import AcaoTipoChoices, StatusCartelaChoice, TipoDebitoBonus
 from jogo.serializers import CadastroJogadorSerializer, JogadorSerializer, LoginJogadorSerializer
 from jogo.utils import testa_horario, comprar_cartelas, manter_contas, format_serializer_message, ehUsuarioDash
 from jogo.constantes import VALORES_VOZES
@@ -32,7 +32,7 @@ from jogo.forms import CartelasFilterForm, ConfiguracaoVisualForm, JogadoresForm
 from jogo.models import ConfiguracaoAplicacao, Jogador, Partida, Automato, Cartela, Usuario, Configuracao, \
     CartelaVencedora, TemplatePartida, \
     Regra, \
-    Acao, PerfilSocial, ConfiguracaoInstagram, Agendamento, CreditoBonus, ReciboPagamento, CampoCadastro
+    Acao, PerfilSocial, ConfiguracaoInstagram, Agendamento, CreditoBonus, ReciboPagamento, CampoCadastro, DebitoBonus
 from jogo.views_social_instagram import CLIENT
 from jogo.websocket_triggers import event_tela_partidas
 from jogo.websocket_triggers_bilhete import event_bilhete_partida
@@ -48,7 +48,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import transaction
-from django.db.models import Count, Q, Sum
+from django.db.models import Count, Q, Sum, ExpressionWrapper, IntegerField, BooleanField, Case, When
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.http import HttpResponse
@@ -1032,11 +1032,53 @@ def afiliados(request):
         jogadores = Jogador.objects.filter(credito_jogador__isnull=False).annotate(
             total=Sum("credito_jogador__valor")
         ).annotate(
-            usado=Sum("credito_jogador__valor",filter=Q(credito_jogador__resgatado_em__isnull=False,credito_jogador__ativo=True))
+            usado=Sum("credito_jogador__valor",filter=Q(credito_jogador__debito__isnull=False,credito_jogador__ativo=True))
         ).annotate(
-            restante=Sum("credito_jogador__valor",filter=Q(credito_jogador__resgatado_em__isnull=True, credito_jogador__ativo=True))
+            restante=Sum("credito_jogador__valor",filter=Q(credito_jogador__debito__isnull=True, credito_jogador__ativo=True))
+        ).annotate(
+            bonus=Count('debitobonus__id', filter=Q(debitobonus__tipo=1), distinct=True)
+        ).annotate(
+            desbloqueio=Count('debitobonus__id', filter=Q(debitobonus__tipo=2), distinct=True)
         )
-
         indicados = Jogador.objects.filter(indicado_por__isnull=False).count()
         return render(request,"afiliados.html",{"afiliados":jogadores,"indicados":indicados})
+    return HttpResponse(status=403)
+
+@login_required(login_url="/login/")
+def afiliado(request, afiliado_id):
+    if ehUsuarioDash(request.user):
+        jogador = Jogador.objects.filter(id=afiliado_id).first()
+        if not jogador:
+            messages.info(request,"Jogador não existe com esse ID")
+            return redirect("/jogadores/")
+        creditos = CreditoBonus.objects.filter(jogador=jogador).order_by("-gerado_em")
+        debitos = DebitoBonus.objects.filter(jogador=jogador).order_by("-resgatado_em")
+        if not creditos:
+            messages.info(request, "Jogador não possui créditos (não é afiliado)")
+            return redirect("/jogadores/")
+
+        total = creditos.aggregate(total=Sum("valor"))['total'] or 0
+        usado = debitos.aggregate(usado=Sum("valor"))['usado'] or 0
+        disponível = creditos.filter(ativo=True, debito__isnull=True).aggregate(disponivel=Sum("valor"))['disponivel'] or 0
+        indisponível = creditos.filter(ativo=False).aggregate(indisponivel=Sum("valor"))['indisponivel'] or 0
+        usado_cartela_bonus = debitos.filter(tipo=TipoDebitoBonus.CARTELA_BONUS).count()
+        usado_desbloqueio = debitos.filter(tipo=TipoDebitoBonus.DESBLOQUEIO).count()
+
+        extrato = {}
+        i, j = (0,0)
+        if not debitos:
+            extrato = {x:"C" for x in creditos}
+        else:
+            while i < len(creditos) and j < len(debitos):
+                if creditos[i].gerado_em > debitos[j].resgatado_em:
+                    extrato[creditos[i]]="C"
+                    i += 1
+                else:
+                    extrato[debitos[j]]="D"
+                    j += 1
+            extrato.update({x:"C" for x in creditos[i:]})
+        indicados = Jogador.objects.filter(indicado_por__isnull=False).count()
+        return render(request,"afiliado.html",{"afiliado":jogador,"operacoes":extrato, "indicados":indicados,
+                                               "total":total,"usado":usado,"disponivel":disponível,"indisponivel":indisponível,
+                                               "cartela_bonus":usado_cartela_bonus,"desbloqueio":usado_desbloqueio})
     return HttpResponse(status=403)

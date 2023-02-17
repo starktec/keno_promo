@@ -1,0 +1,197 @@
+{% extends "index.html" %}
+{% block titulo %}
+EXTRATO DO AFILIADO
+{% endblock %}
+{% block nav-bar %}
+
+    <!-------------------------------Cards de Status-------------------------------->
+    <div class="row my-row">
+
+        <div class="col-sm-6 col-md-3 col-lg-3 ">
+            <div class="card cards-status">
+                <div class="row text-center">
+                    <h6 class="title-card color-card-pos">Indicados</h6>
+                </div>
+                <div class="row">
+                    <h6 class="col-12 text-right subtitle-card color-card-pos">
+                        <em class="icon ni ni-user-fill icon-card color-card-on-line"> </em>{{ indicados }}</h6>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-md-3 col-lg-3 ">
+            <div class="card cards-status">
+                <div class="row text-center">
+                    <h6 class="title-card color-card-pos">Total Creditos</h6>
+                </div>
+                <div class="row">
+                    <h6 class="col-12 text-right subtitle-card color-card-pos">
+                        <em class="icon ni ni-sign-mxn icon-card color-card-on-line"> </em>{{ total }}</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-3 ">
+            <div class="card cards-status">
+                <div class="row text-center">
+                    <h6 class="title-card color-card-pos">Disponível</h6>
+                </div>
+                <div class="row">
+                    <h6 class="col-12 text-right subtitle-card color-card-pos">
+                        <em class="icon ni ni-sign-mxn icon-card color-card-on-line"> </em>{{ disponivel }}</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-3 ">
+            <div class="card cards-status">
+                <div class="row text-center">
+                    <h6 class="title-card color-card-pos">Indisponivel</h6>
+                </div>
+                <div class="row">
+                    <h6 class="col-12 text-right subtitle-card color-card-pos">
+                        <em class="icon ni ni-sign-mxn icon-card color-card-on-line"> </em>{{ indisponivel }}</h6>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-md-3 col-lg-3 ">
+            <div class="card cards-status">
+                <div class="row text-center">
+                    <h6 class="title-card color-card-pos">Créditos Usados</h6>
+                </div>
+                <div class="row">
+                    <h6 class="col-12 text-right subtitle-card color-card-pos">
+                        <em class="icon ni ni-sign-mxn icon-card color-card-on-line"> </em>{{ usado }}</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-3 ">
+            <div class="card cards-status">
+                <div class="row text-center">
+                    <h6 class="title-card color-card-pos">Uso para cartela bonus</h6>
+                </div>
+                <div class="row">
+                    <h6 class="col-12 text-right subtitle-card color-card-pos">{{ cartela_bonus }}x</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-3 ">
+            <div class="card cards-status">
+                <div class="row text-center">
+                    <h6 class="title-card color-card-pos">Uso para Desbloqueio</h6>
+                </div>
+                <div class="row">
+                    <h6 class="col-12 text-right subtitle-card color-card-pos">{{ desbloqueio }}x</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-------------------------------tabela de jogadores-------------------------------->
+    <div class="row my-row">
+        <div class="col-12">
+            <div class="card card-table table-responsive-xl overflow-auto">
+                <table id="" class="table position-relative table-content">
+                    <thead class="thead-dark text-center thead-content">
+                        <tr>
+                            <th scope="col">Ação</th>
+                            <th scope="col">Codigo</th>
+                            <th scope="col">Data</th>
+                            <th scope="col">Valor</th>
+                            <th scope="col">Utilizado</th>
+                            <th scope="col">Indicou</th>
+                            <th scope="col">Ativo</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-center tbody-content">
+                    {% for info,tipo in operacoes.items %}
+                        <tr>
+                            <td scope="row">
+                                <span class="text-{% if tipo == 'C' %}success{% else %}danger{% endif %}">
+                                {% if tipo == "C" %}Crédito{% else %}Débito{% endif %}
+                                </span>
+                            </td>
+                            <td scope="row">
+                                {% if tipo == "C" %}C{{ info.id }}{% else %}D{{ info.id }}{% endif %}
+                            </td>
+                            <td scope="row">
+                                {% if tipo == "C" %}{{ info.gerado_em|date:"SHORT_DATETIME_FORMAT" }}
+                                {% else %}{{ info.resgatado_em|date:"SHORT_DATETIME_FORMAT" }}{% endif %}
+                            </td>
+                            <td scope="row">{{ info.valor }}</td>
+                            <td scope="row">
+                                {% if tipo == "D" %}
+                                {% if info.tipo == 1 %}<em class="icon ni ni-cards-fill"> </em>
+                                {% else %}<em class="icon ni ni-unlock-fill"> </em>{% endif %}
+                                {{ info.get_tipo_display }}{% else %}
+                                {% if info.debito %}Ver Código D{{ info.debito.id }}{% else %}
+                                <em class="icon ni ni-cross-circle-fill"> </em>NÃO{% endif %}
+                                {% endif %}</td>
+                            <td scope="row">
+                                {% if tipo == "C" %}<em class="icon ni ni-user-circle-fill"> </em>{{ info.indicado }}{% endif %}
+                            </td>
+                            <td scope="row">{% if tipo == "C" %}{% if info.ativo %}SIM{% else %}NÃO{% endif %}{% endif %}</td>
+                        </tr>
+                    {% endfor %}
+
+                    </tbody>
+                    </table>
+
+            </div>
+        </div>
+    </div>
+
+    <!------------------------------->
+
+    <!--------Paginação -------->
+    <div class="row my-row pagination-container">
+        <div class="col-12 row justify-content-center">
+            <nav aria-label="Navegação de página exemplo">
+                <ul class="pagination">
+                    {% if pagina_anterior > 0 %}
+                    <li class="pageitem button-paginação">
+                        <button class="page-link button-paginação" aria-hidden="true" onclick=test(1)>&laquo;</button>
+                    </li> 
+                    <li class="page-item button-paginação">
+                        <button class="page-link button-paginação" class="sr-only" onclick=test({{pagina_anterior}})>&lt;</button>
+                    </li>
+                    {%endif%}  
+                    <li class="page-item button-paginação">
+                        <a class="page-link button-paginação">{{ pagina_atual }}</a>
+                    </li>
+                    {% if ultima_pagina != pagina_atual %}
+                    <li class="page-item button-paginação">
+                        <button class="page-link button-paginação" class="sr-only" onclick=test({{proxima_pagina}})>&gt;</button>
+                    </li>  
+                    <li class="page-item button-paginação">
+                        <button class="page-link button-paginação" aria-hidden="true" onclick=test({{ultima_pagina}})>&raquo;</button>
+                    </li>
+                    {%endif%}
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <script>
+        $(document).ready( function () {
+            $('#tabelaJogadores').DataTable({
+                "language": {
+                    "url":"https://cdn.datatables.net/plug-ins/1.10.24/i18n/Portuguese-Brasil.json",
+                },
+                "dom": '',
+                paging: false,
+            });
+        } );
+        let clickado = false
+        function test(pagina){
+            if(clickado == false){
+                $('#form1').attr('action', $('#form1').attr('action') +'?pagina='+parseInt(pagina));
+                $('#form1').submit();   
+                clickado = true
+            }
+        }
+    </script>
+    
+
+
+
+<!-- content @e -->
+
+{% endblock %}

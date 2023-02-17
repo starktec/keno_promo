@@ -7,7 +7,7 @@ from jogo.views import cancelar_template, index, \
     cartelas, configuracao, cancelar_partida, cancelar_bilhete, partida_edit, \
     partida_automatica, automatos, parar_automato, sortear_template, editar_template, manter_contas_view, \
     aumentar_cartelas, forcar_sorteio, status_jogador, mudar_senha_jogador, pagamento, zerar_creditos, \
-    campos_alterar_ativo, campos_alterar_obrigatorio, afiliados
+    campos_alterar_ativo, campos_alterar_obrigatorio, afiliados, afiliado
 
 from .views import configuracao_visual, jogadores, realtime_data
 from .views_api_media import logo_promo, media_login, nome_server, media_logo, media_favicon, media_fundo
@@ -28,6 +28,7 @@ urlpatterns = [
     path('ganhadores/', ganhadores),
     path('jogadores/', jogadores),
     path('afiliados/', afiliados),
+    path('afiliado/<int:afiliado_id>/', afiliado),
     path('cartelas/', cartelas),
     path('configuracao-visual/', configuracao_visual),
     path('configuracao/', configuracao),
