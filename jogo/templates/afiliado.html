@@ -103,10 +103,10 @@ EXTRATO DO AFILIADO
                     </thead>
                     <tbody class="text-center tbody-content">
                     {% for info,tipo in operacoes.items %}
-                        <tr>
+                        <tr {% if tipo == "C" and not info.ativo %}style="background-color:gainsboro !important; opacity:0.5;"{% endif %}>
                             <td scope="row">
                                 <span class="text-{% if tipo == 'C' %}success{% else %}danger{% endif %}">
-                                {% if tipo == "C" %}Crédito{% else %}Débito{% endif %}
+                                <b>{% if tipo == "C" %}Crédito{% else %}Débito{% endif %}</b>
                                 </span>
                             </td>
                             <td scope="row">
