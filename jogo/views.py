@@ -1077,7 +1077,7 @@ def afiliado(request, afiliado_id):
                     extrato[debitos[j]]="D"
                     j += 1
             extrato.update({x:"C" for x in creditos[i:]})
-        indicados = Jogador.objects.filter(indicado_por__isnull=False).count()
+        indicados = Jogador.objects.filter(indicado_por=jogador).count()
         return render(request,"afiliado.html",{"afiliado":jogador,"operacoes":extrato, "indicados":indicados,
                                                "total":total,"usado":usado,"disponivel":disponível,"indisponivel":indisponível,
                                                "cartela_bonus":usado_cartela_bonus,"desbloqueio":usado_desbloqueio})
