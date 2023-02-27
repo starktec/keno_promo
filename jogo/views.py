@@ -1,11 +1,9 @@
 import datetime
-import json
 import time
 from collections import OrderedDict
 from datetime import date, timedelta
 import random
 from decimal import Decimal
-import csv
 import math
 import logging
 
@@ -13,27 +11,21 @@ from django.contrib import messages
 
 from jogo.consts import SituacaoPagamento
 from jogo.consultas_banco import estatisticas_jogadores
-from jogo.permissions import EhJogador
 from instagrapi import Client
 from instagrapi.exceptions import ClientLoginRequired, UserNotFound
-from rest_framework import status, serializers
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from jogo.choices import AcaoTipoChoices, StatusCartelaChoice, TipoDebitoBonus
-from jogo.serializers import CadastroJogadorSerializer, JogadorSerializer, LoginJogadorSerializer
-from jogo.utils import testa_horario, comprar_cartelas, manter_contas, format_serializer_message, ehUsuarioDash
+from jogo.utils import testa_horario, comprar_cartelas, manter_contas, ehUsuarioDash
 from jogo.constantes import VALORES_VOZES
 
 from jogo.agendamento import Agenda
-from jogo.forms import CartelasFilterForm, ConfiguracaoVisualForm, JogadoresForm, NovaPartidaAutomatizada, PartidaEditForm, GanhadoresForm, NovaPartidaForm, UsuarioAddForm, \
+from jogo.forms import CartelasFilterForm, ConfiguracaoVisualForm, JogadoresForm, NovaPartidaAutomatizada, PartidaEditForm, GanhadoresForm, NovaPartidaForm, \
     ConfiguracaoForm, TemplateEditForm
 from jogo.models import ConfiguracaoAplicacao, Jogador, Partida, Automato, Cartela, Usuario, Configuracao, \
     CartelaVencedora, TemplatePartida, \
     Regra, \
     Acao, PerfilSocial, ConfiguracaoInstagram, Agendamento, CreditoBonus, ReciboPagamento, CampoCadastro, DebitoBonus
-from jogo.views_social_instagram import CLIENT
+from bin.views_social_instagram import CLIENT
 from jogo.websocket_triggers import event_tela_partidas
 from jogo.websocket_triggers_bilhete import event_bilhete_partida
 
@@ -44,11 +36,9 @@ from django import forms
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.hashers import make_password
-from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import transaction
-from django.db.models import Count, Q, Sum, ExpressionWrapper, IntegerField, BooleanField, Case, When
+from django.db.models import Count, Q, Sum
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.http import HttpResponse

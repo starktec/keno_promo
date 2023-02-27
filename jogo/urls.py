@@ -16,7 +16,7 @@ from .views_api_online import dados_bilhete, get_politicas_de_privacidade_kol, g
 from .views_api_tela import resultado_sorteio, proximos, proximos_especiais, historico, status, ultimos_ganhadores
 from .views_aplicacao import CadastroJogador, LoginJogador, PegarCartela, ConfiguracaoAplicacaoView, \
     RequisicaoPremioAplicacaoView, AfiliadoView, PegarCartelaBonus, DadosJogadorView
-from .views_social_instagram import index_social, gerar_bilhete
+#from .views_social_instagram import index_social, gerar_bilhete
 
 urlpatterns = [
     path('', index),
@@ -87,13 +87,6 @@ urlpatterns = [
         ]
     )),
 
-    path("api/social/", include(
-        [
-            path("",index_social),
-            path("gerar_bilhete/", gerar_bilhete)
-        ]
-    )),
-
     path("api/cadastro/", CadastroJogador.as_view(), name="api_cadastro"),
     path("api/login/",LoginJogador.as_view(), name="api_login"),
     path("api/gerar_bilhete/",PegarCartela.as_view(), name="api_gerar_bilhete"),
@@ -104,8 +97,17 @@ urlpatterns = [
     path("api/dados_jogador/",DadosJogadorView.as_view()),
 
     path("manter_contas/", manter_contas_view),
-
+    
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+"""
+path("api/social/", include(
+    [
+        path("",index_social),
+        path("gerar_bilhete/", gerar_bilhete)
+    ]
+)),
+"""
